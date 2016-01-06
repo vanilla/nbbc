@@ -1,6 +1,9 @@
-nbbc
-====
+NBBC was last [updated officially](http://nbbc.sourceforge.net/) in 2010; this is forked from the best third-party fork we could find.
 
-This is a fork of The Phantom Ink's nbbc, which seems to have been abondoned in 2010.
+# Goals:
 
-I am not the author of this library. I do not know enough about the internals to really fix any bugs, but I do welcome pull requests.
+* Composer support.
+* PHP 7 support.
+* Integrate into Vanilla Forums as a Composer dependency.
+
+This will deprecate our existing [NBBC addon](http://vanillaforums.org/addon/nbbc-plugin).
