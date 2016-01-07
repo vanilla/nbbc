@@ -448,7 +448,7 @@ class BBCodeLibrary
 				$target = '';
 			}
 			
-			if ( $bbcode->url_target !== false )
+			if ( $bbcode->url_target !== false && empty($target))
 			{
 				$target = ' target="' . htmlspecialchars( $bbcode->url_target ) . '"';
 			}
