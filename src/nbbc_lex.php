@@ -71,7 +71,7 @@
 		public $pat_comment2;	// Pattern for matching comments.
 		public $pat_wiki;		// Pattern for matching wiki-links.
 
-		function BBCodeLexer($string, $tagmarker = '[') {
+		function __construct($string, $tagmarker = '[') {
 			// First thing we do is to split the input string into tuples of
 			// text and tags.  This will make it easy to tokenize.  We define a tag as
 			// anything starting with a [, ending with a ], and containing no [ or ] in
