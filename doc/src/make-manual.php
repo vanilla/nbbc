@@ -1,6 +1,7 @@
 <?php
 
-	require_once("../../nbbc.php");
+	require_once __DIR__.'/../../vendor/autoload.php';
+	$bbcode = new BBCode();
 
 	//-------------------------------------------------------------------------------------------
 	//  Read "toc.tpl" and convert it into a hierarchy.
@@ -193,7 +194,7 @@ EOI;
 		$next_title = htmlspecialchars($next_title);
 		$next_url = htmlspecialchars($next_url);
 
-		$year = date("Y");
+		$year = 2010; // date("Y");
 
 		$content = str_replace('{$BBCODE_VERSION}', BBCODE_VERSION, $content);
 
