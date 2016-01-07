@@ -1531,31 +1531,31 @@ class BBCode {
         foreach (str_split($pattern) as $char) {
             switch ($char) {
                 case 's':
-                    $BBCode_Profiler->Begin('Lexer:NextToken');
+//                    $BBCode_Profiler->Begin('Lexer:NextToken');
                     $token_type = $this->lexer->NextToken();
-                    $BBCode_Profiler->End('Lexer:NextToken');
+//                    $BBCode_Profiler->End('Lexer:NextToken');
                     while ($token_type == self::BBCODE_WS) {
-                        $BBCode_Profiler->Begin('Lexer:NextToken');
+//                        $BBCode_Profiler->Begin('Lexer:NextToken');
                         $token_type = $this->lexer->NextToken();
-                        $BBCode_Profiler->End('Lexer:NextToken');
+//                        $BBCode_Profiler->End('Lexer:NextToken');
                     }
                     $this->lexer->UngetToken();
                     break;
                 case 'n':
-                    $BBCode_Profiler->Begin('Lexer:NextToken');
+//                    $BBCode_Profiler->Begin('Lexer:NextToken');
                     $token_type = $this->lexer->NextToken();
-                    $BBCode_Profiler->End('Lexer:NextToken');
+//                    $BBCode_Profiler->End('Lexer:NextToken');
                     if ($token_type != self::BBCODE_NL)
                         $this->lexer->UngetToken();
                     break;
                 case 'a':
-                    $BBCode_Profiler->Begin('Lexer:NextToken');
+//                    $BBCode_Profiler->Begin('Lexer:NextToken');
                     $token_type = $this->lexer->NextToken();
-                    $BBCode_Profiler->End('Lexer:NextToken');
+//                    $BBCode_Profiler->End('Lexer:NextToken');
                     while ($token_type == self::BBCODE_WS || $token_type == self::BBCODE_NL) {
-                        $BBCode_Profiler->Begin('Lexer:NextToken');
+//                        $BBCode_Profiler->Begin('Lexer:NextToken');
                         $token_type = $this->lexer->NextToken();
-                        $BBCode_Profiler->End('Lexer:NextToken');
+//                        $BBCode_Profiler->End('Lexer:NextToken');
                     }
                     $this->lexer->UngetToken();
                     break;
@@ -2403,9 +2403,9 @@ class BBCode {
         // clarity's sake, we break the tag-processing code into separate functions, but we
         // keep the text/whitespace/newline code here for performance reasons.
         while (true) {
-            $BBCode_Profiler->Begin('Lexer:NextToken');
+//            $BBCode_Profiler->Begin('Lexer:NextToken');
             if (($token_type = $this->lexer->NextToken()) == self::BBCODE_EOI) {
-                $BBCode_Profiler->End('Lexer:NextToken');
+//                $BBCode_Profiler->End('Lexer:NextToken');
                 break;
             }
 
