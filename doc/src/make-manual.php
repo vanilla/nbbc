@@ -1,7 +1,6 @@
 <?php
 
 	require_once __DIR__.'/../../vendor/autoload.php';
-	$bbcode = new BBCode();
 
 	//-------------------------------------------------------------------------------------------
 	//  Read "toc.tpl" and convert it into a hierarchy.
@@ -196,7 +195,7 @@ EOI;
 
 		$year = 2010; // date("Y");
 
-		$content = str_replace('{$BBCODE_VERSION}', BBCODE_VERSION, $content);
+		$content = str_replace('{$BBCODE_VERSION}', BBCode::BBCODE_VERSION, $content);
 
 		if ($prev_url)
 			$prev = "Previous: <a href=\"$prev_url\">$prev_title</a>";

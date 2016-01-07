@@ -1075,7 +1075,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         $bbcode = new BBCode();
 
         $bbcode->AddRule('wstest', [
-            'mode' => BBCODE_MODE_ENHANCED,
+            'mode' => BBCode::BBCODE_MODE_ENHANCED,
             'allow' => ['_default' => '/^[a-zA-Z0-9._ -]+$/'],
             'template' => '<span style="wstest:{$_default}">{$_content}</span>',
             'class' => 'inline',

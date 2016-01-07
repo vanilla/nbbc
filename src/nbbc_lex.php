@@ -52,6 +52,15 @@
 	//-----------------------------------------------------------------------------
 
 	class BBCodeLexer {
+		/**
+		 * Lexer: Next token is plain text.
+		 */
+		const BBCODE_LEXSTATE_TEXT = 0;
+		/**
+		 * Lexer: Next token is non-text element.
+		 */
+		const BBCODE_LEXSTATE_TAG = 1;
+
 		public $token;			// Return token type:  One of the BBCODE_* constants.
 		public $text;			// Actual exact, original text of token.
 		public $tag;			// If token is a tag, this is the decoded array version.
@@ -145,11 +154,11 @@
 			// Current lexing state.
 			$this->ptr = 0;
 			$this->unget = false;
-			$this->state = BBCODE_LEXSTATE_TEXT;
+			$this->state = self::BBCODE_LEXSTATE_TEXT;
 			$this->verbatim = false;
 			
 			// Return values.
-			$this->token = BBCODE_EOI;
+			$this->token = BBCode::BBCODE_EOI;
 			$this->tag = false;
 			$this->text = "";
 		}
@@ -161,32 +170,32 @@
 		function GuessTextLength() {
 			$length = 0;
 			$ptr = 0;
-			$state = BBCODE_LEXSTATE_TEXT;
+			$state = self::BBCODE_LEXSTATE_TEXT;
 			
 			// Loop until we find a valid (nonempty) token.
 			while ($ptr < count($this->input)) {
 				$text = $this->input[$ptr++];
 				
-				if ($state == BBCODE_LEXSTATE_TEXT) {
-					$state = BBCODE_LEXSTATE_TAG;
+				if ($state == self::BBCODE_LEXSTATE_TEXT) {
+					$state = self::BBCODE_LEXSTATE_TAG;
 					$length += strlen($text);
 				}
 				else {
 					switch (ord(substr($this->text, 0, 1))) {
 					case 10:
 					case 13:
-						$state = BBCODE_LEXSTATE_TEXT;
+						$state = self::BBCODE_LEXSTATE_TEXT;
 						$length++;
 						break;
 					default:
-						$state = BBCODE_LEXSTATE_TEXT;
+						$state = self::BBCODE_LEXSTATE_TEXT;
 						$length += strlen($text);
 						break;
 					case 40:
 					case 60:
 					case 91:
 					case 123:
-						$state = BBCODE_LEXSTATE_TEXT;
+						$state = self::BBCODE_LEXSTATE_TEXT;
 						break;
 					}
 				}
@@ -224,7 +233,7 @@
 				if ($this->ptr >= count($this->input)) {
 					$this->text = "";
 					$this->tag = false;
-					return $this->token = BBCODE_EOI;
+					return $this->token = BBCode::BBCODE_EOI;
 				}
 				
 				// Inhale one token, sanitizing away any weird control characters.  We
@@ -236,22 +245,22 @@
 
 					// In verbatim mode, we return *everything* as plain text or whitespace.
 					$this->tag = false;
-					if ($this->state == BBCODE_LEXSTATE_TEXT) {
-						$this->state = BBCODE_LEXSTATE_TAG;
-						$token_type = BBCODE_TEXT;
+					if ($this->state == self::BBCODE_LEXSTATE_TEXT) {
+						$this->state = self::BBCODE_LEXSTATE_TAG;
+						$token_type = BBCode::BBCODE_TEXT;
 					}
 					else {
 						// This must be either whitespace, a newline, or a tag.
-						$this->state = BBCODE_LEXSTATE_TEXT;
+						$this->state = self::BBCODE_LEXSTATE_TEXT;
 						switch (ord(substr($this->text, 0, 1))) {
 						case 10:
 						case 13:
 							// Newline.
-							$token_type = BBCODE_NL;
+							$token_type = BBCode::BBCODE_NL;
 							break;
 						default:
 							// Whitespace.
-							$token_type = BBCODE_WS;
+							$token_type = BBCode::BBCODE_WS;
 							break;
 						case 45:
 						case 40:
@@ -259,7 +268,7 @@
 						case 91:
 						case 123:
 							// Tag or comment.
-							$token_type = BBCODE_TEXT;
+							$token_type = BBCode::BBCODE_TEXT;
 							break;
 						}
 					}
@@ -267,12 +276,12 @@
 					if (strlen($this->text) > 0)
 						return $this->token = $token_type;
 				}
-				else if ($this->state == BBCODE_LEXSTATE_TEXT) {
+				else if ($this->state == self::BBCODE_LEXSTATE_TEXT) {
 					// Next up is plain text, but only return it if it's nonempty.
-					$this->state = BBCODE_LEXSTATE_TAG;
+					$this->state = self::BBCODE_LEXSTATE_TAG;
 					$this->tag = false;
 					if (strlen($this->text) > 0)
-						return $this->token = BBCODE_TEXT;
+						return $this->token = BBCode::BBCODE_TEXT;
 				}
 				else {
 					// This must be either whitespace, a newline, or a tag.
@@ -281,27 +290,27 @@
 					case 13:
 						// Newline.
 						$this->tag = false;
-						$this->state = BBCODE_LEXSTATE_TEXT;
-						return $this->token = BBCODE_NL;
+						$this->state = self::BBCODE_LEXSTATE_TEXT;
+						return $this->token = BBCode::BBCODE_NL;
 					case 45:
 						// A rule made of hyphens; return it as a [rule] tag.
 						if (preg_match("/^-----/", $this->text)) {
 							$this->tag = Array('_name' => 'rule', '_endtag' => false, '_default' => '');
-							$this->state = BBCODE_LEXSTATE_TEXT;
-							return $this->token = BBCODE_TAG;
+							$this->state = self::BBCODE_LEXSTATE_TEXT;
+							return $this->token = BBCode::BBCODE_TAG;
 						}
 						else {
 							$this->tag = false;
-							$this->state = BBCODE_LEXSTATE_TEXT;
+							$this->state = self::BBCODE_LEXSTATE_TEXT;
 							if (strlen($this->text) > 0)
-								return $this->token = BBCODE_TEXT;
+								return $this->token = BBCode::BBCODE_TEXT;
 							continue;
 						}
 					default:
 						// Whitespace.
 						$this->tag = false;
-						$this->state = BBCODE_LEXSTATE_TEXT;
-						return $this->token = BBCODE_WS;
+						$this->state = self::BBCODE_LEXSTATE_TEXT;
+						return $this->token = BBCode::BBCODE_WS;
 					case 40:
 					case 60:
 					case 91:
@@ -312,12 +321,12 @@
 						// See if this is a comment; if so, skip it.
 						if (preg_match($this->pat_comment, $this->text)) {
 							// This is a comment, not a tag, so treat it like it doesn't exist.
-							$this->state = BBCODE_LEXSTATE_TEXT;
+							$this->state = self::BBCODE_LEXSTATE_TEXT;
 							continue;
 						}
 						if (preg_match($this->pat_comment2, $this->text)) {
 							// This is a comment, not a tag, so treat it like it doesn't exist.
-							$this->state = BBCODE_LEXSTATE_TEXT;
+							$this->state = self::BBCODE_LEXSTATE_TEXT;
 							continue;
 						}
 						
@@ -325,14 +334,14 @@
 						if (preg_match($this->pat_wiki, $this->text, $matches)) {
 							$this->tag = Array('_name' => 'wiki', '_endtag' => false,
 								'_default' => @$matches[1], 'title' => @$matches[2]);
-							$this->state = BBCODE_LEXSTATE_TEXT;
-							return $this->token = BBCODE_TAG;
+							$this->state = self::BBCODE_LEXSTATE_TEXT;
+							return $this->token = BBCode::BBCODE_TAG;
 						}
 						
 						// Not a comment, so parse it like a tag.
 						$this->tag = $this->Internal_DecodeTag($this->text);
-						$this->state = BBCODE_LEXSTATE_TEXT;
-						return $this->token = ($this->tag['_end'] ? BBCODE_ENDTAG : BBCODE_TAG);
+						$this->state = self::BBCODE_LEXSTATE_TEXT;
+						return $this->token = ($this->tag['_end'] ? BBCode::BBCODE_ENDTAG : BBCode::BBCODE_TAG);
 					}
 				}
 			}
@@ -344,14 +353,14 @@
 		// unget the tag, switch to verbatim mode, and then get the next token, you'll
 		// get back a BBCODE_TAG --- exactly what you ungot, not a BBCODE_TEXT token.
 		function UngetToken() {
-			if ($this->token !== BBCODE_EOI)
+			if ($this->token !== BBCode::BBCODE_EOI)
 				$this->unget = true;
 		}
 
 		// Peek at the next token, but don't remove it.
 		function PeekToken() {
 			$result = $this->NextToken();
-			if ($this->token !== BBCODE_EOI)
+			if ($this->token !== BBCode::BBCODE_EOI)
 				$this->unget = true;
 			return $result;
 		}

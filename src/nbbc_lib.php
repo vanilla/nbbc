@@ -159,21 +159,21 @@ class BBCodeLibrary
 			'allow_params' => false,			
 		),
 		'font' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'allow' => Array( '_default' => '/^[a-zA-Z0-9._ -]+$/' ),
 			'method' => 'DoFont',
 			'class' => 'inline',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline', 'link' ),
 		),
 		'color' => Array(
-			'mode' => BBCODE_MODE_ENHANCED,
+			'mode' => BBCode::BBCODE_MODE_ENHANCED,
 			'allow' => Array( '_default' => '/^#?[a-zA-Z0-9._ -]+$/' ),
 			'template' => '<span style="color:{$_default/tw}">{$_content/v}</span>',
 			'class' => 'inline',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline', 'link' ),
 		),
 		'size' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'allow' => Array( '_default' => '/^[0-9.]+$/D' ),
 			'method' => 'DoSize',
 			'class' => 'inline',
@@ -200,62 +200,62 @@ class BBCodeLibrary
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline', 'link' ),
 		),
 		'acronym' => Array(
-			'mode' => BBCODE_MODE_ENHANCED,
+			'mode' => BBCode::BBCODE_MODE_ENHANCED,
 			'template' => '<span class="bbcode_acronym" title="{$_default/e}">{$_content/v}</span>',
 			'class' => 'inline',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline', 'link' ),
 		),
 		'url' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'method' => 'DoURL',
 			'class' => 'link',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline' ),
-			'content' => BBCODE_REQUIRED,
+			'content' => BBCode::BBCODE_REQUIRED,
 			'plain_start' => "<a href=\"{\$link}\">",
 			'plain_end' => "</a>",
 			'plain_content' => Array( '_content', '_default' ),
 			'plain_link' => Array( '_default', '_content' ),
 		),
 		'email' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'method' => 'DoEmail',
 			'class' => 'link',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline' ),
-			'content' => BBCODE_REQUIRED,
+			'content' => BBCode::BBCODE_REQUIRED,
 			'plain_start' => "<a href=\"mailto:{\$link}\">",
 			'plain_end' => "</a>",
 			'plain_content' => Array( '_content', '_default' ),
 			'plain_link' => Array( '_default', '_content' ),
 		),
 		'wiki' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'method' => "DoWiki",
 			'class' => 'link',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline' ),
-			'end_tag' => BBCODE_PROHIBIT,
-			'content' => BBCODE_PROHIBIT,
+			'end_tag' => BBCode::BBCODE_PROHIBIT,
+			'content' => BBCode::BBCODE_PROHIBIT,
 			'plain_start' => "<b>[",
 			'plain_end' => "]</b>",
 			'plain_content' => Array( 'title', '_default' ),
 			'plain_link' => Array( '_default', '_content' ),
 		),
 		'img' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'method' => "DoImage",
 			'class' => 'image',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline', 'link' ),
-			'end_tag' => BBCODE_REQUIRED,
-			'content' => BBCODE_REQUIRED,
+			'end_tag' => BBCode::BBCODE_REQUIRED,
+			'content' => BBCode::BBCODE_REQUIRED,
 			'plain_start' => "[image]",
 			'plain_content' => Array( ),
 		),
 		'rule' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'method' => "DoRule",
 			'class' => 'block',
 			'allow_in' => Array( 'listitem', 'block', 'columns' ),
-			'end_tag' => BBCODE_PROHIBIT,
-			'content' => BBCODE_PROHIBIT,
+			'end_tag' => BBCode::BBCODE_PROHIBIT,
+			'content' => BBCode::BBCODE_PROHIBIT,
 			'before_tag' => "sns",
 			'after_tag' => "sns",
 			'plain_start' => "\n-----\n",
@@ -263,13 +263,13 @@ class BBCodeLibrary
 			'plain_content' => Array( ),
 		),
 		'br' => Array(
-			'mode' => BBCODE_MODE_SIMPLE,
+			'mode' => BBCode::BBCODE_MODE_SIMPLE,
 			'simple_start' => "<br>\n",
 			'simple_end' => "",
 			'class' => 'inline',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline', 'link' ),
-			'end_tag' => BBCODE_PROHIBIT,
-			'content' => BBCODE_PROHIBIT,
+			'end_tag' => BBCode::BBCODE_PROHIBIT,
+			'content' => BBCode::BBCODE_PROHIBIT,
 			'before_tag' => "s",
 			'after_tag' => "s",
 			'plain_start' => "\n",
@@ -331,8 +331,8 @@ class BBCodeLibrary
 			'simple_end' => "\n</td></tr></tbody></table>\n",
 			'class' => 'columns',
 			'allow_in' => Array( 'listitem', 'block', 'columns' ),
-			'end_tag' => BBCODE_REQUIRED,
-			'content' => BBCODE_REQUIRED,
+			'end_tag' => BBCode::BBCODE_REQUIRED,
+			'content' => BBCode::BBCODE_REQUIRED,
 			'before_tag' => "sns",
 			'after_tag' => "sns",
 			'before_endtag' => "sns",
@@ -344,8 +344,8 @@ class BBCodeLibrary
 			'simple_start' => "\n</td><td class=\"bbcode_column\">\n",
 			'class' => 'nextcol',
 			'allow_in' => Array( 'columns' ),
-			'end_tag' => BBCODE_PROHIBIT,
-			'content' => BBCODE_PROHIBIT,
+			'end_tag' => BBCode::BBCODE_PROHIBIT,
+			'content' => BBCode::BBCODE_PROHIBIT,
 			'before_tag' => "sns",
 			'after_tag' => "sns",
 			'before_endtag' => "sns",
@@ -354,11 +354,11 @@ class BBCodeLibrary
 			'plain_end' => "",
 		),
 		'code' => Array(
-			'mode' => BBCODE_MODE_ENHANCED,
+			'mode' => BBCode::BBCODE_MODE_ENHANCED,
 			'template' => "\n<div class=\"bbcode_code\">\n<div class=\"bbcode_code_head\">Code:</div>\n<div class=\"bbcode_code_body\" style=\"white-space:pre\">{\$_content/v}</div>\n</div>\n",
 			'class' => 'code',
 			'allow_in' => Array( 'listitem', 'block', 'columns' ),
-			'content' => BBCODE_VERBATIM,
+			'content' => BBCode::BBCODE_VERBATIM,
 			'before_tag' => "sns",
 			'after_tag' => "sn",
 			'before_endtag' => "sn",
@@ -367,7 +367,7 @@ class BBCodeLibrary
 			'plain_end' => "\n",
 		),
 		'quote' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'method' => "DoQuote",
 			'allow_in' => Array( 'listitem', 'block', 'columns' ),
 			'before_tag' => "sns",
@@ -378,7 +378,7 @@ class BBCodeLibrary
 			'plain_end' => "\n",
 		),
 		'list' => Array(
-			'mode' => BBCODE_MODE_LIBRARY,
+			'mode' => BBCode::BBCODE_MODE_LIBRARY,
 			'method' => 'DoList',
 			'class' => 'list',
 			'allow_in' => Array( 'listitem', 'block', 'columns' ),
@@ -394,7 +394,7 @@ class BBCodeLibrary
 			'simple_end' => "</li>\n",
 			'class' => 'listitem',
 			'allow_in' => Array( 'list' ),
-			'end_tag' => BBCODE_OPTIONAL,
+			'end_tag' => BBCode::BBCODE_OPTIONAL,
 			'before_tag' => "s",
 			'after_tag' => "s",
 			'before_endtag' => "sns",
@@ -410,7 +410,7 @@ class BBCodeLibrary
 	 * Format a [url] tag by producing an <a>...</a> element.
 	 * The URL only allows http, https, mailto, and ftp protocols for safety.
 	 * 
-	 * @param type $bbcode
+	 * @param BBCode $bbcode
 	 * @param type $action
 	 * @param type $name
 	 * @param type $default
@@ -423,7 +423,7 @@ class BBCodeLibrary
 	{
 		// We can't check this with BBCODE_CHECK because we may have no URL
 		// before the content has been processed.
-		if ( $action == BBCODE_CHECK )
+		if ( $action == BBCode::BBCODE_CHECK )
 		{
 			return true;
 		}
@@ -436,7 +436,7 @@ class BBCodeLibrary
 		{
 			if ( $bbcode->debug )
 			{
-				BBCode_Debugger::debug( 'ISVALIDURL' );
+				BBCODE_Debugger::debug( 'ISVALIDURL' );
 			}
 			
 			if ( $bbcode->url_targetable !== false && isset( $params[ 'target' ] ) )
@@ -484,7 +484,7 @@ class BBCodeLibrary
 	{
 		// We can't check this with BBCODE_CHECK because we may have no URL
 		// before the content has been processed.
-		if ( $action == BBCODE_CHECK )
+		if ( $action == BBCode::BBCODE_CHECK )
 		{
 			return true;
 		}
@@ -605,7 +605,7 @@ class BBCodeLibrary
 	{
 		$name = $bbcode->Wikify( $default );
 		
-		if ( $action == BBCODE_CHECK )
+		if ( $action == BBCode::BBCODE_CHECK )
 		{
 			return strlen( $name ) > 0;
 		}
@@ -636,7 +636,7 @@ class BBCodeLibrary
 	function DoImage( $bbcode, $action, $name, $default, $params, $content )
 	{
 		// We can't validate this until we have its content.
-		if ( $action == BBCODE_CHECK )
+		if ( $action == BBCode::BBCODE_CHECK )
 		{
 			return true;
 		}
@@ -670,7 +670,7 @@ class BBCodeLibrary
 	// object, whatever that may be.
 	function DoRule( $bbcode, $action, $name, $default, $params, $content )
 	{
-		if ( $action == BBCODE_CHECK )
+		if ( $action == BBCode::BBCODE_CHECK )
 			return true;
 		else
 			return $bbcode->rule_html;
@@ -691,7 +691,7 @@ class BBCodeLibrary
 	// The URL only allows http, https, mailto, gopher, ftp, and feed protocols for safety.
 	function DoQuote( $bbcode, $action, $name, $default, $params, $content )
 	{
-		if ( $action == BBCODE_CHECK )
+		if ( $action == BBCode::BBCODE_CHECK )
 			return true;
 
 		if ( isset( $params[ 'name' ] ) )
@@ -760,7 +760,7 @@ class BBCodeLibrary
 
 		$default = trim( $default );
 
-		if ( $action == BBCODE_CHECK )
+		if ( $action == BBCode::BBCODE_CHECK )
 		{
 			if ( !is_string( $default ) || strlen( $default ) == "" )
 				return true;
