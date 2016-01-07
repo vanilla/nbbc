@@ -526,64 +526,70 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
 
     public function provideEmbeddedUrlTests() {
         $result = [
-//            [[
-//                'descr' => "Embedded URLs get detected and converted.",
-//                'bbcode' => "Go to http://www.google.com for your search needs!",
-//                'html' => "Go to <a href=\"http://www.google.com/\">http://www.google.com</a> for your search needs!",
-//                'detect_urls' => true,
-//            ]],
-//            [[
-//                'descr' => "Embedded HTTPS URLs get detected and converted.",
-//                'bbcode' => "Go to https://www.google.com for your search needs!",
-//                'html' => "Go to <a href=\"https://www.google.com/\">https://www.google.com</a> for your search needs!",
-//                'detect_urls' => true,
-//            ]],
-//            [[
-//                'descr' => "Embedded FTP URLs get detected and converted.",
-//                'bbcode' => "Go to ftp://www.google.com for your search needs!",
-//                'html' => "Go to <a href=\"ftp://www.google.com/\">ftp://www.google.com</a> for your search needs!",
-//                'detect_urls' => true,
-//            ]],
-//            [[
-//                'descr' => "Embedded Javascript URLs are properly ignored.",
-//                'bbcode' => "Go to javascript:foo.com;alert(); for your search needs!",
-//                'html' => "Go to javascript:<a href=\"http://foo.com/\">foo.com</a>;alert(); for your search needs!",
-//                'detect_urls' => true,
-//            ]],
-//            [[
-//                'descr' => "Embedded domain names get detected and converted.",
-//                'bbcode' => "Go to www.google.com for your search needs!",
-//                'html' => "Go to <a href=\"http://www.google.com/\">www.google.com</a> for your search needs!",
-//                'detect_urls' => true,
-//            ]],
-//            [[
-//                'descr' => "Embedded IPs get detected and converted.",
-//                'bbcode' => "Go to 127.0.0.1:667/flarb for your own computer!",
-//                'html' => "Go to <a href=\"http://127.0.0.1:667/flarb\">127.0.0.1:667/flarb</a> for your own computer!",
-//                'detect_urls' => true,
-//            ]],
-//            [[
-//                'descr' => "Embedded addresses are smart about being inside parentheses.",
-//                'bbcode' => "I love Google! (google.com)",
-//                'html' => "I love Google! (<a href=\"http://google.com/\">google.com</a>)",
-//                'detect_urls' => true,
-//            ]],
+            [[
+                'descr' => "Embedded URLs get detected and converted.",
+                'bbcode' => "Go to http://www.google.com for your search needs!",
+                'html' => "Go to <a href=\"http://www.google.com/\">http://www.google.com</a> for your search needs!",
+                'detect_urls' => true,
+            ]],
+            [[
+                'descr' => "Embedded HTTPS URLs get detected and converted.",
+                'bbcode' => "Go to https://www.google.com for your search needs!",
+                'html' => "Go to <a href=\"https://www.google.com/\">https://www.google.com</a> for your search needs!",
+                'detect_urls' => true,
+            ]],
+            [[
+                'descr' => "Embedded FTP URLs get detected and converted.",
+                'bbcode' => "Go to ftp://www.google.com for your search needs!",
+                'html' => "Go to <a href=\"ftp://www.google.com/\">ftp://www.google.com</a> for your search needs!",
+                'detect_urls' => true,
+            ]],
+            [[
+                'descr' => "Embedded Javascript URLs are properly ignored.",
+                'bbcode' => "Go to javascript:foo.com;alert(); for your search needs!",
+                'html' => "Go to javascript:<a href=\"http://foo.com/\">foo.com</a>;alert(); for your search needs!",
+                'detect_urls' => true,
+            ]],
+            [[
+                'descr' => "Embedded domain names get detected and converted.",
+                'bbcode' => "Go to www.google.com for your search needs!",
+                'html' => "Go to <a href=\"http://www.google.com/\">www.google.com</a> for your search needs!",
+                'detect_urls' => true,
+            ]],
+            [[
+                'descr' => "Embedded IPs get detected and converted.",
+                'bbcode' => "Go to 127.0.0.1:667/flarb for your own computer!",
+                'html' => "Go to <a href=\"http://127.0.0.1:667/flarb\">127.0.0.1:667/flarb</a> for your own computer!",
+                'detect_urls' => true,
+            ]],
+            [[
+                'descr' => "Embedded addresses are smart about being inside parentheses.",
+                'bbcode' => "I love Google! (google.com)",
+                'html' => "I love Google! (<a href=\"http://google.com/\">google.com</a>)",
+                'detect_urls' => true,
+            ]],
             [[
                 'descr' => "Embedded-URL detector disallows junk that only seems like a URL.",
                 'bbcode' => "I browse alt.net.screw-you:80/flarb all the time.",
                 'html' => "I browse alt.net.screw-you:80/flarb all the time.",
                 'detect_urls' => true,
             ]],
+            [[
+                'descr' => "Embedded-URL detector also detects e-mail addresses.",
+                'bbcode' => "Send complaints to complaints@whitehouse.gov .",
+                'html' => "Send complaints to <a href=\"mailto:complaints@whitehouse.gov\">complaints@whitehouse.gov</a> .",
+                'detect_urls' => true,
+            ]],
+            [[
+                'descr' => "Embedded-URL detector takes precedence over the smiley detector.",
+                'bbcode' => "This is a good dictionary:  http://www.amazon.com/Oxford-Dictionary-American-Usage-Style/dp/0195135083/ref=pd_bbs_sr_1?ie=UTF8&s=books&qid=1217890161&sr=8-1&x=p",
+                'html' => "This is a good dictionary:  <a href=\"http://www.amazon.com/Oxford-Dictionary-American-Usage-Style/dp/0195135083/ref=pd_bbs_sr_1?ie=UTF8&amp;s=books&amp;qid=1217890161&amp;sr=8-1&amp;x=p\">http://www.amazon.com/Oxford-Dictionary-American-Usage-Style/dp/0195135083/ref=pd_bbs_sr_1?ie=UTF8&amp;s=books&amp;qid=1217890161&amp;sr=8-1&amp;x=p</a>",
+                'detect_urls' => true,
+            ]],
 //            [[
-//                'descr' => "Embedded-URL detector also detects e-mail addresses.",
-//                'bbcode' => "Send complaints to complaints@whitehouse.gov .",
-//                'html' => "Send complaints to <a href=\"mailto:complaints@whitehouse.gov\">complaints@whitehouse.gov</a> .",
-//                'detect_urls' => true,
-//            ]],
-//            [[
-//                'descr' => "Embedded-URL detector takes precedence over the smiley detector.",
-//                'bbcode' => "This is a good dictionary:  http://www.amazon.com/Oxford-Dictionary-American-Usage-Style/dp/0195135083/ref=pd_bbs_sr_1?ie=UTF8&s=books&qid=1217890161&sr=8-1&x=p",
-//                'html' => "This is a good dictionary:  <a href=\"http://www.amazon.com/Oxford-Dictionary-American-Usage-Style/dp/0195135083/ref=pd_bbs_sr_1?ie=UTF8&amp;s=books&amp;qid=1217890161&amp;sr=8-1&amp;x=p\">http://www.amazon.com/Oxford-Dictionary-American-Usage-Style/dp/0195135083/ref=pd_bbs_sr_1?ie=UTF8&amp;s=books&amp;qid=1217890161&amp;sr=8-1&amp;x=p</a>",
+//                'descr' => "Embedded domain names at the end of sentences get detected and converted.",
+//                'bbcode' => "Go to www.google.com.",
+//                'html' => "Go to <a href=\"http://www.google.com/\">www.google.com</a>.",
 //                'detect_urls' => true,
 //            ]],
         ];
