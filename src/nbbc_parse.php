@@ -998,21 +998,11 @@ class BBCode
 					}
 					else
 					{
-						if ( isset( $this->smiley_info[ $token ] ) )
-						{
-							// Use cached image-size information, if possible.
-							$info = $this->smiley_info[ $token ];
-						}
-						else
-						{
-							$info = @getimagesize( $this->smiley_dir . '/' . $this->smileys[ $token ] );
-							$this->smiley_info[ $token ] = $info;
-						}
 						$alt = htmlspecialchars( $token );
 						if ( $smiley_count < $this->max_smileys || $this->max_smileys < 0 )
 						{
-							$output .= "<img src=\"" . htmlspecialchars( $this->smiley_url . '/' . $this->smileys[ $token ] )
-								. "\" width=\"{$info[ 0 ]}\" height=\"{$info[ 1 ]}\""
+							$output .= "<img src=\"" . htmlspecialchars( $this->smiley_url . '/' . $this->smileys[ $token ] ).'"'
+//								. "\" width=\"{$info[ 0 ]}\" height=\"{$info[ 1 ]}\""
 								. " alt=\"$alt\" title=\"$alt\" class=\"bbcode_smiley\" />";
 						}
 						else

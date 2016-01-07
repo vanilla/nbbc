@@ -115,7 +115,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
             [[
                 'descr' => ":-) produces a smiley <img> element.",
                 'bbcode' => "This is a test of the emergency broadcasting system :-)",
-                'regex' => "/This is a test of the emergency broadcasting system <img src=\\\"smileys\\/smile.gif\\\" width=\\\"[0-9]*\\\" height=\\\"[0-9]*\\\" alt=\\\":-\\)\\\" title=\\\":-\\)\\\" class=\\\"bbcode_smiley\\\" \\/>/",
+                'regex' => "/This is a test of the emergency broadcasting system <img src=\\\"smileys\\/smile.gif\\\" alt=\\\":-\\)\\\" title=\\\":-\\)\\\" class=\\\"bbcode_smiley\\\" \\/>/",
             ]],
             [[
                 'descr' => "--- does *not* produce a [rule] tag.",
@@ -878,7 +878,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
                     . "text3"
                     . "</div>\n"
                     . "</div>\n"
-                    . "text4 <img src=\"smileys/smile.gif\" width=\"16\" height=\"16\" alt=\":)\" title=\":)\" class=\"bbcode_smiley\" /> text5 :o text6 :o",
+                    . "text4 <img src=\"smileys/smile.gif\" alt=\":)\" title=\":)\" class=\"bbcode_smiley\" /> text5 :o text6 :o",
             ]],
             [[
                 'descr' => "[quote=John]...[/quote] should produce a quote from John.",
