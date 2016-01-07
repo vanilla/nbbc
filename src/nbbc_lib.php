@@ -404,8 +404,8 @@ class BBCodeLibrary
 		),
 	);
 
-	
-	
+	protected $imageExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
+
 	/**
 	 * Format a [url] tag by producing an <a>...</a> element.
 	 * The URL only allows http, https, mailto, and ftp protocols for safety.
@@ -625,7 +625,7 @@ class BBCodeLibrary
 	/**
 	 * Format an [img] tag.  The URL only allows http, https, and ftp protocols for safety. 
 	 * 
-	 * @param type $bbcode
+	 * @param BBCode $bbcode
 	 * @param type $action
 	 * @param type $name
 	 * @param type $default
@@ -642,28 +642,23 @@ class BBCodeLibrary
 		}
 
 		$content = trim( $bbcode->UnHTMLEncode( strip_tags( $content ) ) );
-		
-		if ( strpos( $content, ':' ) === false )
-		{
-			// No protocol, so the image is in our local image directory, or somewhere under it.
-			if ( !preg_match( "/(?:\\/\\.\\.\\/)|(?:^\\.\\.\\/)|(?:^\\/)/", $content ) )
-			{
-				$info = @getimagesize( "{$bbcode->local_img_dir}/{$content}" );
-				if ( $info[ 2 ] == IMAGETYPE_GIF || $info[ 2 ] == IMAGETYPE_JPEG || $info[ 2 ] == IMAGETYPE_PNG )
-				{
-					return "<img src=\""
-						. htmlspecialchars( "{$bbcode->local_img_url}/{$content}" ) . "\" alt=\""
-						. htmlspecialchars( basename( $content ) ) . "\" width=\""
-						. htmlspecialchars( $info[ 0 ] ) . "\" height=\""
-						. htmlspecialchars( $info[ 1 ] ) . "\" class=\"bbcode_img\" />";
-				}
+		$urlParts = parse_url($content);
+
+
+		if (is_array($urlParts)) {
+			if (!empty($urlParts['path']) &&
+				empty($urlParts['scheme']) &&
+				!preg_match('`^\.{0,2}/`', $urlParts['path']) &&
+				in_array(pathinfo($urlParts['path'], PATHINFO_EXTENSION), $this->imageExtensions)) {
+
+				return "<img src=\""
+				.htmlspecialchars((empty($bbcode->local_img_url) ? '': $bbcode->local_img_url.'/').ltrim($urlParts['path'], '/')).'" alt="'
+				.htmlspecialchars(basename($content)).'" class="bbcode_img" />';
+			} elseif ($bbcode->IsValidURL($content, false)) {
+				// Remote URL, or at least we don't know where it is.
+				return '<img src="'.htmlspecialchars($content).'" alt="'
+				.htmlspecialchars(basename($content)).'" class="bbcode_img" />';
 			}
-		}
-		else if ( $bbcode->IsValidURL( $content, false ) )
-		{
-			// Remote URL, or at least we don't know where it is.
-			return '<img src="' . htmlspecialchars( $content ) . '" alt="'
-				. htmlspecialchars( basename( $content ) ) . '" class="bbcode_img" />';
 		}
 
 		return htmlspecialchars( $params[ '_tag' ] ) . htmlspecialchars( $content ) . htmlspecialchars( $params[ '_endtag' ] );

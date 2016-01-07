@@ -582,7 +582,7 @@ class BBCode
 
 	function SetLocalImgURL( $path )
 	{
-		$this->local_img_url = $path;
+		$this->local_img_url = rtrim($path, '/');
 	}
 
 
