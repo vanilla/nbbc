@@ -1,0 +1,30 @@
+{
+	"name": "vanilla/nbbc",
+	"description": "A composer-compatible fork of the NBBC BBCode parsing library.",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Todd Burry",
+			"email": "todd@vanillaforums.com"
+		}
+	],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "git@github.com:vanilla/garden.git"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"autoload": {
+		"classmap": [
+			"src/"
+		]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Nbbc\\Tests\\": "tests"
+		}
+	}
+}
