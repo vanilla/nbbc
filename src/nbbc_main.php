@@ -116,7 +116,7 @@ class BBCode_Profiler
 
 	var $start_time, $total_times;
 
-	function BBCode_Profiler()
+	function __construct()
 	{
 		$start_time = Array( );
 		$total_times = Array( );
