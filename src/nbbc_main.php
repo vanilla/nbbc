@@ -1,4 +1,9 @@
 <?php
+/**
+ * @copyright 2008-2010 Phantom Inker
+ * @copyright 2016 Vanilla Forums Inc. (changes only)
+ * @license MIT
+ */
 
 //-----------------------------------------------------------------------------
 //
@@ -49,61 +54,49 @@
 //
 //-----------------------------------------------------------------------------
 
-class BBCode_Debugger
-{
-	public static $level = 9;
-	public static $debug = 1;
-	public static $info = 2;
-	public static $warning = 3;
-	public static $error = 4;
-	
-	// File to log messages to
-	public static $log_file = '';
+class BBCode_Debugger {
+    public static $level = 9;
+    public static $debug = 1;
+    public static $info = 2;
+    public static $warning = 3;
+    public static $error = 4;
 
-	public static function log( $level, $string )
-	{
-		if ( $level >= static::$level )
-		{
-			if ( strpos( $string, "\n" ) === false )
-			{
-				$string .= "\n";
-			}
-			
-			$date = new DateTime();
-			$string = '[' . $date->format( 'Y-m-d H:i:s.u' ) . '] ' . $string;
+    // File to log messages to
+    public static $log_file = '';
 
-			if ( static::$log_file )
-			{
-				file_put_contents( static::$log_file, $string, FILE_APPEND );
-			}
-			else
-			{
-				echo $string;
-			}
-		}
-	}
+    public static function log($level, $string) {
+        if ($level >= static::$level) {
+            if (strpos($string, "\n") === false) {
+                $string .= "\n";
+            }
 
-	public static function debug( $string )
-	{
-		static::log( static::$debug, $string );
-	}
+            $date = new DateTime();
+            $string = '['.$date->format('Y-m-d H:i:s.u').'] '.$string;
 
-	public static function info( $string )
-	{
-		static::log( static::$info, $string );
-	}
+            if (static::$log_file) {
+                file_put_contents(static::$log_file, $string, FILE_APPEND);
+            } else {
+                echo $string;
+            }
+        }
+    }
 
-	public static function warning( $string )
-	{
-		static::log( static::$warning, $string );
-	}
+    public static function debug($string) {
+        static::log(static::$debug, $string);
+    }
 
-	public static function error( $string )
-	{
-		static::log( static::$error, $string );
-	}
+    public static function info($string) {
+        static::log(static::$info, $string);
+    }
+
+    public static function warning($string) {
+        static::log(static::$warning, $string);
+    }
+
+    public static function error($string) {
+        static::log(static::$error, $string);
+    }
 }
-
 
 
 //-----------------------------------------------------------------------------
@@ -111,56 +104,47 @@ class BBCode_Debugger
 //  We leave it out of the high-speed compressed version of NBBC for
 //  performance reasons; this is really a debugging aid more than anything.
 //<skip-when-compressing>
-class BBCode_Profiler
-{
+class BBCode_Profiler {
 
-	var $start_time, $total_times;
+    var $start_time, $total_times;
 
-	function __construct()
-	{
-		$start_time = Array( );
-		$total_times = Array( );
-	}
+    function __construct() {
+        $start_time = Array();
+        $total_times = Array();
+    }
 
-	function Now()
-	{
-		list($usec, $sec) = explode( " ", microtime() );
-		$sec -= 1394060000;
-		return ((double) $usec + (double) $sec);
-	}
+    function Now() {
+        list($usec, $sec) = explode(" ", microtime());
+        $sec -= 1394060000;
+        return ((double)$usec + (double)$sec);
+    }
 
-	function Begin( $group )
-	{
-		$this->start_time[ $group ] = $this->Now();
-	}
+    function Begin($group) {
+        $this->start_time[$group] = $this->Now();
+    }
 
-	function End( $group )
-	{
-		$time = $this->Now() - $this->start_time[ $group ];
-		if ( !isset( $this->total_times[ $group ] ) )
-			$this->total_times[ $group ] = $time;
-		else
-			$this->total_times[ $group ] += $time;
-	}
+    function End($group) {
+        $time = $this->Now() - $this->start_time[$group];
+        if (!isset($this->total_times[$group]))
+            $this->total_times[$group] = $time;
+        else
+            $this->total_times[$group] += $time;
+    }
 
-	function Reset( $group )
-	{
-		$this->total_times[ $group ] = 0;
-	}
+    function Reset($group) {
+        $this->total_times[$group] = 0;
+    }
 
-	function Total( $group )
-	{
-		return @$this->total_times[ $group ];
-	}
+    function Total($group) {
+        return @$this->total_times[$group];
+    }
 
-	function DumpAllGroups()
-	{
-		print "<div>Profiled times:\n<ul>\n";
-		ksort( $this->total_times );
-		foreach ( $this->total_times as $name => $time )
-		{
-			print "<li><b>" . htmlspecialchars( $name ) . "</b>: " . sprintf( "%0.2f msec", $time * 1000 ) . "</li>\n";
-		}
-		print "</ul>\n</div>\n";
-	}
+    function DumpAllGroups() {
+        print "<div>Profiled times:\n<ul>\n";
+        ksort($this->total_times);
+        foreach ($this->total_times as $name => $time) {
+            print "<li><b>".htmlspecialchars($name)."</b>: ".sprintf("%0.2f msec", $time * 1000)."</li>\n";
+        }
+        print "</ul>\n</div>\n";
+    }
 }
