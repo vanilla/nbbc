@@ -4,6 +4,7 @@
  * @copyright 2016 Vanilla Forums Inc. (changes only)
  * @license MIT
  */
+namespace Nbbc;
 
 //-----------------------------------------------------------------------------
 //
