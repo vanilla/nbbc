@@ -1169,6 +1169,6 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
      * @dataProvider provideListAndListItemTests
      */
     public function testListAndListItems(array $test) {
-        $this->testArray($test);
+        $this->runTestArray($test);
     }
 }
