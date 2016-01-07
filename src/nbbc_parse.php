@@ -2371,7 +2371,7 @@ class BBCode
 		// pass the contents through htmlspecialchars or FixupOutput
 		// or anything else that could sanitize it:  They asked for
 		// verbatim contents, so they're going to get it.
-		$tag_params[ '_endtag' ] = $end_tag_params[ '_tag' ];
+		$tag_params[ '_endtag' ] = $end_tag_params;
 		$tag_params[ '_hasend' ] = true;
 		$output = $this->DoTag( BBCODE_OUTPUT, $tag_name, @$tag_params[ '_default' ], $tag_params, $content );
 
