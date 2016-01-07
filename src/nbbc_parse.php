@@ -77,6 +77,90 @@
 //
 //-----------------------------------------------------------------------------
 
+define( 'BBCODE_VERSION', '1.4.6' );  // Current version number
+define( 'BBCODE_RELEASE', '2014-03-05' ); // Current release date
+
+// Content type:  Content may not be provided by user.
+define( 'BBCODE_PROHIBIT', -1 );
+
+// Content type:  Content is permitted but not required.
+define( 'BBCODE_OPTIONAL', 0 );
+
+// Content type:  Content may not be empty or whitespace.
+define( 'BBCODE_REQUIRED', 1 );
+
+// Content type:  Content is not processed as BBCode.
+define( 'BBCODE_VERBATIM', 2 );
+
+
+
+// Callback operation: Check validitity of input
+define( 'BBCODE_CHECK', 1 );
+
+// Callback operation: Generate HTML output
+define( 'BBCODE_OUTPUT', 2 );
+
+
+
+// Token: End-of-input
+define( 'BBCODE_EOI', 0 );
+
+// Token: Non-newline whitespace
+define( 'BBCODE_WS', 1 );
+
+// Token: A single newline
+define( 'BBCODE_NL', 2 );
+
+// Token: Non-whitespace non-tag plain text
+define( 'BBCODE_TEXT', 3 );
+
+// Token: A [start tag] or [empty tag]
+define( 'BBCODE_TAG', 4 );
+
+// Token: An [/end tag]
+define( 'BBCODE_ENDTAG', 5 );
+
+
+
+
+// Lexer: Next token is plain text.
+define( 'BBCODE_LEXSTATE_TEXT', 0 );
+
+// Lexer: Next token is non-text element.
+define( 'BBCODE_LEXSTATE_TAG', 1 );
+
+
+
+// Swap BBCode tags with HTML tags.
+define( 'BBCODE_MODE_SIMPLE', 0 );
+
+// Use provided callback function or method.
+define( 'BBCODE_MODE_CALLBACK', 1 );
+
+// Use internal callback function.
+define( 'BBCODE_MODE_INTERNAL', 2 );
+
+// Use library callback function.
+define( 'BBCODE_MODE_LIBRARY', 3 );
+
+// Insert BBCode input into the provided HTML template.
+define( 'BBCODE_MODE_ENHANCED', 4 );
+
+
+
+// Stack node: Token type
+define( 'BBCODE_STACK_TOKEN', 0 );
+
+// Stack node: HTML text content
+define( 'BBCODE_STACK_TEXT', 1 );
+
+// Stack node: Tag contents (array)
+define( 'BBCODE_STACK_TAG', 2 );
+
+// Stack node: Classname
+define( 'BBCODE_STACK_CLASS', 3 );
+
+
 class BBCode
 {
 
