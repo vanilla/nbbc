@@ -4,6 +4,7 @@
  * @copyright 2016 Vanilla Forums Inc. (changes only)
  * @license MIT
  */
+namespace Nbbc;
 
 //-----------------------------------------------------------------------------
 //
@@ -436,7 +437,7 @@ class BBCodeLibrary {
 
         if ($bbcode->IsValidURL($url)) {
             if ($bbcode->debug) {
-                BBCODE_Debugger::debug('ISVALIDURL');
+                Debugger::debug('ISVALIDURL');
             }
 
             if ($bbcode->url_targetable !== false && isset($params['target'])) {

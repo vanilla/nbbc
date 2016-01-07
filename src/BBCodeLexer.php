@@ -4,6 +4,7 @@
  * @copyright 2016 Vanilla Forums Inc. (changes only)
  * @license MIT
  */
+namespace Nbbc;
 
 //-----------------------------------------------------------------------------
 //
@@ -424,7 +425,7 @@ class BBCodeLexer {
     // it down into its components and return them as an array.
     function Internal_DecodeTag($tag) {
 
-        BBCode_Debugger::debug("<b>Lexer::InternalDecodeTag:</b> input: ".htmlspecialchars($tag)."<br />\n");
+        Debugger::debug("<b>Lexer::InternalDecodeTag:</b> input: ".htmlspecialchars($tag)."<br />\n");
 
         // Create the initial result object.
         $result = Array('_tag' => $tag, '_endtag' => '', '_name' => '',
@@ -583,8 +584,8 @@ class BBCodeLexer {
         $result['_params'] = $params;
 
         // In debugging modes, output the tag as we collected it.
-        BBCode_Debugger::debug("<b>Lexer::InternalDecodeTag:</b> output: ");
-        BBCode_Debugger::debug(htmlspecialchars(print_r($result, true))."<br />\n");
+        Debugger::debug("<b>Lexer::InternalDecodeTag:</b> output: ");
+        Debugger::debug(htmlspecialchars(print_r($result, true))."<br />\n");
 
         // Save the resulting parameters, and return the whole shebang.
         return $result;
