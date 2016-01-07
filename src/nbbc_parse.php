@@ -77,92 +77,105 @@
 //
 //-----------------------------------------------------------------------------
 
-define( 'BBCODE_VERSION', '1.4.6' );  // Current version number
-define( 'BBCODE_RELEASE', '2014-03-05' ); // Current release date
+class BBCode {
+	/**
+	 * Current version number
+	 */
+	const BBCODE_VERSION = '2.0.0-alpha1';
+	/**
+	 * Current release date
+	 */
+	const BBCODE_RELEASE = '2016-01-07';
 
-// Content type:  Content may not be provided by user.
-define( 'BBCODE_PROHIBIT', -1 );
+	/**
+	 * Content type:  Content may not be provided by user.
+	 */
+	const BBCODE_PROHIBIT = -1;
+	/**
+	 * Content type:  Content is permitted but not required.
+	 */
+	const BBCODE_OPTIONAL = 0;
+	/**
+	 * Content type:  Content may not be empty or whitespace.
+	 */
+	const BBCODE_REQUIRED = 1;
+	/**
+	 * Content type:  Content is not processed as BBCode.
+	 */
+	const BBCODE_VERBATIM = 2;
 
-// Content type:  Content is permitted but not required.
-define( 'BBCODE_OPTIONAL', 0 );
+	/**
+	 * Callback operation: Check validitity of input
+	 */
+	const BBCODE_CHECK = 1;
+	/**
+	 * Callback operation: Generate HTML output
+	 */
+	const BBCODE_OUTPUT = 2;
 
-// Content type:  Content may not be empty or whitespace.
-define( 'BBCODE_REQUIRED', 1 );
+	/**
+	 * Token: End-of-input
+	 */
+	const BBCODE_EOI = 0;
+	/**
+	 * Token: Non-newline whitespace
+	 */
+	const BBCODE_WS = 1;
+	/**
+	 * Token: A single newline
+	 */
+	const BBCODE_NL = 2;
+	/**
+	 * Token: Non-whitespace non-tag plain text
+	 */
+	const BBCODE_TEXT = 3;
+	/**
+	 * Token: A [start tag] or [empty tag]
+	 */
+	const BBCODE_TAG = 4;
+	/**
+	 * Token: An [/end tag]
+	 */
+	const BBCODE_ENDTAG = 5;
 
-// Content type:  Content is not processed as BBCode.
-define( 'BBCODE_VERBATIM', 2 );
+	/**
+	 * Swap BBCode tags with HTML tags.
+	 */
+	const BBCODE_MODE_SIMPLE = 0;
+	/**
+	 * Use provided callback function or method.
+	 */
+	const BBCODE_MODE_CALLBACK = 1;
+	/**
+	 * Use internal callback function.
+	 */
+	const BBCODE_MODE_INTERNAL = 2;
+	/**
+	 * Use library callback function.
+	 */
+	const BBCODE_MODE_LIBRARY = 3;
+	/**
+	 * Insert BBCode input into the provided HTML template.
+	 */
+	const BBCODE_MODE_ENHANCED = 4;
 
+	/**
+	 * Stack node: Token type
+	 */
+	const BBCODE_STACK_TOKEN = 0;
+	/**
+	 * Stack node: HTML text content
+	 */
+	const BBCODE_STACK_TEXT = 1;
+	/**
+	 * Stack node: Tag contents (array)
+	 */
+	const BBCODE_STACK_TAG = 2;
+	/**
+	 * Stack node: Classname
+	 */
+	const BBCODE_STACK_CLASS = 3;
 
-
-// Callback operation: Check validitity of input
-define( 'BBCODE_CHECK', 1 );
-
-// Callback operation: Generate HTML output
-define( 'BBCODE_OUTPUT', 2 );
-
-
-
-// Token: End-of-input
-define( 'BBCODE_EOI', 0 );
-
-// Token: Non-newline whitespace
-define( 'BBCODE_WS', 1 );
-
-// Token: A single newline
-define( 'BBCODE_NL', 2 );
-
-// Token: Non-whitespace non-tag plain text
-define( 'BBCODE_TEXT', 3 );
-
-// Token: A [start tag] or [empty tag]
-define( 'BBCODE_TAG', 4 );
-
-// Token: An [/end tag]
-define( 'BBCODE_ENDTAG', 5 );
-
-
-
-
-// Lexer: Next token is plain text.
-define( 'BBCODE_LEXSTATE_TEXT', 0 );
-
-// Lexer: Next token is non-text element.
-define( 'BBCODE_LEXSTATE_TAG', 1 );
-
-
-
-// Swap BBCode tags with HTML tags.
-define( 'BBCODE_MODE_SIMPLE', 0 );
-
-// Use provided callback function or method.
-define( 'BBCODE_MODE_CALLBACK', 1 );
-
-// Use internal callback function.
-define( 'BBCODE_MODE_INTERNAL', 2 );
-
-// Use library callback function.
-define( 'BBCODE_MODE_LIBRARY', 3 );
-
-// Insert BBCode input into the provided HTML template.
-define( 'BBCODE_MODE_ENHANCED', 4 );
-
-
-
-// Stack node: Token type
-define( 'BBCODE_STACK_TOKEN', 0 );
-
-// Stack node: HTML text content
-define( 'BBCODE_STACK_TEXT', 1 );
-
-// Stack node: Tag contents (array)
-define( 'BBCODE_STACK_TAG', 2 );
-
-// Stack node: Classname
-define( 'BBCODE_STACK_CLASS', 3 );
-
-
-class BBCode
-{
 
 	//-----------------------------------------------------------------------------
 	// Instance variables.  Do not change any of these directly!  Use the
@@ -206,7 +219,7 @@ class BBCode
 
 	function __construct()
 	{
-		$this->defaults = new BBCodeLibrary;
+		$this->defaults = new BBCodeLibrary();
 		$this->tag_rules = $this->defaults->default_tag_rules;
 		$this->smileys = $this->defaults->default_smileys;
 		$this->enable_smileys = true;
@@ -776,19 +789,7 @@ class BBCode
 	// works on older versions of PHP (prior to 4.3.0).
 	function UnHTMLEncode( $string )
 	{
-		// Use the (faster!) built-in if it's available.
-		if ( function_exists( "html_entity_decode" ) )
-			return html_entity_decode( $string );
-
-		// Replace numeric entities.
-		$string = preg_replace( '~&#x([0-9a-f]+);~ei', 'chr(hexdec("\\1"))', $string );
-		$string = preg_replace( '~&#([0-9]+);~e', 'chr("\\1")', $string );
-
-		// Replace literal entities.
-		$trans_tbl = get_html_translation_table( HTML_ENTITIES );
-		$trans_tbl = array_flip( $trans_tbl );
-
-		return strtr( $string, $trans_tbl );
+		return html_entity_decode( $string );
 	}
 
 
@@ -863,8 +864,8 @@ class BBCode
 	// everything that RFC821 allows, including e-mail addresses that make no sense.
 	function IsValidEmail( $string )
 	{
-		$validator = new BBCodeEmailAddressValidator;
-		return $validator->check_email_address( $string );
+		$result = filter_var($string, FILTER_VALIDATE_EMAIL);
+		return $result !== false;
 	}
 
 
@@ -1319,7 +1320,7 @@ class BBCode
 
 		ob_start();
 		for ( $start = intval( $start ), $end = count( $array ); $start < $end; $start++ )
-			print $array[ $start ][ BBCODE_STACK_TEXT ];
+			print $array[ $start ][self::BBCODE_STACK_TEXT];
 		$output = ob_get_contents();
 		ob_end_clean();
 
@@ -1337,7 +1338,7 @@ class BBCode
 
 		ob_start();
 		for ( $start = intval( $start ); $start >= $end; $start-- )
-			print $array[ $start ][ BBCODE_STACK_TEXT ];
+			print $array[ $start ][self::BBCODE_STACK_TEXT];
 		$output = ob_get_contents();
 		ob_end_clean();
 
@@ -1367,12 +1368,12 @@ class BBCode
 		while ( count( $this->stack ) > $pos )
 		{
 			$token = array_pop( $this->stack );
-			if ( $token[ BBCODE_STACK_TOKEN ] != BBCODE_TAG )
+			if ( $token[self::BBCODE_STACK_TOKEN] != self::BBCODE_TAG )
 			{
 				// Not a tag, so just push it to the output.
 				$output[ ] = $token;
 				BBCode_Debugger::debug( "<b>Internal_GenerateOutput:</b> push text: <tt>"
-					. htmlspecialchars( $token[ BBCODE_STACK_TEXT ] ) . "</tt><br>\n" );
+					. htmlspecialchars( $token[self::BBCODE_STACK_TEXT] ) . "</tt><br>\n" );
 			}
 			else
 			{
@@ -1386,22 +1387,22 @@ class BBCode
 				// classes and the other to convert the output:  So we choose speed over
 				// precision here, but it's a decision that only affects broken tags anyway.
 
-				$name = @$token[ BBCODE_STACK_TAG ][ '_name' ];
+				$name = @$token[self::BBCODE_STACK_TAG][ '_name' ];
 				$rule = @$this->tag_rules[ $name ];
 				$end_tag = @$rule[ 'end_tag' ];
 				if ( !isset( $rule[ 'end_tag' ] ) )
-					$end_tag = BBCODE_REQUIRED;
+					$end_tag = self::BBCODE_REQUIRED;
 				else
 					$end_tag = $rule[ 'end_tag' ];
 				array_pop( $this->start_tags[ $name ] ); // Remove the locator for this tag.
-				if ( $end_tag == BBCODE_PROHIBIT )
+				if ( $end_tag == self::BBCODE_PROHIBIT)
 				{
 					// Broken tag, so just push it to the output as HTML.
 					$output[ ] = Array(
-						BBCODE_STACK_TOKEN => BBCODE_TEXT,
-						BBCODE_STACK_TAG => false,
-						BBCODE_STACK_TEXT => $token[ BBCODE_STACK_TEXT ],
-						BBCODE_STACK_CLASS => $this->current_class,
+						self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+						self::BBCODE_STACK_TAG => false,
+						self::BBCODE_STACK_TEXT => $token[self::BBCODE_STACK_TEXT],
+						self::BBCODE_STACK_CLASS => $this->current_class,
 					);
 					BBCode_Debugger::debug( "<b>Internal_GenerateOutput:</b> push broken tag: <tt>"
 						. htmlspecialchars( $token[ 'text' ] ) . "</tt><br>\n" );
@@ -1412,11 +1413,11 @@ class BBCode
 					// tag where the end tag was forgotten, so that tag should be
 					// processed with the current output as its content.
 					BBCode_Debugger::debug( "<b>Internal_GenerateOutput:</b> found start tag with optional end tag: <tt>"
-						. htmlspecialchars( $token[ BBCODE_STACK_TEXT ] ) . "</tt><br>\n" );
+						. htmlspecialchars( $token[self::BBCODE_STACK_TEXT] ) . "</tt><br>\n" );
 
 					// If this was supposed to have an end tag, and we find a floating one
 					// later on, then we should consume it.
-					if ( $end_tag == BBCODE_REQUIRED ) {
+					if ( $end_tag == self::BBCODE_REQUIRED) {
 						if (!isset($this->lost_start_tags[$name])) {
 							$this->lost_start_tags[$name] = 0;
 						}
@@ -1436,9 +1437,9 @@ class BBCode
 					BBCode_Debugger::debug( "<b>Internal_GenerateOutput:</b> optional-tag's content: <tt>"
 						. htmlspecialchars( $tag_body ) . "</tt><br>\n" );
 
-					@$this->Internal_UpdateParamsForMissingEndTag( $token[ BBCODE_STACK_TAG ] );
+					@$this->Internal_UpdateParamsForMissingEndTag( $token[self::BBCODE_STACK_TAG] );
 
-					$tag_output = $this->DoTag( BBCODE_OUTPUT, $name, @$token[ BBCODE_STACK_TAG ][ '_default' ], @$token[ BBCODE_STACK_TAG ], $tag_body );
+					$tag_output = $this->DoTag( self::BBCODE_OUTPUT, $name, @$token[self::BBCODE_STACK_TAG][ '_default' ], @$token[self::BBCODE_STACK_TAG], $tag_body );
 
 					if ( $this->debug )
 					{
@@ -1447,10 +1448,10 @@ class BBCode
 					}
 
 					$output = Array( Array(
-							BBCODE_STACK_TOKEN => BBCODE_TEXT,
-							BBCODE_STACK_TAG => false,
-							BBCODE_STACK_TEXT => $tag_output,
-							BBCODE_STACK_CLASS => $this->current_class
+							self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+							self::BBCODE_STACK_TAG => false,
+							self::BBCODE_STACK_TEXT => $tag_output,
+							self::BBCODE_STACK_CLASS => $this->current_class
 					) );
 				}
 			}
@@ -1496,7 +1497,7 @@ class BBCode
 		// Walk backward from the top of the stack, searching for a state where
 		// the new class was still legal.
 		$pos = count( $this->stack ) - 1;
-		while ( $pos >= 0 && !in_array( $this->stack[ $pos ][ BBCODE_STACK_CLASS ], $class_list ) )
+		while ( $pos >= 0 && !in_array( $this->stack[ $pos ][self::BBCODE_STACK_CLASS], $class_list ) )
 			$pos--;
 		if ( $pos < 0 )
 		{
@@ -1516,7 +1517,7 @@ class BBCode
 		while ( count( $output ) )
 		{
 			$token = array_pop( $output );
-			$token[ BBCODE_STACK_CLASS ] = $this->current_class;
+			$token[self::BBCODE_STACK_CLASS] = $this->current_class;
 			$this->stack[ ] = $token;
 		}
 
@@ -1629,7 +1630,7 @@ class BBCode
 	function Internal_ComputeCurrentClass()
 	{
 		if ( count( $this->stack ) > 0 )
-			$this->current_class = $this->stack[ count( $this->stack ) - 1 ][ BBCODE_STACK_CLASS ];
+			$this->current_class = $this->stack[ count( $this->stack ) - 1 ][self::BBCODE_STACK_CLASS];
 		else
 			$this->current_class = $this->root_class;
 		if ( $this->debug )
@@ -1653,19 +1654,19 @@ class BBCode
 			$array = $this->stack;
 		foreach ( $array as $item )
 		{
-			switch ( @$item[ BBCODE_STACK_TOKEN ] )
+			switch ( @$item[self::BBCODE_STACK_TOKEN] )
 			{
-				case BBCODE_TEXT:
-					$string .= "\"" . htmlspecialchars( @$item[ BBCODE_STACK_TEXT ] ) . "\" ";
+				case self::BBCODE_TEXT:
+					$string .= "\"" . htmlspecialchars( @$item[self::BBCODE_STACK_TEXT] ) . "\" ";
 					break;
-				case BBCODE_WS:
+				case self::BBCODE_WS:
 					$string .= "WS ";
 					break;
-				case BBCODE_NL:
+				case self::BBCODE_NL:
 					$string .= "NL ";
 					break;
-				case BBCODE_TAG:
-					$string .= "[" . htmlspecialchars( @$item[ BBCODE_STACK_TAG ][ '_name' ] ) . "] ";
+				case self::BBCODE_TAG:
+					$string .= "[" . htmlspecialchars( @$item[self::BBCODE_STACK_TAG][ '_name' ] ) . "] ";
 					break;
 				default:
 					$string .= "unknown ";
@@ -1701,15 +1702,15 @@ class BBCode
 			switch ( $char )
 			{
 				case 's':
-					while ( count( $array ) > 0 && $array[ count( $array ) - 1 ][ BBCODE_STACK_TOKEN ] == BBCODE_WS )
+					while ( count( $array ) > 0 && $array[ count( $array ) - 1 ][self::BBCODE_STACK_TOKEN] == self::BBCODE_WS )
 						array_pop( $array );
 					break;
 				case 'n':
-					if ( count( $array ) > 0 && $array[ count( $array ) - 1 ][ BBCODE_STACK_TOKEN ] == BBCODE_NL )
+					if ( count( $array ) > 0 && $array[ count( $array ) - 1 ][self::BBCODE_STACK_TOKEN] == self::BBCODE_NL )
 						array_pop( $array );
 					break;
 				case 'a':
-					while ( count( $array ) > 0 && (($token = $array[ count( $array ) - 1 ][ BBCODE_STACK_TOKEN ]) == BBCODE_WS || $token == BBCODE_NL) )
+					while ( count( $array ) > 0 && (($token = $array[ count( $array ) - 1 ][self::BBCODE_STACK_TOKEN]) == self::BBCODE_WS || $token == self::BBCODE_NL) )
 						array_pop( $array );
 					break;
 			}
@@ -1755,7 +1756,7 @@ class BBCode
 					$BBCode_Profiler->Begin( 'Lexer:NextToken' );
 					$token_type = $this->lexer->NextToken();
 					$BBCode_Profiler->End( 'Lexer:NextToken' );
-					while ( $token_type == BBCODE_WS )
+					while ( $token_type == self::BBCODE_WS )
 					{
 						$BBCode_Profiler->Begin( 'Lexer:NextToken' );
 						$token_type = $this->lexer->NextToken();
@@ -1767,14 +1768,14 @@ class BBCode
 					$BBCode_Profiler->Begin( 'Lexer:NextToken' );
 					$token_type = $this->lexer->NextToken();
 					$BBCode_Profiler->End( 'Lexer:NextToken' );
-					if ( $token_type != BBCODE_NL )
+					if ( $token_type != self::BBCODE_NL )
 						$this->lexer->UngetToken();
 					break;
 				case 'a':
 					$BBCode_Profiler->Begin( 'Lexer:NextToken' );
 					$token_type = $this->lexer->NextToken();
 					$BBCode_Profiler->End( 'Lexer:NextToken' );
-					while ( $token_type == BBCODE_WS || $token_type == BBCODE_NL )
+					while ( $token_type == self::BBCODE_WS || $token_type == self::BBCODE_NL )
 					{
 						$BBCode_Profiler->Begin( 'Lexer:NextToken' );
 						$token_type = $this->lexer->NextToken();
@@ -1809,15 +1810,15 @@ class BBCode
 			switch ( $char )
 			{
 				case 's':
-					while ( $pos < count( $array ) && $array[ $pos ][ BBCODE_STACK_TOKEN ] == BBCODE_WS )
+					while ( $pos < count( $array ) && $array[ $pos ][self::BBCODE_STACK_TOKEN] == self::BBCODE_WS )
 						$pos++;
 					break;
 				case 'n':
-					if ( $pos < count( $array ) && $array[ $pos ][ BBCODE_STACK_TOKEN ] == BBCODE_NL )
+					if ( $pos < count( $array ) && $array[ $pos ][self::BBCODE_STACK_TOKEN] == self::BBCODE_NL )
 						$pos++;
 					break;
 				case 'a':
-					while ( $pos < count( $array ) && (($token = $array[ $pos ][ BBCODE_STACK_TOKEN ]) == BBCODE_WS || $token == BBCODE_NL) )
+					while ( $pos < count( $array ) && (($token = $array[ $pos ][self::BBCODE_STACK_TOKEN]) == self::BBCODE_WS || $token == self::BBCODE_NL) )
 						$pos++;
 					break;
 			}
@@ -1868,10 +1869,10 @@ class BBCode
 		if ( strlen( $this->limit_tail ) > 0 )
 		{
 			$this->stack[ ] = Array(
-				BBCODE_STACK_TOKEN => BBCODE_TEXT,
-				BBCODE_STACK_TEXT => $this->limit_tail,
-				BBCODE_STACK_TAG => false,
-				BBCODE_STACK_CLASS => $this->current_class,
+				self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+				self::BBCODE_STACK_TEXT => $this->limit_tail,
+				self::BBCODE_STACK_TAG => false,
+				self::BBCODE_STACK_CLASS => $this->current_class,
 			);
 		}
 
@@ -1910,7 +1911,7 @@ class BBCode
 		switch ( $action )
 		{
 
-			case BBCODE_CHECK:
+			case self::BBCODE_CHECK:
 				if ( $this->debug )
 					BBCode_Debugger::debug( "<b>DoTag:</b> check tag <tt>[" . htmlspecialchars( $tag_name ) . "]</tt><br>\n" );
 
@@ -1961,24 +1962,24 @@ class BBCode
 					{
 
 						default:
-						case BBCODE_MODE_SIMPLE:
+						case self::BBCODE_MODE_SIMPLE:
 							$result = true;
 							break;
 
-						case BBCODE_MODE_ENHANCED:
+						case self::BBCODE_MODE_ENHANCED:
 							$result = true;
 							break;
 
-						case BBCODE_MODE_INTERNAL:
-							$result = @call_user_func( Array( $this, @$tag_rule[ 'method' ] ), BBCODE_CHECK, $tag_name, $default_value, $params, $contents );
+						case self::BBCODE_MODE_INTERNAL:
+							$result = @call_user_func( Array( $this, @$tag_rule[ 'method' ] ), self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents );
 							break;
 
-						case BBCODE_MODE_LIBRARY:
-							$result = @call_user_func( Array( $this->defaults, @$tag_rule[ 'method' ] ), $this, BBCODE_CHECK, $tag_name, $default_value, $params, $contents );
+						case self::BBCODE_MODE_LIBRARY:
+							$result = @call_user_func( Array( $this->defaults, @$tag_rule[ 'method' ] ), $this, self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents );
 							break;
 
-						case BBCODE_MODE_CALLBACK:
-							$result = @call_user_func( @$tag_rule[ 'method' ], $this, BBCODE_CHECK, $tag_name, $default_value, $params, $contents );
+						case self::BBCODE_MODE_CALLBACK:
+							$result = @call_user_func( @$tag_rule[ 'method' ], $this, self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents );
 							break;
 					}
 				}
@@ -1991,7 +1992,7 @@ class BBCode
 
 				return $result;
 
-			case BBCODE_OUTPUT:
+			case self::BBCODE_OUTPUT:
 				if ( $this->debug )
 				{
 					BBCode_Debugger::debug( "<b>DoTag:</b> output tag <tt>[" . htmlspecialchars( $tag_name )
@@ -2072,24 +2073,24 @@ class BBCode
 				{
 
 					default:
-					case BBCODE_MODE_SIMPLE:
+					case self::BBCODE_MODE_SIMPLE:
 						$result = @$tag_rule[ 'simple_start' ] . $contents . @$tag_rule[ 'simple_end' ];
 						break;
 
-					case BBCODE_MODE_ENHANCED:
+					case self::BBCODE_MODE_ENHANCED:
 						$result = $this->Internal_DoEnhancedTag( $tag_rule, $params, $contents );
 						break;
 
-					case BBCODE_MODE_INTERNAL:
-						$result = @call_user_func( Array( $this, @$tag_rule[ 'method' ] ), BBCODE_OUTPUT, $tag_name, $default_value, $params, $contents );
+					case self::BBCODE_MODE_INTERNAL:
+						$result = @call_user_func( Array( $this, @$tag_rule[ 'method' ] ), self::BBCODE_OUTPUT, $tag_name, $default_value, $params, $contents );
 						break;
 
-					case BBCODE_MODE_LIBRARY:
-						$result = @call_user_func( Array( $this->defaults, @$tag_rule[ 'method' ] ), $this, BBCODE_OUTPUT, $tag_name, $default_value, $params, $contents );
+					case self::BBCODE_MODE_LIBRARY:
+						$result = @call_user_func( Array( $this->defaults, @$tag_rule[ 'method' ] ), $this, self::BBCODE_OUTPUT, $tag_name, $default_value, $params, $contents );
 						break;
 
-					case BBCODE_MODE_CALLBACK:
-						$result = @call_user_func( @$tag_rule[ 'method' ], $this, BBCODE_OUTPUT, $tag_name, $default_value, $params, $contents );
+					case self::BBCODE_MODE_CALLBACK:
+						$result = @call_user_func( @$tag_rule[ 'method' ], $this, self::BBCODE_OUTPUT, $tag_name, $default_value, $params, $contents );
 						break;
 				}
 
@@ -2188,7 +2189,7 @@ class BBCode
 
 		// Ask this tag if its attributes are valid; this gives the tag
 		// the option to say, no, I'm broken, don't try to process me.
-		if ( !$this->DoTag( BBCODE_CHECK, $tag_name, @$tag_params[ '_default' ], $tag_params, "" ) )
+		if ( !$this->DoTag( self::BBCODE_CHECK, $tag_name, @$tag_params[ '_default' ], $tag_params, "" ) )
 		{
 			if ( $this->debug )
 			{
@@ -2196,16 +2197,16 @@ class BBCode
 					. "]</tt> rejected its parameters; outputting as text after fixup.<br>\n" );
 			}
 			$this->stack[ ] = Array(
-				BBCODE_STACK_TOKEN => BBCODE_TEXT,
-				BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-				BBCODE_STACK_TAG => false,
-				BBCODE_STACK_CLASS => $this->current_class,
+				self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+				self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+				self::BBCODE_STACK_TAG => false,
+				self::BBCODE_STACK_CLASS => $this->current_class,
 			);
 			return;
 		}
 
 		$this->Internal_CleanupWSByPoppingStack( @$tag_rule[ 'before_tag' ], $this->stack );
-		$output = $this->DoTag( BBCODE_OUTPUT, $tag_name, @$tag_params[ '_default' ], $tag_params, "" );
+		$output = $this->DoTag( self::BBCODE_OUTPUT, $tag_name, @$tag_params[ '_default' ], $tag_params, "" );
 		$this->Internal_CleanupWSByEatingInput( @$tag_rule[ 'after_tag' ] );
 
 		if ( $this->debug )
@@ -2215,10 +2216,10 @@ class BBCode
 		}
 
 		$this->stack[ ] = Array(
-			BBCODE_STACK_TOKEN => BBCODE_TEXT,
-			BBCODE_STACK_TEXT => $output,
-			BBCODE_STACK_TAG => false,
-			BBCODE_STACK_CLASS => $this->current_class,
+			self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+			self::BBCODE_STACK_TEXT => $output,
+			self::BBCODE_STACK_TAG => false,
+			self::BBCODE_STACK_CLASS => $this->current_class,
 		);
 	}
 
@@ -2246,7 +2247,7 @@ class BBCode
 		// Push tokens until we find a matching end tag or end-of-input.
 		$start = count( $this->stack );
 		$this->lexer->verbatim = true;
-		while ( ($token_type = $this->lexer->NextToken()) != BBCODE_EOI )
+		while ( ($token_type = $this->lexer->NextToken()) != self::BBCODE_EOI )
 		{
 			if ( strcasecmp( $this->lexer->text, $end_tag ) === 0 )
 			{
@@ -2269,10 +2270,10 @@ class BBCode
 				{
 					$this->text_length += strlen( $text );
 					$this->stack[ ] = Array(
-						BBCODE_STACK_TOKEN => BBCODE_TEXT,
-						BBCODE_STACK_TEXT => $this->FixupOutput( $text ),
-						BBCODE_STACK_TAG => false,
-						BBCODE_STACK_CLASS => $this->current_class,
+						self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+						self::BBCODE_STACK_TEXT => $this->FixupOutput( $text ),
+						self::BBCODE_STACK_TAG => false,
+						self::BBCODE_STACK_CLASS => $this->current_class,
 					);
 				}
 				$this->Internal_DoLimit();
@@ -2281,17 +2282,17 @@ class BBCode
 			$this->text_length += strlen( $this->lexer->text );
 
 			$this->stack[ ] = Array(
-				BBCODE_STACK_TOKEN => $token_type,
-				BBCODE_STACK_TEXT => htmlspecialchars( $this->lexer->text ),
-				BBCODE_STACK_TAG => $this->lexer->tag,
-				BBCODE_STACK_CLASS => $this->current_class,
+				self::BBCODE_STACK_TOKEN => $token_type,
+				self::BBCODE_STACK_TEXT => htmlspecialchars( $this->lexer->text ),
+				self::BBCODE_STACK_TAG => $this->lexer->tag,
+				self::BBCODE_STACK_CLASS => $this->current_class,
 			);
 		}
 		$this->lexer->verbatim = false;
 
 		// We've collected a bunch of text for this tag.  Now, make sure it ended on
 		// a valid end tag.
-		if ( $token_type == BBCODE_EOI )
+		if ( $token_type == self::BBCODE_EOI )
 		{
 			// No end tag, so we have to reject the start tag as broken, and
 			// rewind the input back to where it was still sane.
@@ -2307,10 +2308,10 @@ class BBCode
 			$this->stack = array_slice($this->stack, 0, $start);
 			
 			$this->stack[ ] = Array(
-				BBCODE_STACK_TOKEN => BBCODE_TEXT,
-				BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-				BBCODE_STACK_TAG => false,
-				BBCODE_STACK_CLASS => $this->current_class,
+				self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+				self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+				self::BBCODE_STACK_TAG => false,
+				self::BBCODE_STACK_CLASS => $this->current_class,
 			);
 			return;
 		}
@@ -2373,7 +2374,7 @@ class BBCode
 		// verbatim contents, so they're going to get it.
 		$tag_params[ '_endtag' ] = $end_tag_params;
 		$tag_params[ '_hasend' ] = true;
-		$output = $this->DoTag( BBCODE_OUTPUT, $tag_name, @$tag_params[ '_default' ], $tag_params, $content );
+		$output = $this->DoTag( self::BBCODE_OUTPUT, $tag_name, @$tag_params[ '_default' ], $tag_params, $content );
 
 		if ( $this->debug )
 		{
@@ -2383,16 +2384,16 @@ class BBCode
 		}
 
 		$this->stack[ ] = Array(
-			BBCODE_STACK_TOKEN => BBCODE_TEXT,
-			BBCODE_STACK_TEXT => $output,
-			BBCODE_STACK_TAG => false,
-			BBCODE_STACK_CLASS => $this->current_class,
+			self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+			self::BBCODE_STACK_TEXT => $output,
+			self::BBCODE_STACK_TAG => false,
+			self::BBCODE_STACK_CLASS => $this->current_class,
 		);
 	}
 
 
 
-	// Called when the parser has read a BBCODE_TAG token.
+	// Called when the parser has read a self::BBCODE_TAG token.
 	function Internal_ParseStartTagToken()
 	{
 
@@ -2418,10 +2419,10 @@ class BBCode
 			// If there is no such tag with this name, then just push the text as
 			// though it was plain text.
 			$this->stack[ ] = Array(
-				BBCODE_STACK_TOKEN => BBCODE_TEXT,
-				BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-				BBCODE_STACK_TAG => false,
-				BBCODE_STACK_CLASS => $this->current_class,
+				self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+				self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+				self::BBCODE_STACK_TAG => false,
+				self::BBCODE_STACK_CLASS => $this->current_class,
 			);
 			return;
 		}
@@ -2436,10 +2437,10 @@ class BBCode
 					// If there is no such tag with this name, then just push the text as
 					// though it was plain text.
 					$this->stack[ ] = Array(
-						BBCODE_STACK_TOKEN => BBCODE_TEXT,
-						BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-						BBCODE_STACK_TAG => false,
-						BBCODE_STACK_CLASS => $this->current_class,
+						self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+						self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+						self::BBCODE_STACK_TAG => false,
+						self::BBCODE_STACK_CLASS => $this->current_class,
 					);
 					return;
 				}
@@ -2469,10 +2470,10 @@ class BBCode
 						. " this tag as text after fixup.<br>\n" );
 				}
 				$this->stack[ ] = Array(
-					BBCODE_STACK_TOKEN => BBCODE_TEXT,
-					BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-					BBCODE_STACK_TAG => false,
-					BBCODE_STACK_CLASS => $this->current_class,
+					self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+					self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+					self::BBCODE_STACK_TAG => false,
+					self::BBCODE_STACK_CLASS => $this->current_class,
 				);
 				return;
 			}
@@ -2483,9 +2484,9 @@ class BBCode
 		// it's end-tag-prohibited.  If it's end-tag-prohibited, then we process it
 		// right now (no content); otherwise, we push it onto the stack to defer
 		// processing it until either its end tag is encountered or we reach EOI.
-		$end_tag = isset( $tag_rule[ 'end_tag' ] ) ? $tag_rule[ 'end_tag' ] : BBCODE_REQUIRED;
+		$end_tag = isset( $tag_rule[ 'end_tag' ] ) ? $tag_rule[ 'end_tag' ] : self::BBCODE_REQUIRED;
 
-		if ( $end_tag == BBCODE_PROHIBIT )
+		if ( $end_tag == self::BBCODE_PROHIBIT)
 		{
 			// No end tag, so process this tag RIGHT NOW.
 			$this->Internal_ProcessIsolatedTag( $tag_name, $tag_params, $tag_rule );
@@ -2503,7 +2504,7 @@ class BBCode
 
 		// Ask this tag if its attributes are valid; this gives the tag the option
 		// to say, no, I'm broken, don't try to process me.
-		if ( !$this->DoTag( BBCODE_CHECK, $tag_name, @$tag_params[ '_default' ], $tag_params, "" ) )
+		if ( !$this->DoTag( self::BBCODE_CHECK, $tag_name, @$tag_params[ '_default' ], $tag_params, "" ) )
 		{
 			if ( $this->debug )
 			{
@@ -2511,15 +2512,15 @@ class BBCode
 					. "]</tt> rejected its parameters; outputting as text after fixup.<br>\n" );
 			}
 			$this->stack[ ] = Array(
-				BBCODE_STACK_TOKEN => BBCODE_TEXT,
-				BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-				BBCODE_STACK_TAG => false,
-				BBCODE_STACK_CLASS => $this->current_class,
+				self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+				self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+				self::BBCODE_STACK_TAG => false,
+				self::BBCODE_STACK_CLASS => $this->current_class,
 			);
 			return;
 		}
 
-		if ( isset( $tag_rule[ 'content' ] ) && $tag_rule[ 'content' ] == BBCODE_VERBATIM )
+		if ( isset( $tag_rule[ 'content' ] ) && $tag_rule[ 'content' ] == self::BBCODE_VERBATIM)
 		{
 			// Verbatim tags have to be handled specially, since they consume successive
 			// input immediately.
@@ -2544,10 +2545,10 @@ class BBCode
 		}
 
 		$this->stack[ ] = Array(
-			BBCODE_STACK_TOKEN => $this->lexer->token,
-			BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-			BBCODE_STACK_TAG => $this->lexer->tag,
-			BBCODE_STACK_CLASS => ($this->current_class = $newclass),
+			self::BBCODE_STACK_TOKEN => $this->lexer->token,
+			self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+			self::BBCODE_STACK_TAG => $this->lexer->tag,
+			self::BBCODE_STACK_CLASS => ($this->current_class = $newclass),
 		);
 
 		if ( !isset( $this->start_tags[ $tag_name ] ) )
@@ -2558,7 +2559,7 @@ class BBCode
 
 
 
-	// Called when the parser has read a BBCODE_ENDTAG token.
+	// Called when the parser has read a self::BBCODE_ENDTAG token.
 	function Internal_ParseEndTagToken()
 	{
 
@@ -2592,10 +2593,10 @@ class BBCode
 			else
 			{
 				$this->stack[ ] = Array(
-					BBCODE_STACK_TOKEN => BBCODE_TEXT,
-					BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-					BBCODE_STACK_TAG => false,
-					BBCODE_STACK_CLASS => $this->current_class,
+					self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+					self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+					self::BBCODE_STACK_TAG => false,
+					self::BBCODE_STACK_CLASS => $this->current_class,
 				);
 			}
 			return;
@@ -2608,7 +2609,7 @@ class BBCode
 		// We don't need to run a BBCODE_CHECK on the start tag, because it was already
 		// done when the tag was pushed onto the stack.
 		$start_tag_node = array_pop( $this->stack );
-		$start_tag_params = $start_tag_node[ BBCODE_STACK_TAG ];
+		$start_tag_params = $start_tag_node[self::BBCODE_STACK_TAG];
 		$this->Internal_ComputeCurrentClass();
 
 		if ( isset( $this->tag_rules[ $tag_name ] ) && isset( $this->tag_rules[ $tag_name ][ 'before_tag' ] ) )
@@ -2621,7 +2622,7 @@ class BBCode
 		}
 		$start_tag_params[ '_endtag' ] = $tag_params[ '_tag' ];
 		$start_tag_params[ '_hasend' ] = true;
-		$output = $this->DoTag( BBCODE_OUTPUT, $tag_name, @$start_tag_params[ '_default' ], $start_tag_params, $contents );
+		$output = $this->DoTag( self::BBCODE_OUTPUT, $tag_name, @$start_tag_params[ '_default' ], $start_tag_params, $contents );
 		if ( isset( $this->tag_rules[ $tag_name ] ) && isset( $this->tag_rules[ $tag_name ][ 'after_endtag' ] ) )
 		{
 			$this->Internal_CleanupWSByEatingInput( @$this->tag_rules[ $tag_name ][ 'after_endtag' ] );
@@ -2639,10 +2640,10 @@ class BBCode
 		}
 
 		$this->stack[ ] = Array(
-			BBCODE_STACK_TOKEN => BBCODE_TEXT,
-			BBCODE_STACK_TEXT => $output,
-			BBCODE_STACK_TAG => false,
-			BBCODE_STACK_CLASS => $this->current_class,
+			self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+			self::BBCODE_STACK_TEXT => $output,
+			self::BBCODE_STACK_TAG => false,
+			self::BBCODE_STACK_CLASS => $this->current_class,
 		);
 	}
 
@@ -2742,7 +2743,7 @@ class BBCode
 		while ( true )
 		{
 			$BBCode_Profiler->Begin( 'Lexer:NextToken' );
-			if ( ($token_type = $this->lexer->NextToken()) == BBCODE_EOI )
+			if ( ($token_type = $this->lexer->NextToken()) == self::BBCODE_EOI )
 			{
 				$BBCode_Profiler->End( 'Lexer:NextToken' );
 				break;
@@ -2754,7 +2755,7 @@ class BBCode
 			switch ( $token_type )
 			{
 
-				case BBCODE_TEXT:
+				case self::BBCODE_TEXT:
 					// Text is like an arithmetic operand, so just push it onto the stack because we
 					// won't know what to do with it until we reach an operator (e.g., a tag or EOI).
 					if ( $this->debug )
@@ -2772,10 +2773,10 @@ class BBCode
 						{
 							$this->text_length += strlen( $text );
 							$this->stack[ ] = Array(
-								BBCODE_STACK_TOKEN => BBCODE_TEXT,
-								BBCODE_STACK_TEXT => $this->FixupOutput( $text ),
-								BBCODE_STACK_TAG => false,
-								BBCODE_STACK_CLASS => $this->current_class,
+								self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+								self::BBCODE_STACK_TEXT => $this->FixupOutput( $text ),
+								self::BBCODE_STACK_TAG => false,
+								self::BBCODE_STACK_CLASS => $this->current_class,
 							);
 						}
 						$this->Internal_DoLimit();
@@ -2785,14 +2786,14 @@ class BBCode
 
 					// Push this text token onto the stack.
 					$this->stack[ ] = Array(
-						BBCODE_STACK_TOKEN => BBCODE_TEXT,
-						BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
-						BBCODE_STACK_TAG => false,
-						BBCODE_STACK_CLASS => $this->current_class,
+						self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
+						self::BBCODE_STACK_TEXT => $this->FixupOutput( $this->lexer->text ),
+						self::BBCODE_STACK_TAG => false,
+						self::BBCODE_STACK_CLASS => $this->current_class,
 					);
 					break;
 
-				case BBCODE_WS:
+				case self::BBCODE_WS:
 					// Whitespace is like an operand too, so just push it onto the stack, but
 					// sanitize it by removing all non-tab non-space characters.
 					if ( $this->debug )
@@ -2808,14 +2809,14 @@ class BBCode
 
 					// Push this whitespace onto the stack.
 					$this->stack[ ] = Array(
-						BBCODE_STACK_TOKEN => BBCODE_WS,
-						BBCODE_STACK_TEXT => $this->lexer->text,
-						BBCODE_STACK_TAG => false,
-						BBCODE_STACK_CLASS => $this->current_class,
+						self::BBCODE_STACK_TOKEN => self::BBCODE_WS,
+						self::BBCODE_STACK_TEXT => $this->lexer->text,
+						self::BBCODE_STACK_TAG => false,
+						self::BBCODE_STACK_CLASS => $this->current_class,
 					);
 					break;
 
-				case BBCODE_NL:
+				case self::BBCODE_NL:
 					// Newlines are really like tags in disguise:  They insert a replaced
 					// element into the output, and are actually more-or-less like plain text.
 
@@ -2841,10 +2842,10 @@ class BBCode
 						// this should still be acceptable, since we're working with text, not
 						// binary data.
 						$this->stack[ ] = Array(
-							BBCODE_STACK_TOKEN => BBCODE_WS,
-							BBCODE_STACK_TEXT => "\n",
-							BBCODE_STACK_TAG => false,
-							BBCODE_STACK_CLASS => $this->current_class,
+							self::BBCODE_STACK_TOKEN => self::BBCODE_WS,
+							self::BBCODE_STACK_TEXT => "\n",
+							self::BBCODE_STACK_TAG => false,
+							self::BBCODE_STACK_CLASS => $this->current_class,
 						);
 					}
 					else
@@ -2867,10 +2868,10 @@ class BBCode
 
 						// Add the newline to the stack.
 						$this->stack[ ] = Array(
-							BBCODE_STACK_TOKEN => BBCODE_NL,
-							BBCODE_STACK_TEXT => $newline,
-							BBCODE_STACK_TAG => false,
-							BBCODE_STACK_CLASS => $this->current_class,
+							self::BBCODE_STACK_TOKEN => self::BBCODE_NL,
+							self::BBCODE_STACK_TEXT => $newline,
+							self::BBCODE_STACK_TAG => false,
+							self::BBCODE_STACK_CLASS => $this->current_class,
 						);
 
 						// Any whitespace after a newline is meaningless, so if there's whitespace
@@ -2879,12 +2880,12 @@ class BBCode
 					}
 					break;
 
-				case BBCODE_TAG:
+				case self::BBCODE_TAG:
 					// Use a separate function to handle tags, because they're complicated.
 					$this->Internal_ParseStartTagToken();
 					break;
 
-				case BBCODE_ENDTAG:
+				case self::BBCODE_ENDTAG:
 					// Use a separate function to handle end tags, because they're complicated.
 					$this->Internal_ParseEndTagToken();
 					break;
