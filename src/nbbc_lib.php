@@ -699,6 +699,10 @@ class BBCodeLibrary
 		if ( $action == BBCODE_CHECK )
 			return true;
 
+		// Trim content
+		$content = preg_replace('/^\s*(?:<br\s*\/?>\s*)*/i', '', $content);
+		$content = preg_replace('/\s*(?:<br\s*\/?>\s*)*+$/i', '', $content);
+
 		if ( isset( $params[ 'name' ] ) )
 		{
 			$title = htmlspecialchars( trim( $params[ 'name' ] ) ) . " wrote";
@@ -712,11 +716,6 @@ class BBCodeLibrary
 					$title = "<a href=\"" . htmlspecialchars( $params[ 'url' ] ) . "\">" . $title . "</a>";
 			}
 		}
-		
-		// Trim content
-		$content = preg_replace('/^\s*(?:<br\s*\/?>\s*)*/i', '', $content);
-		$content = preg_replace('/\s*(?:<br\s*\/?>\s*)*+$/i', '', $content);
-		
 		else if ( !is_string( $default ) )
 			$title = "Quote:";
 		else
