@@ -7,7 +7,7 @@
 
 namespace Nbbc\Tests;
 
-use BBCode;
+use Nbbc\BBCode;
 
 /**
  * Contains all the tests that were part of the default NBBC test page (test_nbbc.php).
