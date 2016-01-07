@@ -264,7 +264,7 @@ class BBCodeLibrary
 		),
 		'br' => Array(
 			'mode' => BBCODE_MODE_SIMPLE,
-			'simple_start' => "<br />\n",
+			'simple_start' => "<br>\n",
 			'simple_end' => "",
 			'class' => 'inline',
 			'allow_in' => Array( 'listitem', 'block', 'columns', 'inline', 'link' ),
