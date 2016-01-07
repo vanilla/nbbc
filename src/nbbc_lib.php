@@ -694,10 +694,6 @@ class BBCodeLibrary
 		if ( $action == BBCODE_CHECK )
 			return true;
 
-		// Trim content
-		$content = preg_replace('/^\s*(?:<br\s*\/?>\s*)*/i', '', $content);
-		$content = preg_replace('/\s*(?:<br\s*\/?>\s*)*+$/i', '', $content);
-
 		if ( isset( $params[ 'name' ] ) )
 		{
 			$title = htmlspecialchars( trim( $params[ 'name' ] ) ) . " wrote";
