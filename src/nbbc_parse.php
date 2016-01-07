@@ -1097,11 +1097,11 @@ class BBCode
 					(?! [a-zA-Z0-9.:-] )
 					(?:
 						\\/
-						[^&?#\\(\\)\\[\\]\\{\\}<>\\,\\\"\\x00-\\x20\\x7F-\\xFF]*
+						[^&?#\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]*
 					)?
 					(?:
 						[?#]
-						[^\\(\\)\\[\\]\\{\\}<>\\,\\\"\\x00-\\x20\\x7F-\\xFF]+
+						[^\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]+
 					)?
 				) | (?:
 					(?:
@@ -1115,11 +1115,11 @@ class BBCode
 					(?! [a-zA-Z0-9:-] )
 					(?:
 						\\/
-						[^&?#\\(\\)\\[\\]\\{\\}<>\\,\\\"\\x00-\\x20\\x7F-\\xFF]*
+						[^&?#\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]*
 					)?
 					(?:
 						[?#]
-						[^\\(\\)\\[\\]\\{\\}<>\\,\\\"\\x00-\\x20\\x7F-\\xFF]+
+						[^\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]+
 					)?
 				) | (?:
 					[a-zA-Z0-9._-]{2,} @
@@ -1140,22 +1140,6 @@ class BBCode
 			{
 				if ( $is_a_url )
 				{
-					// Check if ends in period or !, remove it and push to next index
-					// We might want to add more to this as we discover them.
-					$end = substr( $token, -1, 1 );
-					if ( $end === '.' || $end === '!' )
-					{
-						$token = substr( $token, 0, -1 );
-						if ( isset( $output[ $index + 1 ] ) )
-						{
-							$output[ $index + 1 ] = $end . $output[ $index + 1 ];
-						}
-						else
-						{
-							$output[ $index + 1 ] = $end;
-						}
-					}
-
 					// Decide whether we have an e-mail address or a server address.
 					if ( preg_match( "/^[a-zA-Z0-9._-]{2,}@/", $token ) )
 					{
