@@ -1426,8 +1426,12 @@ class BBCode
 
 					// If this was supposed to have an end tag, and we find a floating one
 					// later on, then we should consume it.
-					if ( $end_tag == BBCODE_REQUIRED )
-						@$this->lost_start_tags[ $name ] += 1;
+					if ( $end_tag == BBCODE_REQUIRED ) {
+						if (!isset($this->lost_start_tags[$name])) {
+							$this->lost_start_tags[$name] = 0;
+						}
+						$this->lost_start_tags[$name]++;
+					}
 
 					$end = $this->Internal_CleanupWSByIteratingPointer( @$rule[ 'before_endtag' ], 0, $output );
 					$this->Internal_CleanupWSByPoppingStack( @$rule[ 'after_tag' ], $output );
