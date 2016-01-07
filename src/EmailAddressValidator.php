@@ -4,6 +4,7 @@
  * @copyright 2016 Vanilla Forums Inc. (changes only)
  * @license BSDv2
  */
+namespace Nbbc;
 
 /**
  * A class to validate email address strings.
@@ -22,7 +23,7 @@
  *
  * @deprecated
  */
-class BBCodeEmailAddressValidator {
+class EmailAddressValidator {
 
     // Check email address validity
     // @param   strEmailAddress     Email address to be checked
