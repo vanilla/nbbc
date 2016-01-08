@@ -440,14 +440,14 @@ class BBCodeLibrary {
                 Debugger::debug('ISVALIDURL');
             }
 
-            if ($bbcode->url_targetable !== false && isset($params['target'])) {
+            if ($bbcode->getURLTargetable() !== false && isset($params['target'])) {
                 $target = ' target="'.htmlspecialchars($params['target']).'"';
             } else {
                 $target = '';
             }
 
-            if ($bbcode->url_target !== false && empty($target)) {
-                $target = ' target="'.htmlspecialchars($bbcode->url_target).'"';
+            if ($bbcode->getURLTarget() !== false && empty($target)) {
+                $target = ' target="'.htmlspecialchars($bbcode->getURLTarget()).'"';
             }
 
             // If $detect_urls is on, it's possble the $content is already
@@ -570,7 +570,7 @@ class BBCodeLibrary {
     /**
      * Format a [wiki] tag by producing an <a>...</a> element.
      *
-     * @param type $bbcode
+     * @param BBCode $bbcode
      * @param type $action
      * @param type $name
      * @param type $default
@@ -590,8 +590,8 @@ class BBCodeLibrary {
             $title = trim($default);
         }
 
-        return "<a href=\"{$bbcode->wiki_url}$name\" class=\"bbcode_wiki\">"
-        .htmlspecialchars($title)."</a>";
+        $wikiURL = $bbcode->getWikiURL();
+        return "<a href=\"{$wikiURL}$name\" class=\"bbcode_wiki\">".htmlspecialchars($title)."</a>";
     }
 
 
@@ -624,7 +624,7 @@ class BBCodeLibrary {
             ) {
 
                 return "<img src=\""
-                .htmlspecialchars((empty($bbcode->local_img_url) ? '' : $bbcode->local_img_url.'/').ltrim($urlParts['path'], '/')).'" alt="'
+                .htmlspecialchars((empty($bbcode->getLocalImgURL()) ? '' : $bbcode->getLocalImgURL().'/').ltrim($urlParts['path'], '/')).'" alt="'
                 .htmlspecialchars(basename($content)).'" class="bbcode_img" />';
             } elseif ($bbcode->isValidURL($content, false)) {
                 // Remote URL, or at least we don't know where it is.
@@ -637,14 +637,14 @@ class BBCodeLibrary {
     }
 
 
-
     // Format a [rule] tag.  This substitutes the content provided by the BBCode
     // object, whatever that may be.
     public function doRule($bbcode, $action, $name, $default, $params, $content) {
-        if ($action == BBCode::BBCODE_CHECK)
+        if ($action == BBCode::BBCODE_CHECK) {
             return true;
-        else
-            return $bbcode->rule_html;
+        } else {
+            return $bbcode->getRuleHTML();
+        }
     }
 
     // Format a [quote] tag.  This tag can come in a variety of flavors:

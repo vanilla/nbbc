@@ -212,12 +212,12 @@ class BBCode {
     protected $smileys;  // The current list of smileys.
     protected $smiley_regex; // This is a regex, precomputed from the list of smileys above.
     protected $enable_smileys; // Whether or not to perform smiley-parsing.
-    public $wiki_url;  // URL prefix used for [[wiki]] links.
+    protected $wiki_url;  // URL prefix used for [[wiki]] links.
     protected $local_img_dir; // The host filesystem path to local images (should be an absolute path).
-    public $local_img_url; // The URL path to local images (possibly a relative path).
-    public $url_targetable; // If true, [url] tags can accept a target="..." parameter.
-    public $url_target; // If non-false, [url] tags will use this target and no other.
-    public $rule_html;  // The default HTML to output for a [rule] tag.
+    protected $local_img_url; // The URL path to local images (possibly a relative path).
+    protected $url_targetable; // If true, [url] tags can accept a target="..." parameter.
+    protected $url_target; // If non-false, [url] tags will use this target and no other.
+    protected $rule_html;  // The default HTML to output for a [rule] tag.
     protected $pre_trim;  // How to trim the whitespace at the start of the input.
     protected $post_trim;  // How to trim the whitespace at the end of the input.
     public $debug;   // Enable debugging mode
@@ -484,7 +484,7 @@ class BBCode {
     }
 
 
-    public function getWikiURL($url) {
+    public function getWikiURL() {
         return $this->wiki_url;
     }
 
