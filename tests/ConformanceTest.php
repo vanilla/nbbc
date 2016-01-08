@@ -593,7 +593,7 @@ BBCODE
             [[
                 'descr' => "Embedded Javascript URLs are properly ignored.",
                 'bbcode' => "Go to javascript:foo.com;alert(); for your search needs!",
-                'html' => "Go to javascript:<a href=\"http://foo.com\">foo.com</a>;alert(); for your search needs!",
+                'html' => "Go to javascript:foo.com;alert(); for your search needs!",
                 'detect_urls' => true,
             ]],
             [[
@@ -638,12 +638,24 @@ BBCODE
                 'html' => "<a href=\"http://m.example.com\">m.example.com</a> is a mobile site.",
                 'detect_urls' => true,
             ]],
-//            [[
-//                'descr' => "Embedded domain names at the end of sentences get detected and converted.",
-//                'bbcode' => "Go to www.google.com.",
-//                'html' => "Go to <a href=\"http://www.google.com/\">www.google.com</a>.",
-//                'detect_urls' => true,
-//            ]],
+            [[
+                'descr' => "Embedded domain names at the end of sentences get detected and converted.",
+                'bbcode' => "Go to www.google.com.",
+                'html' => "Go to <a href=\"http://www.google.com\">www.google.com</a>.",
+                'detect_urls' => true,
+            ]],
+            [[
+                'descr' => "Embedded links to an invalid TLD with a scheme should work.",
+                'bbcode' => 'Go to http://foo.bar',
+                'html' => 'Go to <a href="http://foo.bar">http://foo.bar</a>',
+                'detect_urls' => true
+            ]],
+            [[
+                'descr' => "Embedded links to an invalid TLD without a scheme should not work.",
+                'bbcode' => 'Go to foo.bar',
+                'html' => 'Go to foo.bar',
+                'detect_urls' => true
+            ]],
         ];
 
         return $result;

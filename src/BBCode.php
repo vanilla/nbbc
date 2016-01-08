@@ -8,8 +8,6 @@ namespace Nbbc;
 
 //-----------------------------------------------------------------------------
 //
-//  nbbc_parse.php
-//
 //  This file is part of NBBC, the New BBCode Parser.
 //
 //  NBBC implements a fully-validating, high-speed, extensible parser for the
@@ -974,120 +972,172 @@ class BBCode {
         Debugger::debug("<b>Internal_RebuildSmileys:</b> regex: <tt>".htmlspecialchars($this->smiley_regex)."</tt><br>\n");
     }
 
-    // Search through the input for URLs, or things that are URL-like.  We search
-    // for several possibilities here:
-    //
-    //   First format (HTTP/HTTPS/FTP):
-    //      <"http:" or "https:" or "ftp:"> <optional "//"> <domain or IPv4 or IPv6> <optional tail>
-    //
-    //   Second format (implicit HTTP):
-    //      <domain or IPv4> <optional tail>
-    //
-    //   Third format (e-mail):
-    //      <simple username> "@" <domain or IPv4>
-    //
-    // In short, we look for domains and protocols, and if we find them, we consume any paths
-    // or parameters after them, stopping at the first whitespace.
-    //
-    // We use the same split-and-match technique used by the lexer and the smiley parser,
-    // since it's the fastest way to perform tokenization in PHP.
-    //
-    // Once we find the URL, we convert it according to the rule given in $this->url_pattern.
-    //
-    // Note that the input string is plain text, not HTML or BBCode.  The return value
-    // must be an array of alternating pairs of plain text (even indexes) and HTML (odd indexes).
+    /*
+     * Search through the input for URLs, or things that are URL-like and replace with anchor tags.
+     *
+     * We search for several possibilities here:
+     *
+     *   First format (HTTP/HTTPS/FTP):
+     *      <"http://" or "https://" or "ftp://"> <domain or IPv4> <optional tail>
+     *
+     *   Second format (implicit HTTP):
+     *      <domain or IPv4> <optional tail>
+     *
+     *   Third format (e-mail):
+     *      <simple username> "@" <domain>
+     *
+     * In short, we look for domains and protocols, and if we find them, we consume any paths
+     * or parameters after them, stopping at the first whitespace.
+     *
+     * We use the same split-and-match technique used by the lexer and the smiley parser,
+     * since it's the fastest way to perform tokenization in PHP.
+     *
+     * Once we find the URL, we convert it according to the rule given in $this->url_pattern.
+     *
+     * Note that the input string is plain text, not HTML or BBCode.  The return value
+     * must be an array of alternating pairs of plain text (even indexes) and HTML (odd indexes).
+     *
+     * @param string $string The string to detect the URLs in.
+     * @return array Returns an array in the form `[text, anchor, text, anchor, ...]`.
+     */
     protected function autoDetectURLs($string) {
-        /* @var Profiler $BBCode_Profiler */
-        global $BBCode_Profiler;
-        $BBCode_Profiler->begin('AutoDetectURLs');
+        $hostRegex = /** @lang RegExp */
+<<<REGEX
+(?: # host
+    (?:[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*\.[a-z]{2,}(?::\d+)?) # domain name
+    |
+    (?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(?::\d+)?) # ip address
+)
+REGEX;
 
-        $output = preg_split("/( (?:
-					(?:https?|ftp) : \\/*
-					(?:
-						(?: (?: [a-zA-Z0-9-]{1,} \\. )+
-							(?: arpa | com | org | net | edu | gov | mil | int | [a-z]{2}
-								| aero | biz | coop | info | museum | name | pro
-								| example | invalid | localhost | test | local | onion | swift ) )
-						| (?: [0-9]{1,3} \\. [0-9]{1,3} \\. [0-9]{1,3} \\. [0-9]{1,3} )
-						| (?: [0-9A-Fa-f:]+ : [0-9A-Fa-f]{1,4} )
-					)
-					(?: : [0-9]+ )?
-					(?! [a-zA-Z0-9.:-] )
-					(?:
-						\\/
-						[^&?#\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]*
-					)?
-					(?:
-						[?#]
-						[^\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]+
-					)?
-				) | (?:
-					(?:
-						(?: (?: [a-zA-Z0-9-]{1,} \\. )+
-							(?: arpa | com | org | net | edu | gov | mil | int | [a-z]{2}
-								| aero | biz | coop | info | museum | name | pro
-								| example | invalid | localhost | test | local | onion | swift ) )
-						| (?: [0-9]{1,3} \\. [0-9]{1,3} \\. [0-9]{1,3} \\. [0-9]{1,3} )
-					)
-					(?: : [0-9]+ )?
-					(?! [a-zA-Z0-9.:-] )
-					(?:
-						\\/
-						[^&?#\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]*
-					)?
-					(?:
-						[?#]
-						[^\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]+
-					)?
-				) | (?:
-					[a-zA-Z0-9._-]{1,} @
-					(?:
-						(?: (?: [a-zA-Z0-9-]{2,} \\. )+
-							(?: arpa | com | org | net | edu | gov | mil | int | [a-z]{2}
-								| aero | biz | coop | info | museum | name | pro
-								| example | invalid | localhost | test | local | onion | swift ) )
-						| (?: [0-9]{1,3} \\. [0-9]{1,3} \\. [0-9]{1,3} \\. [0-9]{1,3} )
-					)
-				) )/Dx", $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $urlRegex = /** @lang RegExp */
+<<<REGEX
+(?: # url
+    (?:(?:https?|ftp)://)? # optional scheme
+    $hostRegex # host
+    (?:
+        (?=[/?#]) # the part after the domain must be one of these characters
+        [@a-zA-Z0-9!#-'*-.:;\/;?-z~=]*[a-zA-Z0-9#/=]
+    )? # path, query string etc
+)
+REGEX;
 
-        if (count($output) > 1) {
+        $emailRegex = /** @lang RegExp */
+<<<REGEX
+(?: # email
+    [a-zA-Z0-9._-]+
+    @
+    [a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*\.[a-z]{2,} # domain name
+)
+REGEX;
 
-            $is_a_url = false;
-            foreach ($output as $index => $token) {
-                if ($is_a_url) {
-                    // Decide whether we have an e-mail address or a server address.
-                    if (preg_match("/^[a-zA-Z0-9._-]{2,}@/", $token)) {
-                        // Plain e-mail address.
-                        $url = "mailto:".$token;
-                    } else if (preg_match("/^(https?:|ftp:)\\/*([^\\/&?#]+)\\/*(.*)\$/", $token, $matches)) {
-                        // Protocol has been provided, so just use it as-is (but fix
-                        // up any forgotten slashes).
-                        $url = $matches[1].'/'.'/'.$matches[2].($matches[3] ? "/" : '').$matches[3];
-                    } else {
-                        // Raw domain name, like "www.google.com", so convert it for
-                        // use as an HTTP web address.
-                        preg_match("/^([^\\/&?#]+)\\/*(.*)\$/", $token, $matches);
-                        $url = "http:/"."/".$matches[1].($matches[2] ? "/" : '').$matches[2];
-                    }
+        $regex = /** @lang RegExp */
+<<<REGEX
+`
+(?<=^|[\s(]) # url starts at beginning, after space, within parentheses
+(
+    $urlRegex
+    |
+    $emailRegex
+)
+(?=$|[\s)]|[.!?;]($|[\s])) # url ends at the end, before space, within parentheses, before punctuation
+`Dx
+REGEX;
 
-                    // We have a full, complete, and properly-formatted URL, with protocol.
-                    // Now we need to apply the $this->url_pattern template to turn it into HTML.
-                    $params = @parse_url($url);
-                    if (!is_array($params))
-                        $params = [];
-                    $params['url'] = $url;
-                    $params['link'] = $url;
-                    $params['text'] = $token;
-                    $output[$index] = $this->fillTemplate($this->url_pattern, $params);
+        $parts = preg_split($regex, $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $result = [];
+        $isURL = false;
+        foreach ($parts as $part) {
+            if (strpos($part, ' ') !== false) {
+                $urlParts = false;
+            } else {
+                $urlParts = parse_url($part);
+            }
+
+            // Fix parts that are just single domains.
+            if ($urlParts !== false && preg_match("`^$hostRegex$`Dx", $part)) {
+                $urlParts['host'] = $part;
+                unset($urlParts['path']);
+            }
+
+            // Look for an email address.
+            if (preg_match("`^$emailRegex$`Dx", $part)) {
+                $urlParts = [
+                    'url' => "mailto:$part",
+                    'host' => $part
+                ];
+            }
+
+            // The TLD should be validated when there is no scheme.
+            if ($urlParts !== false && empty($urlParts['scheme']) && !empty($urlParts['host'])
+                && !$this->isValidTLD($urlParts['host'], true)) {
+
+                $urlParts = false;
+            }
+
+            if ($urlParts === false || empty($urlParts['host'])) {
+                // Fix wrongly detected URL.
+                if ($isURL) {
+                    $result[] = '';
+                }
+                $result[] = $part;
+            } else {
+                // Fix wrongly detected text.
+                if (!$isURL) {
+                    $result[] = '';
                 }
 
-                $is_a_url = !$is_a_url;
+                if (empty($urlParts['url'])) {
+                    $url = $part;
+                    if (empty($urlParts['scheme'])) {
+                        $url = 'http://'.$part;
+                    }
+                    $urlParts['url'] = $url;
+                }
+
+                $urlParts['link'] = $urlParts['url'];
+                $urlParts['text'] = $part;
+                $result[] = $this->fillTemplate($this->url_pattern, $urlParts);
             }
+            $isURL = !$isURL;
         }
 
-        $BBCode_Profiler->end('AutoDetectURLs');
+        return $result;
+    }
 
-        return $output;
+    /**
+     * Check that a host name has a valid top level domain.
+     *
+     * @param string $host The host or TLD to check.
+     * @param bool $allowIPs Whether or not IPv4 strings should count as valid.
+     * @return bool Returns **true** if {@link $host} has a valid TLD or **false** otherwise.
+     */
+    public function isValidTLD($host, $allowIPs = false) {
+        static $validTLDs = [
+            'aero', 'arpa', 'biz', 'com', 'coop', 'dev', 'edu', 'example', 'gov', 'org', 'info', 'int', 'invalid',
+            'local', 'mil', 'museum', 'name', 'net', 'onion', 'pro', 'swift', 'test'
+            ];
+
+        // An IP address should be considered okay.
+        if ($allowIPs && filter_var($host, FILTER_VALIDATE_IP) !== false) {
+            return true;
+        }
+
+        // Only localhost is allowed if there is no TLD.
+        if (strpos($host, '.') === false) {
+            return $host === 'localhost';
+        }
+
+        // Strip the TLD portion from the string.
+        $tld = trim(strrchr($host, '.'), '.');
+
+        // Check against the known TLDs.
+        // We'll just assume that two letter TLDs are valid to avoid too many checks.
+        if (in_array($tld, $validTLDs) || preg_match('`^[a-z]{2}$`', $tld)) {
+            return true;
+        }
+
+        return false;
     }
 
     // Fill an HTML template using variable inserts, which look like this:
