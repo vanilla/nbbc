@@ -521,8 +521,8 @@ class BBCodeLibrary {
                 $size = '2.5em';
                 break;
             default:
-                $size = (int)$size;
-                if ($size < 8 || $size > 48) {
+                $size = (int)$default;
+                if ($size < 11 || $size > 48) {
                     $size = '1.0em';
                 } else {
                     $size .= 'px';
