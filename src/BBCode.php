@@ -701,20 +701,55 @@ class BBCode {
         return rawurlencode(str_replace(" ", "_", trim(preg_replace("/[!?;@#\$%\\^&*<>=+`~\\x00-\\x20_-]+/", " ", $string))));
     }
 
-
-
-    // Returns true if the given string is a valid URL.  If $email_too is false,
-    // this checks for:
-    //
-    //    http :// domain [:port] [/] [any single-line string]
-    //    https :// domain [:port] [/] [any single-line string]
-    //    ftp :// domain [:port] [/] [any single-line string]
-    //
-    // If $email_too is true (the default), this also allows the mailto protocol:
-    //
-    //    mailto : name @ domain
-    //
+    /**
+     * Returns true if the given string is a valid URL.
+     *
+     * If $email_too is false, this checks for:
+     *
+     * ```
+     * http :// domain [:port] [/] [any single-line string]
+     * https :// domain [:port] [/] [any single-line string]
+     * ftp :// domain [:port] [/] [any single-line string]
+     * ```
+     *
+     * If $email_too is true (the default), this also allows the mailto protocol:
+     *
+     * ```
+     * mailto : name @ domain
+     * ```
+     *
+     * @param string $string The URL to validate.
+     * @param bool $email_too Whether or not a **mailto:** link is also valid.
+     * @return bool Returns **true** if {@link $string} is a valid URL or **false** otherwise.
+     */
     public function isValidURL($string, $email_too = true) {
+        // Validate using PHP's fast filter method.
+        if (filter_var($string, FILTER_VALIDATE_URL) !== false &&
+            in_array(parse_url($string, PHP_URL_SCHEME), ['http', 'https', 'ftp'])) {
+            return true;
+        }
+
+        // Check for anything that does *not* have a colon in it before the first
+        // slash or question mark or #; that indicates a local file relative to us.
+        if (preg_match("/^[^:]+([\\/\\\\?#][^\\r\\n]*)?$/D", $string)) {
+            return true;
+        }
+
+        // Match mail addresses.
+        if ($email_too && substr($string, 0, 7) == "mailto:") {
+            return $this->isValidEmail(substr($string, 7));
+        }
+    }
+
+    /**
+     * A regex version of {@link BBCode::isValidURL()}.
+     *
+     * @param string $string The URL to validate.
+     * @param bool $email_too Whether or not a **mailto:** link is also valid.
+     * @return bool Returns **true** if {@link $string} is a valid URL or **false** otherwise.
+     * @deprecated
+     */
+    protected function isValidURLPHP($string, $email_too = true) {
         // Check for anything that uses http, https, or ftp, with the general
         // structure being:  protocol :// domain [:port] [/] [any single-line string]
         // For security reasons, we disallow username/password inclusion in URLs.
