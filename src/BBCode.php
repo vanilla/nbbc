@@ -260,6 +260,7 @@ class BBCode {
 
     function setPreTrim($trim = "a") {
         $this->pre_trim = $trim;
+        return $this;
     }
 
 
@@ -270,6 +271,7 @@ class BBCode {
 
     public function setPostTrim($trim = "a") {
         $this->post_trim = $trim;
+        return $this;
     }
 
 
@@ -280,16 +282,19 @@ class BBCode {
 
     public function setRoot($class = 'block') {
         $this->root_class = $class;
+        return $this;
     }
 
 
     public function setRootInline() {
         $this->root_class = 'inline';
+        return $this;
     }
 
 
     public function setRootBlock() {
         $this->root_class = 'block';
+        return $this;
     }
 
 
@@ -300,6 +305,7 @@ class BBCode {
 
     public function setDebug($enable = true) {
         $this->debug = $enable;
+        return $this;
     }
 
 
@@ -310,6 +316,7 @@ class BBCode {
 
     public function setAllowAmpersand($enable = true) {
         $this->allow_ampersand = $enable;
+        return $this;
     }
 
 
@@ -320,6 +327,7 @@ class BBCode {
 
     public function setTagMarker($marker = '[') {
         $this->tag_marker = $marker;
+        return $this;
     }
 
 
@@ -330,6 +338,7 @@ class BBCode {
 
     public function setIgnoreNewlines($ignore = true) {
         $this->ignore_newlines = $ignore;
+        return $this;
     }
 
 
@@ -340,6 +349,7 @@ class BBCode {
 
     public function setLimit($limit = 0) {
         $this->output_limit = $limit;
+        return $this;
     }
 
 
@@ -350,6 +360,7 @@ class BBCode {
 
     public function setLimitTail($tail = "...") {
         $this->limit_tail = $tail;
+        return $this;
     }
 
 
@@ -360,6 +371,7 @@ class BBCode {
 
     public function setLimitPrecision($prec = 0.15) {
         $this->limit_precision = $prec;
+        return $this;
     }
 
 
@@ -375,6 +387,7 @@ class BBCode {
 
     public function setPlainMode($enable = true) {
         $this->plain_mode = $enable;
+        return $this;
     }
 
 
@@ -385,6 +398,7 @@ class BBCode {
 
     public function setDetectURLs($enable = true) {
         $this->detect_urls = $enable;
+        return $this;
     }
 
 
@@ -395,6 +409,7 @@ class BBCode {
 
     public function setURLPattern($pattern) {
         $this->url_pattern = $pattern;
+        return $this;
     }
 
 
@@ -405,6 +420,7 @@ class BBCode {
 
     public function setURLTargetable($enable) {
         $this->url_targetable = $enable;
+        return $this;
     }
 
 
@@ -415,6 +431,7 @@ class BBCode {
 
     public function setURLTarget($target) {
         $this->url_target = $target;
+        return $this;
     }
 
 
@@ -430,11 +447,13 @@ class BBCode {
 
     public function addRule($name, $rule) {
         $this->tag_rules[$name] = $rule;
+        return $this;
     }
 
 
     public function removeRule($name) {
         unset($this->tag_rules[$name]);
+        return $this;
     }
 
 
@@ -445,6 +464,7 @@ class BBCode {
 
     public function clearRules() {
         $this->tag_rules = [];
+        return $this;
     }
 
 
@@ -454,10 +474,11 @@ class BBCode {
 
 
     public function setDefaultRule($name) {
-        if (isset($this->defaults->default_tag_rules[$name]))
+        if (isset($this->defaults->default_tag_rules[$name])) {
             $this->addRule($name, $this->defaults->default_tag_rules[$name]);
-        else
+        } else {
             $this->removeRule($name);
+        }
     }
 
 
@@ -468,6 +489,7 @@ class BBCode {
 
     public function setDefaultRules() {
         $this->tag_rules = $this->defaults->default_tag_rules;
+        return $this;
     }
 
     //-----------------------------------------------------------------------------
@@ -476,6 +498,7 @@ class BBCode {
 
     public function setWikiURL($url) {
         $this->wiki_url = $url;
+        return $this;
     }
 
 
@@ -491,6 +514,7 @@ class BBCode {
 
     public function setLocalImgDir($path) {
         $this->local_img_dir = $path;
+        return $this;
     }
 
 
@@ -506,6 +530,7 @@ class BBCode {
 
     public function setLocalImgURL($path) {
         $this->local_img_url = rtrim($path, '/');
+        return $this;
     }
 
 
@@ -521,6 +546,7 @@ class BBCode {
 
     public function setRuleHTML($html) {
         $this->rule_html = $html;
+        return $this;
     }
 
 
@@ -541,12 +567,14 @@ class BBCode {
     public function addSmiley($code, $image) {
         $this->smileys[$code] = $image;
         $this->smiley_regex = false;
+        return $this;
     }
 
 
     public function removeSmiley($code) {
         unset($this->smileys[$code]);
         $this->smiley_regex = false;
+        return $this;
     }
 
 
@@ -558,6 +586,7 @@ class BBCode {
     public function clearSmileys() {
         $this->smileys = [];
         $this->smiley_regex = false;
+        return $this;
     }
 
 
@@ -569,6 +598,7 @@ class BBCode {
     public function setDefaultSmiley($code) {
         $this->smileys[$code] = @$this->defaults->default_smileys[$code];
         $this->smiley_regex = false;
+        return $this;
     }
 
 
@@ -580,11 +610,13 @@ class BBCode {
     public function setDefaultSmileys() {
         $this->smileys = $this->defaults->default_smileys;
         $this->smiley_regex = false;
+        return $this;
     }
 
 
     public function setSmileyDir($path) {
         $this->smiley_dir = $path;
+        return $this;
     }
 
 
@@ -600,6 +632,7 @@ class BBCode {
 
     public function setSmileyURL($path) {
         $this->smiley_url = $path;
+        return $this;
     }
 
 
@@ -615,6 +648,7 @@ class BBCode {
 
     public function setEnableSmileys($enable = true) {
         $this->enable_smileys = $enable;
+        return $this;
     }
 
 
@@ -628,6 +662,7 @@ class BBCode {
         if ($this->max_smileys < -1) {
             $this->max_smileys = -1;
         }
+        return $this;
     }
 
 
@@ -736,8 +771,6 @@ class BBCode {
         return $result !== false;
     }
 
-
-
     /**
      * Escape HTML characters.
      *
@@ -761,8 +794,6 @@ class BBCode {
             return str_replace(Array('<', '>', '"'), Array('&lt;', '&gt;', '&quot;'), $string);
         }
     }
-
-
 
     /**
      * Properly encode tag content.
@@ -906,8 +937,6 @@ class BBCode {
         Debugger::debug("<b>Internal_RebuildSmileys:</b> regex: <tt>".htmlspecialchars($this->smiley_regex)."</tt><br>\n");
     }
 
-
-
     // Search through the input for URLs, or things that are URL-like.  We search
     // for several possibilities here:
     //
@@ -1022,8 +1051,6 @@ class BBCode {
 
         return $output;
     }
-
-
 
     // Fill an HTML template using variable inserts, which look like this:
     //    {$variable}   or   {$variable/flags}   or even   {$myarray.george.father/flags}
@@ -1150,8 +1177,6 @@ class BBCode {
         return implode("", $result);
     }
 
-
-
     //-----------------------------------------------------------------------------
     //  Stack and output-management (internal).
     // Collect a series of text strings from a token stack and return them as a
@@ -1172,7 +1197,6 @@ class BBCode {
         return $output;
     }
 
-
     protected function collectTextReverse($array, $start = 0, $end = 0) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('CollectTextReverse');
@@ -1187,8 +1211,6 @@ class BBCode {
 
         return $output;
     }
-
-
 
     // Output everything on the stack from $pos to the top, inclusive, as
     // plain text, and return it.  This is a little more complicated than
@@ -1300,8 +1322,6 @@ class BBCode {
         return $output;
     }
 
-
-
     // We're transitioning into a class that's not allowed inside the current one
     // (like they tried to put a [center] tag inside a [b] tag), so we need to
     // unwind the stack, outputting content until we're inside a valid state again.
@@ -1355,8 +1375,6 @@ class BBCode {
 
         return true;
     }
-
-
 
     // We've found an end tag with the given name, so walk backward until we
     // find the start tag, and then output the contents.
@@ -1441,7 +1459,6 @@ class BBCode {
         return $output;
     }
 
-
     // Recompute the current class, based on the class of the stack's top element.
     protected function computeCurrentClass() {
         if (count($this->stack) > 0)
@@ -1453,8 +1470,6 @@ class BBCode {
                 .htmlspecialchars($this->current_class)."</tt>\"<br>\n");
         }
     }
-
-
 
     // Given a stack of tokens in $array, write it to a string (possibly with HTML
     // color and style encodings for readability, if $raw is false).
@@ -1488,8 +1503,6 @@ class BBCode {
             $string .= "</span>";
         return $string;
     }
-
-
 
     //-----------------------------------------------------------------------------
     //  Whitespace cleanup routines (internal).
@@ -1534,8 +1547,6 @@ class BBCode {
             $this->computeCurrentClass();
         }
     }
-
-
 
     // Read tokens from the input, and remove whitespace/newline tokens from the input
     // according to the rules in the given pattern.
@@ -1589,8 +1600,6 @@ class BBCode {
             Debugger::debug("<b>Internal_CleanupWSByEatingInput:</b> input pointer is now at {$this->lexer->ptr}<br>\n");
     }
 
-
-
     // Read tokens from the given position in the stack, going forward as we match
     // the rules in the given pattern.  Returns the first position *after* the pattern.
     protected function cleanupWSByIteratingPointer($pattern, $pos, $array) {
@@ -1626,8 +1635,6 @@ class BBCode {
         return $pos;
     }
 
-
-
     // We have a string that's too long, so chop it off at a suitable break so that it's
     // no longer than $limit characters, if at all possible (if there's nowhere to break
     // before that, we just chop at $limit).
@@ -1648,8 +1655,6 @@ class BBCode {
             Debugger::debug("<b>Internal_LimitText:</b> resulting string is length ".strlen($output).".<br>\n");
         return $output;
     }
-
-
 
     // If we've reached the text limit, clean up the stack, push the limit tail,
     // set the we-hit-the-limit flag, and return.
@@ -1874,8 +1879,6 @@ class BBCode {
         }
     }
 
-
-
     // Format an enhanced tag, which is like a simple tag but uses a short HTML template
     // for its formatting instead.
     //
@@ -1904,8 +1907,6 @@ class BBCode {
             }
         }
     }
-
-
 
     //-----------------------------------------------------------------------------
     //  Parser token-processing routines (internal).
