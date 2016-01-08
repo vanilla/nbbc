@@ -49,26 +49,33 @@ namespace Nbbc;
 //
 //-----------------------------------------------------------------------------
 //
-//  This file implements the standard BBCode language and our extensions,
-//  as well as a default set of smileys.  While this is not strictly necessary
-//  for the parser to work, without these definitions, the parser has nothing
-//  to do.  Generally, the definitions in this file are sufficient for most
-//  needs; however, if your needs differ, you don't want to change this file:
-//  If you want additional definitions, create a BBCode object and add them
-//  manually afterward:
-//
-//    $bbcode = new BBCode;
-//    $bbcode->AddRule(...);
-//    $bbcode->AddSmiley(...);
+
 //
 //-----------------------------------------------------------------------------
 
+/**
+ * Represents the default implementation of most BBCode tags.
+ *
+ * This class implements the standard BBCode language and our extensions,
+ * as well as a default set of smileys.  While this is not strictly necessary
+ * for the parser to work, without these definitions, the parser has nothing
+ * to do.  Generally, the definitions in this file are sufficient for most
+ * needs; however, if your needs differ, you don't want to change this file:
+ * If you want additional definitions, create a BBCode object and add them
+ * manually afterward:
+ *
+ * ```
+ * $bbcode = new BBCode();
+ * $bbcode->addRule(...);
+ * $bbcode->addSmiley(...);
+ * ```
+ */
 class BBCodeLibrary {
 
-    //-----------------------------------------------------------------------------
-    // Standard library of smiley definitions.
-
-    var $default_smileys = Array(
+    /**
+     * @var array Standard library of smiley definitions.
+     */
+    public $default_smileys = [
         ':)' => 'smile.gif', ':-)' => 'smile.gif',
         '=)' => 'smile.gif', '=-)' => 'smile.gif',
         ':(' => 'frown.gif', ':-(' => 'frown.gif',
@@ -107,7 +114,6 @@ class BBCodeLibrary {
         '8)' => 'bigeyes.gif', '8-)' => 'bigeyes.gif',
         'B)' => 'cool.gif', 'B-)' => 'cool.gif',
         ';)' => 'wink.gif', ';-)' => 'wink.gif',
-        ';D' => 'bigwink.gif', ';-D' => 'bigwink.gif',
         '^_^' => 'anime.gif', '^^;' => 'sweatdrop.gif',
         '>_>' => 'lookright.gif', '>.>' => 'lookright.gif',
         '<_<' => 'lookleft.gif', '<.<' => 'lookleft.gif',
@@ -122,220 +128,221 @@ class BBCodeLibrary {
         ':zzz:' => 'sleepy.gif',
         '<3' => 'heart.gif',
         ':star:' => 'star.gif',
-    );
-    //-----------------------------------------------------------------------------
-    // Standard rules for what to do when a BBCode tag is encountered.
+    ];
 
-    var $default_tag_rules = Array(
-        'b' => Array(
+    /**
+     * @var array Standard rules for what to do when a BBCode tag is encountered.
+     */
+    public $default_tag_rules = [
+        'b' => [
             'simple_start' => "<b>",
             'simple_end' => "</b>",
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'plain_start' => "<b>",
             'plain_end' => "</b>",
             'allow_params' => false,
-        ),
-        'i' => Array(
+        ],
+        'i' => [
             'simple_start' => "<i>",
             'simple_end' => "</i>",
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'plain_start' => "<i>",
             'plain_end' => "</i>",
             'allow_params' => false,
-        ),
-        'u' => Array(
+        ],
+        'u' => [
             'simple_start' => "<u>",
             'simple_end' => "</u>",
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'plain_start' => "<u>",
             'plain_end' => "</u>",
             'allow_params' => false,
-        ),
-        's' => Array(
+        ],
+        's' => [
             'simple_start' => "<strike>",
             'simple_end' => "</strike>",
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'plain_start' => "<i>",
             'plain_end' => "</i>",
             'allow_params' => false,
-        ),
-        'font' => Array(
+        ],
+        'font' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'allow' => Array('_default' => '/^[a-zA-Z0-9._ -]+$/'),
+            'allow' => ['_default' => '/^[a-zA-Z0-9._ -]+$/'],
             'method' => 'DoFont',
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
-        ),
-        'color' => Array(
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
+        ],
+        'color' => [
             'mode' => BBCode::BBCODE_MODE_ENHANCED,
-            'allow' => Array('_default' => '/^#?[a-zA-Z0-9._ -]+$/'),
+            'allow' => ['_default' => '/^#?[a-zA-Z0-9._ -]+$/'],
             'template' => '<span style="color:{$_default/tw}">{$_content/v}</span>',
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
-        ),
-        'size' => Array(
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
+        ],
+        'size' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'allow' => Array('_default' => '/^[0-9.]+$/D'),
+            'allow' => ['_default' => '/^[0-9.]+$/D'],
             'method' => 'DoSize',
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
-        ),
-        'sup' => Array(
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
+        ],
+        'sup' => [
             'simple_start' => "<sup>",
             'simple_end' => "</sup>",
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'allow_params' => false,
-        ),
-        'sub' => Array(
+        ],
+        'sub' => [
             'simple_start' => "<sub>",
             'simple_end' => "</sub>",
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'allow_params' => false,
-        ),
-        'spoiler' => Array(
+        ],
+        'spoiler' => [
             'simple_start' => "<span class=\"bbcode_spoiler\">",
             'simple_end' => "</span>",
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
-        ),
-        'acronym' => Array(
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
+        ],
+        'acronym' => [
             'mode' => BBCode::BBCODE_MODE_ENHANCED,
             'template' => '<span class="bbcode_acronym" title="{$_default/e}">{$_content/v}</span>',
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
-        ),
-        'url' => Array(
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
+        ],
+        'url' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'method' => 'DoURL',
             'class' => 'link',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline'],
             'content' => BBCode::BBCODE_REQUIRED,
             'plain_start' => "<a href=\"{\$link}\">",
             'plain_end' => "</a>",
-            'plain_content' => Array('_content', '_default'),
-            'plain_link' => Array('_default', '_content'),
-        ),
-        'email' => Array(
+            'plain_content' => ['_content', '_default'],
+            'plain_link' => ['_default', '_content'],
+        ],
+        'email' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'method' => 'DoEmail',
             'class' => 'link',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline'],
             'content' => BBCode::BBCODE_REQUIRED,
             'plain_start' => "<a href=\"mailto:{\$link}\">",
             'plain_end' => "</a>",
-            'plain_content' => Array('_content', '_default'),
-            'plain_link' => Array('_default', '_content'),
-        ),
-        'wiki' => Array(
+            'plain_content' => ['_content', '_default'],
+            'plain_link' => ['_default', '_content'],
+        ],
+        'wiki' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'method' => "DoWiki",
             'class' => 'link',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline'],
             'end_tag' => BBCode::BBCODE_PROHIBIT,
             'content' => BBCode::BBCODE_PROHIBIT,
             'plain_start' => "<b>[",
             'plain_end' => "]</b>",
-            'plain_content' => Array('title', '_default'),
-            'plain_link' => Array('_default', '_content'),
-        ),
-        'img' => Array(
+            'plain_content' => ['title', '_default'],
+            'plain_link' => ['_default', '_content'],
+        ],
+        'img' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'method' => "DoImage",
             'class' => 'image',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'end_tag' => BBCode::BBCODE_REQUIRED,
             'content' => BBCode::BBCODE_REQUIRED,
             'plain_start' => "[image]",
-            'plain_content' => Array(),
-        ),
-        'rule' => Array(
+            'plain_content' => [],
+        ],
+        'rule' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'method' => "DoRule",
             'class' => 'block',
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'end_tag' => BBCode::BBCODE_PROHIBIT,
             'content' => BBCode::BBCODE_PROHIBIT,
             'before_tag' => "sns",
             'after_tag' => "sns",
             'plain_start' => "\n-----\n",
             'plain_end' => "",
-            'plain_content' => Array(),
-        ),
-        'br' => Array(
+            'plain_content' => [],
+        ],
+        'br' => [
             'mode' => BBCode::BBCODE_MODE_SIMPLE,
             'simple_start' => "<br>\n",
             'simple_end' => "",
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'end_tag' => BBCode::BBCODE_PROHIBIT,
             'content' => BBCode::BBCODE_PROHIBIT,
             'before_tag' => "s",
             'after_tag' => "s",
             'plain_start' => "\n",
             'plain_end' => "",
-            'plain_content' => Array(),
-        ),
-        'left' => Array(
+            'plain_content' => [],
+        ],
+        'left' => [
             'simple_start' => "\n<div class=\"bbcode_left\" style=\"text-align:left\">\n",
             'simple_end' => "\n</div>\n",
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'before_tag' => "sns",
             'after_tag' => "sns",
             'before_endtag' => "sns",
             'after_endtag' => "sns",
             'plain_start' => "\n",
             'plain_end' => "\n",
-        ),
-        'right' => Array(
+        ],
+        'right' => [
             'simple_start' => "\n<div class=\"bbcode_right\" style=\"text-align:right\">\n",
             'simple_end' => "\n</div>\n",
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'before_tag' => "sns",
             'after_tag' => "sns",
             'before_endtag' => "sns",
             'after_endtag' => "sns",
             'plain_start' => "\n",
             'plain_end' => "\n",
-        ),
-        'center' => Array(
+        ],
+        'center' => [
             'simple_start' => "\n<div class=\"bbcode_center\" style=\"text-align:center\">\n",
             'simple_end' => "\n</div>\n",
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'before_tag' => "sns",
             'after_tag' => "sns",
             'before_endtag' => "sns",
             'after_endtag' => "sns",
             'plain_start' => "\n",
             'plain_end' => "\n",
-        ),
-        'rtl' => Array(
+        ],
+        'rtl' => [
             'simple_start' => '<div style="direction:rtl;">',
             'simple_end' => '</div>',
             'class' => 'inline',
-            'allow_in' => Array('listitem', 'block', 'columns', 'inline', 'link'),
-        ),
-        'indent' => Array(
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
+        ],
+        'indent' => [
             'simple_start' => "\n<div class=\"bbcode_indent\" style=\"margin-left:4em\">\n",
             'simple_end' => "\n</div>\n",
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'before_tag' => "sns",
             'after_tag' => "sns",
             'before_endtag' => "sns",
             'after_endtag' => "sns",
             'plain_start' => "\n",
             'plain_end' => "\n",
-        ),
-        'columns' => Array(
+        ],
+        'columns' => [
             'simple_start' => "\n<table class=\"bbcode_columns\"><tbody><tr><td class=\"bbcode_column bbcode_firstcolumn\">\n",
             'simple_end' => "\n</td></tr></tbody></table>\n",
             'class' => 'columns',
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'end_tag' => BBCode::BBCODE_REQUIRED,
             'content' => BBCode::BBCODE_REQUIRED,
             'before_tag' => "sns",
@@ -344,11 +351,11 @@ class BBCodeLibrary {
             'after_endtag' => "sns",
             'plain_start' => "\n",
             'plain_end' => "\n",
-        ),
-        'nextcol' => Array(
+        ],
+        'nextcol' => [
             'simple_start' => "\n</td><td class=\"bbcode_column\">\n",
             'class' => 'nextcol',
-            'allow_in' => Array('columns'),
+            'allow_in' => ['columns'],
             'end_tag' => BBCode::BBCODE_PROHIBIT,
             'content' => BBCode::BBCODE_PROHIBIT,
             'before_tag' => "sns",
@@ -357,12 +364,12 @@ class BBCodeLibrary {
             'after_endtag' => "sns",
             'plain_start' => "\n",
             'plain_end' => "",
-        ),
-        'code' => Array(
+        ],
+        'code' => [
             'mode' => BBCode::BBCODE_MODE_ENHANCED,
             'template' => "\n<div class=\"bbcode_code\">\n<div class=\"bbcode_code_head\">Code:</div>\n<div class=\"bbcode_code_body\" style=\"white-space:pre\">{\$_content/v}</div>\n</div>\n",
             'class' => 'code',
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'content' => BBCode::BBCODE_VERBATIM,
             'before_tag' => "sns",
             'after_tag' => "sn",
@@ -370,35 +377,35 @@ class BBCodeLibrary {
             'after_endtag' => "sns",
             'plain_start' => "\n<b>Code:</b>\n",
             'plain_end' => "\n",
-        ),
-        'quote' => Array(
+        ],
+        'quote' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'method' => "DoQuote",
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'before_tag' => "sns",
             'after_tag' => "sns",
             'before_endtag' => "sns",
             'after_endtag' => "sns",
             'plain_start' => "\n<b>Quote:</b>\n",
             'plain_end' => "\n",
-        ),
-        'list' => Array(
+        ],
+        'list' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'method' => 'DoList',
             'class' => 'list',
-            'allow_in' => Array('listitem', 'block', 'columns'),
+            'allow_in' => ['listitem', 'block', 'columns'],
             'before_tag' => "sns",
             'after_tag' => "sns",
             'before_endtag' => "sns",
             'after_endtag' => "sns",
             'plain_start' => "\n",
             'plain_end' => "\n",
-        ),
-        '*' => Array(
+        ],
+        '*' => [
             'simple_start' => "<li>",
             'simple_end' => "</li>\n",
             'class' => 'listitem',
-            'allow_in' => Array('list'),
+            'allow_in' => ['list'],
             'end_tag' => BBCode::BBCODE_OPTIONAL,
             'before_tag' => "s",
             'after_tag' => "s",
@@ -406,25 +413,28 @@ class BBCodeLibrary {
             'after_endtag' => "sns",
             'plain_start' => "\n * ",
             'plain_end' => "\n",
-        ),
-    );
+        ],
+    ];
 
+    /**
+     * @var array The file extensions that are considered valid local images.
+     */
     protected $imageExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
     /**
      * Format a [url] tag by producing an <a>...</a> element.
+     *
      * The URL only allows http, https, mailto, and ftp protocols for safety.
      *
-     * @param BBCode $bbcode
-     * @param type $action
-     * @param type $name
-     * @param type $default
-     * @param type $params
-     * @param type $content
-     *
-     * @return string Full HTML url
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return string Returns the full HTML url.
      */
-    public function doURL($bbcode, $action, $name, $default, $params, $content) {
+    public function doURL(BBCode $bbcode, $action, $name, $default, $params, $content) {
         // We can't check this with BBCODE_CHECK because we may have no URL
         // before the content has been processed.
         if ($action == BBCode::BBCODE_CHECK) {
@@ -463,18 +473,19 @@ class BBCodeLibrary {
 
     /**
      * Format an [email] tag by producing an <a href="mailto:...">...</a> element.
+     *
      * The e-mail address must be a valid address including at least a '@' and a valid domain
      * name or IPv4 or IPv6 address after the '@'.
      *
-     * @param BBCode $bbcode
-     * @param type $action
-     * @param type $name
-     * @param type $default
-     * @param type $params
-     * @param type $content
-     * @return string
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return string Returns the email link HTML.
      */
-    public function doEmail($bbcode, $action, $name, $default, $params, $content) {
+    public function doEmail(BBCode $bbcode, $action, $name, $default, $params, $content) {
         // We can't check this with BBCODE_CHECK because we may have no URL
         // before the content has been processed.
         if ($action == BBCode::BBCODE_CHECK) {
@@ -493,8 +504,18 @@ class BBCodeLibrary {
     }
 
 
-    // Format a [size] tag by producing a <span> with a style with a different font-size.
-    public function doSize($bbcode, $action, $name, $default, $params, $content) {
+    /**
+     * Format a [size] tag by producing a <span> with a style with a different font-size.
+     *
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return string Returns a span with the font size CSS.
+     */
+    public function doSize(BBCode $bbcode, $action, $name, $default, $params, $content) {
         switch ($default) {
             case '0':
                 $size = '.5em';
@@ -532,15 +553,24 @@ class BBCodeLibrary {
         return '<span style="font-size:'.$size.'">'.$content.'</span>';
     }
 
-
-
-    // Format a [font] tag by producing a <span> with a style with a different font-family.
-    // This is complicated by the fact that we have to recognize the five special font
-    // names and quote all the others.
-    public function doFont($bbcode, $action, $name, $default, $params, $content) {
+    /**
+     * Format a [font] tag by producing a <span> with a style with a different font-family.
+     *
+     * This is complicated by the fact that we have to recognize the five special font
+     * names and quote all the others.
+     *
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return string Returns a span with the font family CSS.
+     */
+    public function doFont(BBCode $bbcode, $action, $name, $default, $params, $content) {
         $fonts = explode(",", $default);
         $result = "";
-        $special_fonts = Array(
+        $special_fonts = [
             'serif' => 'serif',
             'sans-serif' => 'sans-serif',
             'sans serif' => 'sans-serif',
@@ -550,16 +580,18 @@ class BBCodeLibrary {
             'fantasy' => 'fantasy',
             'monospace' => 'monospace',
             'mono' => 'monospace',
-        );
+        ];
         foreach ($fonts as $font) {
             $font = trim($font);
             if (isset($special_fonts[$font])) {
-                if (strlen($result) > 0)
+                if (strlen($result) > 0) {
                     $result .= ",";
+                }
                 $result .= $special_fonts[$font];
             } else if (strlen($font) > 0) {
-                if (strlen($result) > 0)
+                if (strlen($result) > 0) {
                     $result .= ",";
+                }
                 $result .= "'$font'";
             }
         }
@@ -570,15 +602,15 @@ class BBCodeLibrary {
     /**
      * Format a [wiki] tag by producing an <a>...</a> element.
      *
-     * @param BBCode $bbcode
-     * @param type $action
-     * @param type $name
-     * @param type $default
-     * @param type $params
-     * @param type $content
-     * @return string
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return string Returns a link to the wiki.
      */
-    public function doWiki($bbcode, $action, $name, $default, $params, $content) {
+    public function doWiki(BBCode $bbcode, $action, $name, $default, $params, $content) {
         $name = $bbcode->Wikify($default);
 
         if ($action == BBCode::BBCODE_CHECK) {
@@ -598,15 +630,15 @@ class BBCodeLibrary {
     /**
      * Format an [img] tag.  The URL only allows http, https, and ftp protocols for safety.
      *
-     * @param BBCode $bbcode
-     * @param type $action
-     * @param type $name
-     * @param type $default
-     * @param type $params
-     * @param type $content
-     * @return string
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return string Returns the image tag.
      */
-    public function doImage($bbcode, $action, $name, $default, $params, $content) {
+    public function doImage(BBCode $bbcode, $action, $name, $default, $params, $content) {
         // We can't validate this until we have its content.
         if ($action == BBCode::BBCODE_CHECK) {
             return true;
@@ -636,10 +668,20 @@ class BBCodeLibrary {
         return htmlspecialchars($params['_tag']).htmlspecialchars($content).htmlspecialchars($params['_endtag']);
     }
 
-
-    // Format a [rule] tag.  This substitutes the content provided by the BBCode
-    // object, whatever that may be.
-    public function doRule($bbcode, $action, $name, $default, $params, $content) {
+    /**
+     * Format a [rule] tag.
+     *
+     * This substitutes the content provided by the BBCode object, whatever that may be.
+     *
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return bool|string Returns the rule HTML or **true** if {@link $action} is **BBCode::BBCODE_CHECK**.
+     */
+    public function doRule(BBCode $bbcode, $action, $name, $default, $params, $content) {
         if ($action == BBCode::BBCODE_CHECK) {
             return true;
         } else {
@@ -647,121 +689,158 @@ class BBCodeLibrary {
         }
     }
 
-    // Format a [quote] tag.  This tag can come in a variety of flavors:
-    //
-    //  [quote]...[/quote]
-    //  [quote=Tom]...[/quote]
-    //  [quote name="Tom"]...[/quote]
-    //
-    // In the third form, you can also add a date="" parameter to display the date
-    // on which Tom wrote it, and you can add a url="" parameter to turn the author's
-    // name into a link.  A full example might be:
-    //
-    //  [quote name="Tom" date="July 4, 1776 3:48 PM" url="http://www.constitution.gov"]...[/quote]
-    //
-    // The URL only allows http, https, mailto, gopher, ftp, and feed protocols for safety.
-    public function doQuote($bbcode, $action, $name, $default, $params, $content) {
-        if ($action == BBCode::BBCODE_CHECK)
+    /**
+     * Format a [quote] tag.
+     *
+     * This tag can come in a variety of flavors:
+     *
+     * ```
+     * [quote]...[/quote]
+     * [quote=Tom]...[/quote]
+     * [quote name="Tom"]...[/quote]
+     * ```
+     *
+     * In the third form, you can also add a date="" parameter to display the date
+     * on which Tom wrote it, and you can add a url="" parameter to turn the author's
+     * name into a link.  A full example might be:
+     *
+     * ```
+     * [quote name="Tom" date="July 4, 1776 3:48 PM" url="http://www.constitution.gov"]...[/quote]
+     * ```
+     *
+     * The URL only allows http, https, mailto, gopher, ftp, and feed protocols for safety.
+     *
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return bool|string Returns the quote HTML or **true** if {@link $action} is **BBCode::BBCODE_CHECK**.
+     */
+    public function doQuote(BBCode $bbcode, $action, $name, $default, $params, $content) {
+        if ($action == BBCode::BBCODE_CHECK) {
             return true;
+        }
 
         if (isset($params['name'])) {
             $title = htmlspecialchars(trim($params['name']))." wrote";
-            if (isset($params['date']))
+            if (isset($params['date'])) {
                 $title .= " on ".htmlspecialchars(trim($params['date']));
+            }
             $title .= ":";
             if (isset($params['url'])) {
                 $url = trim($params['url']);
-                if ($bbcode->IsValidURL($url))
+                if ($bbcode->IsValidURL($url)) {
                     $title = "<a href=\"".htmlspecialchars($params['url'])."\">".$title."</a>";
+                }
             }
-        } else if (!is_string($default))
+        } elseif (!is_string($default)) {
             $title = "Quote:";
-        else
+        } else {
             $title = htmlspecialchars(trim($default))." wrote:";
+        }
+
         return "\n<div class=\"bbcode_quote\">\n<div class=\"bbcode_quote_head\">"
-        .$title."</div>\n<div class=\"bbcode_quote_body\">"
-        .$content."</div>\n</div>\n";
+            .$title."</div>\n<div class=\"bbcode_quote_body\">"
+            .$content."</div>\n</div>\n";
     }
 
-    // Format a [list] tag, which is complicated by the number of different
-    // ways a list can be started.  The following parameters are allowed:
-    //
-    //   [list]           Unordered list, using default marker
-    //   [list=circle]    Unordered list, using circle marker
-    //   [list=disc]      Unordered list, using disc marker
-    //   [list=square]    Unordered list, using square marker
-    //
-    //   [list=1]         Ordered list, numeric, starting at 1
-    //   [list=A]         Ordered list, capital letters, starting at A
-    //   [list=a]         Ordered list, lowercase letters, starting at a
-    //   [list=I]         Ordered list, capital Roman numerals, starting at I
-    //   [list=i]         Ordered list, lowercase Roman numerals, starting at i
-    //   [list=greek]     Ordered list, lowercase Greek letters, starting at alpha
-    //   [list=01]        Ordered list, two-digit numeric with 0-padding, starting at 01
-    public function doList($bbcode, $action, $name, $default, $params, $content) {
+    /**
+     * Format a [list] tag.
+     *
+     * This  is complicated by the number of different
+     * ways a list can be started.  The following parameters are allowed:
+     *
+     * ```
+     * [list]           Unordered list, using default marker
+     * [list=circle]    Unordered list, using circle marker
+     * [list=disc]      Unordered list, using disc marker
+     * [list=square]    Unordered list, using square marker
+     *
+     * [list=1]         Ordered list, numeric, starting at 1
+     * [list=A]         Ordered list, capital letters, starting at A
+     * [list=a]         Ordered list, lowercase letters, starting at a
+     * [list=I]         Ordered list, capital Roman numerals, starting at I
+     * [list=i]         Ordered list, lowercase Roman numerals, starting at i
+     * [list=greek]     Ordered list, lowercase Greek letters, starting at alpha
+     * [list=01]        Ordered list, two-digit numeric with 0-padding, starting at 01
+     * ```
+     *
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return string|bool Returns the list HTML or a boolen result when {@link $action} is **BBCode::BBCODE_CHECK**.
+     */
+    public function doList(BBCode $bbcode, $action, $name, $default, $params, $content) {
 
         // Allowed list styles, striaght from the CSS 2.1 spec.  The only prohibited
         // list style is that with image-based markers, which often slows down web sites.
-        $list_styles = Array(
+        $listStyles = [
             '1' => 'decimal',
             '01' => 'decimal-leading-zero',
             'i' => 'lower-roman',
             'I' => 'upper-roman',
             'a' => 'lower-alpha',
             'A' => 'upper-alpha',
-        );
-        $ci_list_styles = Array(
+        ];
+        $ciListStyles = [
             'circle' => 'circle',
             'disc' => 'disc',
             'square' => 'square',
             'greek' => 'lower-greek',
             'armenian' => 'armenian',
             'georgian' => 'georgian',
-        );
-        $ul_types = Array(
+        ];
+        $ulTypes = [
             'circle' => 'circle',
             'disc' => 'disc',
             'square' => 'square',
-        );
+        ];
 
         $default = trim($default);
 
         if ($action == BBCode::BBCODE_CHECK) {
-            if (!is_string($default) || strlen($default) == "")
+            if (!is_string($default) || strlen($default) == "") {
                 return true;
-            else if (isset($list_styles[$default]))
+            } elseif (isset($listStyles[$default])) {
                 return true;
-            else if (isset($ci_list_styles[strtolower($default)]))
+            } elseif (isset($ciListStyles[strtolower($default)])) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         }
 
         // Choose a list element (<ul> or <ol>) and a style.
         if (!is_string($default) || strlen($default) == "") {
             $elem = 'ul';
             $type = '';
-        } else if ($default == '1') {
+        } elseif ($default == '1') {
             $elem = 'ol';
             $type = '';
-        } else if (isset($list_styles[$default])) {
+        } elseif (isset($listStyles[$default])) {
             $elem = 'ol';
-            $type = $list_styles[$default];
+            $type = $listStyles[$default];
         } else {
             $default = strtolower($default);
-            if (isset($ul_types[$default])) {
+            if (isset($ulTypes[$default])) {
                 $elem = 'ul';
-                $type = $ul_types[$default];
-            } else if (isset($ci_list_styles[$default])) {
+                $type = $ulTypes[$default];
+            } elseif (isset($ciListStyles[$default])) {
                 $elem = 'ol';
-                $type = $ci_list_styles[$default];
+                $type = $ciListStyles[$default];
             }
         }
 
         // Generate the HTML for it.
-        if (strlen($type))
+        if (strlen($type)) {
             return "\n<$elem class=\"bbcode_list\" style=\"list-style-type:$type\">\n$content</$elem>\n";
-        else
+        } else {
             return "\n<$elem class=\"bbcode_list\">\n$content</$elem>\n";
+        }
     }
 }
