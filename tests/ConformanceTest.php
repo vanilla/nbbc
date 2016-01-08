@@ -1074,7 +1074,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
 
         $bbcode = new BBCode();
 
-        $bbcode->AddRule('wstest', [
+        $bbcode->addRule('wstest', [
             'mode' => BBCode::BBCODE_MODE_ENHANCED,
             'allow' => ['_default' => '/^[a-zA-Z0-9._ -]+$/'],
             'template' => '<span style="wstest:{$_default}">{$_content}</span>',
@@ -1082,24 +1082,24 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
             'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
         ]);
 
-        $bbcode->SetLocalImgDir(__DIR__.'/../smileys');
-        $bbcode->SetLocalImgURL('smileys');
-        $bbcode->SetTagMarker('[');
-        $bbcode->SetAllowAmpersand(false);
-        $bbcode->SetIgnoreNewlines((bool)$test['newline_ignore']);
-        $bbcode->SetDetectURLs((bool)$test['detect_urls']);
-        $bbcode->SetURLTargetable($test['urltarget'] == true);
-        $bbcode->SetURLTarget($test['urlforcetarget']);
-        $bbcode->SetPlainMode($test['plainmode']);
+        $bbcode->setLocalImgDir(__DIR__.'/../smileys');
+        $bbcode->setLocalImgURL('smileys');
+        $bbcode->setTagMarker('[');
+        $bbcode->setAllowAmpersand(false);
+        $bbcode->setIgnoreNewlines((bool)$test['newline_ignore']);
+        $bbcode->setDetectURLs((bool)$test['detect_urls']);
+        $bbcode->setURLTargetable($test['urltarget'] == true);
+        $bbcode->setURLTarget($test['urlforcetarget']);
+        $bbcode->setPlainMode($test['plainmode']);
 
         if ($test['tag_marker'] === '<') {
-            $bbcode->SetTagMarker('<');
-            $bbcode->SetAllowAmpersand(true);
+            $bbcode->setTagMarker('<');
+            $bbcode->setAllowAmpersand(true);
         } elseif (!empty($test['tag_marker'])) {
-            $bbcode->SetTagMarker($test['tag_marker']);
+            $bbcode->setTagMarker($test['tag_marker']);
         }
 
-        $result = $bbcode->Parse($test['bbcode']);
+        $result = $bbcode->parse($test['bbcode']);
         if (!empty($test['regex'])) {
             $this->assertRegExp($test['regex'], $result, $test['descr']);
         } else {

@@ -15,38 +15,36 @@ class Profiler {
 
     var $start_time, $total_times;
 
-    function __construct() {
+    public function __construct() {
         $start_time = Array();
         $total_times = Array();
     }
 
-    function Now() {
-        list($usec, $sec) = explode(" ", microtime());
-        $sec -= 1394060000;
-        return ((double)$usec + (double)$sec);
+    public function now() {
+        return microtime(true) - 1394060000;
     }
 
-    function Begin($group) {
-        $this->start_time[$group] = $this->Now();
+    public function begin($group) {
+        $this->start_time[$group] = $this->now();
     }
 
-    function End($group) {
-        $time = $this->Now() - $this->start_time[$group];
+    public function end($group) {
+        $time = $this->now() - $this->start_time[$group];
         if (!isset($this->total_times[$group]))
             $this->total_times[$group] = $time;
         else
             $this->total_times[$group] += $time;
     }
 
-    function Reset($group) {
+    public function reset($group) {
         $this->total_times[$group] = 0;
     }
 
-    function Total($group) {
+    public function total($group) {
         return @$this->total_times[$group];
     }
 
-    function DumpAllGroups() {
+    public function dumpAllGroups() {
         print "<div>Profiled times:\n<ul>\n";
         ksort($this->total_times);
         foreach ($this->total_times as $name => $time) {

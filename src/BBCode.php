@@ -190,54 +190,54 @@ class BBCode {
     // Instance variables.  Do not change any of these directly!  Use the
     // access methods provided below.
 
-    public $tag_rules;  // List of tag rules currently in use.
-    public $defaults;  // The standard library (an instance of class BBCodeLibrary).
-    public $current_class; // The current class (auto-computed).
-    public $root_class; // The root container class.
-    public $lost_start_tags; // For repair when tags are badly mis-nested.
-    public $start_tags; // An associative array of locations of start tags on the stack.
-    public $allow_ampersand; // If true, we use str_replace() instead of htmlspecialchars().
-    public $tag_marker; // Set to '[', '<', '{', or '('.
-    public $ignore_newlines; // If true, newlines will be treated as normal whitespace.
-    public $plain_mode; // Don't output tags:  Just output text/whitespace/newlines only.
-    public $detect_urls; // Should we audo-detect URLs and convert them to links?
-    public $url_pattern; // What to convert auto-detected URLs into.
-    public $output_limit; // The maximum number of text characters to output.
-    public $text_length; // The number of text characters output so far.
-    public $was_limited; // Set to true if the output was cut off.
-    public $limit_tail; // What to add if the output is cut off.
-    public $limit_precision; // How accurate should we be if we're cutting off text?
-    public $smiley_dir; // The host filesystem path to smileys (should be an absolute path).
-    public $smiley_url; // The URL path to smileys (possibly a relative path).
-    public $smileys;  // The current list of smileys.
-    public $smiley_regex; // This is a regex, precomputed from the list of smileys above.
-    public $enable_smileys; // Whether or not to perform smiley-parsing.
+    protected $tag_rules;  // List of tag rules currently in use.
+    protected $defaults;  // The standard library (an instance of class BBCodeLibrary).
+    protected $current_class; // The current class (auto-computed).
+    protected $root_class; // The root container class.
+    protected $lost_start_tags; // For repair when tags are badly mis-nested.
+    protected $start_tags; // An associative array of locations of start tags on the stack.
+    protected $allow_ampersand; // If true, we use str_replace() instead of htmlspecialchars().
+    protected $tag_marker; // Set to '[', '<', '{', or '('.
+    protected $ignore_newlines; // If true, newlines will be treated as normal whitespace.
+    protected $plain_mode; // Don't output tags:  Just output text/whitespace/newlines only.
+    protected $detect_urls; // Should we audo-detect URLs and convert them to links?
+    protected $url_pattern; // What to convert auto-detected URLs into.
+    protected $output_limit; // The maximum number of text characters to output.
+    protected $text_length; // The number of text characters output so far.
+    protected $was_limited; // Set to true if the output was cut off.
+    protected $limit_tail; // What to add if the output is cut off.
+    protected $limit_precision; // How accurate should we be if we're cutting off text?
+    protected $smiley_dir; // The host filesystem path to smileys (should be an absolute path).
+    protected $smiley_url; // The URL path to smileys (possibly a relative path).
+    protected $smileys;  // The current list of smileys.
+    protected $smiley_regex; // This is a regex, precomputed from the list of smileys above.
+    protected $enable_smileys; // Whether or not to perform smiley-parsing.
     public $wiki_url;  // URL prefix used for [[wiki]] links.
-    public $local_img_dir; // The host filesystem path to local images (should be an absolute path).
+    protected $local_img_dir; // The host filesystem path to local images (should be an absolute path).
     public $local_img_url; // The URL path to local images (possibly a relative path).
     public $url_targetable; // If true, [url] tags can accept a target="..." parameter.
     public $url_target; // If non-false, [url] tags will use this target and no other.
     public $rule_html;  // The default HTML to output for a [rule] tag.
-    public $pre_trim;  // How to trim the whitespace at the start of the input.
-    public $post_trim;  // How to trim the whitespace at the end of the input.
+    protected $pre_trim;  // How to trim the whitespace at the start of the input.
+    protected $post_trim;  // How to trim the whitespace at the end of the input.
     public $debug;   // Enable debugging mode
-    public $max_smileys; // Maximum numbe of smileys that can be used in parse
+    protected $max_smileys; // Maximum numbe of smileys that can be used in parse
 
     //-----------------------------------------------------------------------------
     // Constructor.
 
-    function __construct() {
+    public function __construct() {
         $this->defaults = new BBCodeLibrary();
         $this->tag_rules = $this->defaults->default_tag_rules;
         $this->smileys = $this->defaults->default_smileys;
         $this->enable_smileys = true;
         $this->smiley_regex = false;
-        $this->smiley_dir = $this->GetDefaultSmileyDir();
-        $this->smiley_url = $this->GetDefaultSmileyURL();
-        $this->wiki_url = $this->GetDefaultWikiURL();
-        $this->local_img_dir = $this->GetDefaultLocalImgDir();
-        $this->local_img_url = $this->GetDefaultLocalImgURL();
-        $this->rule_html = $this->GetDefaultRuleHTML();
+        $this->smiley_dir = $this->getDefaultSmileyDir();
+        $this->smiley_url = $this->getDefaultSmileyURL();
+        $this->wiki_url = $this->getDefaultWikiURL();
+        $this->local_img_dir = $this->getDefaultLocalImgDir();
+        $this->local_img_url = $this->getDefaultLocalImgURL();
+        $this->rule_html = $this->getDefaultRuleHTML();
         $this->pre_trim = "";
         $this->post_trim = "";
         $this->root_class = 'block';
@@ -263,167 +263,167 @@ class BBCode {
     //-----------------------------------------------------------------------------
     // State control.
 
-    function SetPreTrim($trim = "a") {
+    function setPreTrim($trim = "a") {
         $this->pre_trim = $trim;
     }
 
 
-    function GetPreTrim() {
+    public function getPreTrim() {
         return $this->pre_trim;
     }
 
 
-    function SetPostTrim($trim = "a") {
+    public function setPostTrim($trim = "a") {
         $this->post_trim = $trim;
     }
 
 
-    function GetPostTrim() {
+    public function getPostTrim() {
         return $this->post_trim;
     }
 
 
-    function SetRoot($class = 'block') {
+    public function setRoot($class = 'block') {
         $this->root_class = $class;
     }
 
 
-    function SetRootInline() {
+    public function setRootInline() {
         $this->root_class = 'inline';
     }
 
 
-    function SetRootBlock() {
+    public function setRootBlock() {
         $this->root_class = 'block';
     }
 
 
-    function GetRoot() {
+    public function getRoot() {
         return $this->root_class;
     }
 
 
-    function SetDebug($enable = true) {
+    public function setDebug($enable = true) {
         $this->debug = $enable;
     }
 
 
-    function GetDebug() {
+    public function getDebug() {
         return $this->debug;
     }
 
 
-    function SetAllowAmpersand($enable = true) {
+    public function setAllowAmpersand($enable = true) {
         $this->allow_ampersand = $enable;
     }
 
 
-    function GetAllowAmpersand() {
+    public function getAllowAmpersand() {
         return $this->allow_ampersand;
     }
 
 
-    function SetTagMarker($marker = '[') {
+    public function setTagMarker($marker = '[') {
         $this->tag_marker = $marker;
     }
 
 
-    function GetTagMarker() {
+    public function getTagMarker() {
         return $this->tag_marker;
     }
 
 
-    function SetIgnoreNewlines($ignore = true) {
+    public function setIgnoreNewlines($ignore = true) {
         $this->ignore_newlines = $ignore;
     }
 
 
-    function GetIgnoreNewlines() {
+    public function getIgnoreNewlines() {
         return $this->ignore_newlines;
     }
 
 
-    function SetLimit($limit = 0) {
+    public function setLimit($limit = 0) {
         $this->output_limit = $limit;
     }
 
 
-    function GetLimit() {
+    public function getLimit() {
         return $this->output_limit;
     }
 
 
-    function SetLimitTail($tail = "...") {
+    public function setLimitTail($tail = "...") {
         $this->limit_tail = $tail;
     }
 
 
-    function GetLimitTail() {
+    public function getLimitTail() {
         return $this->limit_tail;
     }
 
 
-    function SetLimitPrecision($prec = 0.15) {
+    public function setLimitPrecision($prec = 0.15) {
         $this->limit_precision = $prec;
     }
 
 
-    function GetLimitPrecision() {
+    public function getLimitPrecision() {
         return $this->limit_precision;
     }
 
 
-    function WasLimited() {
+    public function wasLimited() {
         return $this->was_limited;
     }
 
 
-    function SetPlainMode($enable = true) {
+    public function setPlainMode($enable = true) {
         $this->plain_mode = $enable;
     }
 
 
-    function GetPlainMode() {
+    public function getPlainMode() {
         return $this->plain_mode;
     }
 
 
-    function SetDetectURLs($enable = true) {
+    public function setDetectURLs($enable = true) {
         $this->detect_urls = $enable;
     }
 
 
-    function GetDetectURLs() {
+    public function getDetectURLs() {
         return $this->detect_urls;
     }
 
 
-    function SetURLPattern($pattern) {
+    public function setURLPattern($pattern) {
         $this->url_pattern = $pattern;
     }
 
 
-    function GetURLPattern() {
+    public function getURLPattern() {
         return $this->url_pattern;
     }
 
 
-    function SetURLTargetable($enable) {
+    public function setURLTargetable($enable) {
         $this->url_targetable = $enable;
     }
 
 
-    function GetURLTargetable() {
+    public function getURLTargetable() {
         return $this->url_targetable;
     }
 
 
-    function SetURLTarget($target) {
+    public function setURLTarget($target) {
         $this->url_target = $target;
     }
 
 
-    function GetURLTarget() {
+    public function getURLTarget() {
         return $this->url_target;
     }
 
@@ -433,45 +433,45 @@ class BBCode {
     // Rule-management:  You can add your own custom tag rules, or use the defaults.
     // These are basically getter/setter functions that exist for convenience.
 
-    function AddRule($name, $rule) {
+    public function addRule($name, $rule) {
         $this->tag_rules[$name] = $rule;
     }
 
 
-    function RemoveRule($name) {
+    public function removeRule($name) {
         unset($this->tag_rules[$name]);
     }
 
 
-    function GetRule($name) {
+    public function getRule($name) {
         return isset($this->tag_rules[$name]) ? $this->tag_rules[$name] : false;
     }
 
 
-    function ClearRules() {
+    public function clearRules() {
         $this->tag_rules = [];
     }
 
 
-    function GetDefaultRule($name) {
+    public function getDefaultRule($name) {
         return isset($this->defaults->default_tag_rules[$name]) ? $this->defaults->default_tag_rules[$name] : false;
     }
 
 
-    function SetDefaultRule($name) {
+    public function setDefaultRule($name) {
         if (isset($this->defaults->default_tag_rules[$name]))
-            $this->AddRule($name, $this->defaults->default_tag_rules[$name]);
+            $this->addRule($name, $this->defaults->default_tag_rules[$name]);
         else
-            $this->RemoveRule($name);
+            $this->removeRule($name);
     }
 
 
-    function GetDefaultRules() {
+    public function getDefaultRules() {
         return $this->defaults->default_tag_rules;
     }
 
 
-    function SetDefaultRules() {
+    public function setDefaultRules() {
         $this->tag_rules = $this->defaults->default_tag_rules;
     }
 
@@ -479,62 +479,62 @@ class BBCode {
     // Handling for [[wiki]] and [[wiki|Wiki]] links and other replaced items.
     // These are basically getter/setter functions that exist for convenience.
 
-    function SetWikiURL($url) {
+    public function setWikiURL($url) {
         $this->wiki_url = $url;
     }
 
 
-    function GetWikiURL($url) {
+    public function getWikiURL($url) {
         return $this->wiki_url;
     }
 
 
-    function GetDefaultWikiURL() {
+    public function getDefaultWikiURL() {
         return '/?page=';
     }
 
 
-    function SetLocalImgDir($path) {
+    public function setLocalImgDir($path) {
         $this->local_img_dir = $path;
     }
 
 
-    function GetLocalImgDir() {
+    public function getLocalImgDir() {
         return $this->local_img_dir;
     }
 
 
-    function GetDefaultLocalImgDir() {
+    public function getDefaultLocalImgDir() {
         return "img";
     }
 
 
-    function SetLocalImgURL($path) {
+    public function setLocalImgURL($path) {
         $this->local_img_url = rtrim($path, '/');
     }
 
 
-    function GetLocalImgURL() {
+    public function getLocalImgURL() {
         return $this->local_img_url;
     }
 
 
-    function GetDefaultLocalImgURL() {
+    public function getDefaultLocalImgURL() {
         return "img";
     }
 
 
-    function SetRuleHTML($html) {
+    public function setRuleHTML($html) {
         $this->rule_html = $html;
     }
 
 
-    function GetRuleHTML() {
+    public function getRuleHTML() {
         return $this->rule_html;
     }
 
 
-    function GetDefaultRuleHTML() {
+    public function getDefaultRuleHTML() {
         return "\n<hr class=\"bbcode_rule\" />\n";
     }
 
@@ -543,92 +543,92 @@ class BBCode {
     // These are *mostly* getter/setter functions, but they also affect the
     // caching of the smiley-processing rules.
 
-    function AddSmiley($code, $image) {
+    public function addSmiley($code, $image) {
         $this->smileys[$code] = $image;
         $this->smiley_regex = false;
     }
 
 
-    function RemoveSmiley($code) {
+    public function removeSmiley($code) {
         unset($this->smileys[$code]);
         $this->smiley_regex = false;
     }
 
 
-    function GetSmiley($code) {
+    public function getSmiley($code) {
         return isset($this->smileys[$code]) ? $this->smileys[$code] : false;
     }
 
 
-    function ClearSmileys() {
+    public function clearSmileys() {
         $this->smileys = [];
         $this->smiley_regex = false;
     }
 
 
-    function GetDefaultSmiley($code) {
+    public function getDefaultSmiley($code) {
         return isset($this->defaults->default_smileys[$code]) ? $this->defaults->default_smileys[$code] : false;
     }
 
 
-    function SetDefaultSmiley($code) {
+    public function setDefaultSmiley($code) {
         $this->smileys[$code] = @$this->defaults->default_smileys[$code];
         $this->smiley_regex = false;
     }
 
 
-    function GetDefaultSmileys() {
+    public function getDefaultSmileys() {
         return $this->defaults->default_smileys;
     }
 
 
-    function SetDefaultSmileys() {
+    public function setDefaultSmileys() {
         $this->smileys = $this->defaults->default_smileys;
         $this->smiley_regex = false;
     }
 
 
-    function SetSmileyDir($path) {
+    public function setSmileyDir($path) {
         $this->smiley_dir = $path;
     }
 
 
-    function GetSmileyDir() {
+    public function getSmileyDir() {
         return $this->smiley_dir;
     }
 
 
-    function GetDefaultSmileyDir() {
+    public function getDefaultSmileyDir() {
         return "smileys";
     }
 
 
-    function SetSmileyURL($path) {
+    public function setSmileyURL($path) {
         $this->smiley_url = $path;
     }
 
 
-    function GetSmileyURL() {
+    public function getSmileyURL() {
         return $this->smiley_url;
     }
 
 
-    function GetDefaultSmileyURL() {
+    public function getDefaultSmileyURL() {
         return "smileys";
     }
 
 
-    function SetEnableSmileys($enable = true) {
+    public function setEnableSmileys($enable = true) {
         $this->enable_smileys = $enable;
     }
 
 
-    function GetEnableSmileys() {
+    public function getEnableSmileys() {
         return $this->enable_smileys;
     }
 
 
-    function SetMaxSmileys($count) {
+    public function setMaxSmileys($count) {
         $this->max_smileys = (int)$count;
         if ($this->max_smileys < -1) {
             $this->max_smileys = -1;
@@ -636,7 +636,7 @@ class BBCode {
     }
 
 
-    function GetMaxSmileys() {
+    public function getMaxSmileys() {
         return $this->max_smileys;
     }
 
@@ -646,7 +646,7 @@ class BBCode {
     // Like PHP's built-in nl2br, but this one can convert Windows, Un*x, or Mac
     // newlines to a <br>, and regularizes the output to just use Un*x-style
     // newlines to boot.
-    function nl2br($string) {
+    public function nl2br($string) {
         return preg_replace("/\\x0A|\\x0D|\\x0A\\x0D|\\x0D\\x0A/", "<br>\n", $string);
     }
 
@@ -655,7 +655,7 @@ class BBCode {
     // This function comes straight from the PHP documentation on html_entity_decode,
     // and performs exactly the same function.  Unlike html_entity_decode, it
     // works on older versions of PHP (prior to 4.3.0).
-    function UnHTMLEncode($string) {
+    public function unHTMLEncode($string) {
         return html_entity_decode($string);
     }
 
@@ -667,7 +667,7 @@ class BBCode {
     // trailing _ characters.  So, for example, [[Washington, D.C.]] would become
     // "Washington_D.C.", safe to pass through a URL or anywhere else.  All characters
     // in the extended-character range (0x7F-0xFF) will be URL-encoded.
-    function Wikify($string) {
+    public function wikify($string) {
         return rawurlencode(str_replace(" ", "_", trim(preg_replace("/[!?;@#\$%\\^&*<>=+`~\\x00-\\x20_-]+/", " ", $string))));
     }
 
@@ -684,7 +684,7 @@ class BBCode {
     //
     //    mailto : name @ domain
     //
-    function IsValidURL($string, $email_too = true) {
+    public function isValidURL($string, $email_too = true) {
         // Check for anything that uses http, https, or ftp, with the general
         // structure being:  protocol :// domain [:port] [/] [any single-line string]
         // For security reasons, we disallow username/password inclusion in URLs.
@@ -717,7 +717,7 @@ class BBCode {
         // Match mail addresses.
         if ($email_too)
             if (substr($string, 0, 7) == "mailto:")
-                return $this->IsValidEmail(substr($string, 7));
+                return $this->isValidEmail(substr($string, 7));
 
         // Reject all other protocols.
         return false;
@@ -727,7 +727,7 @@ class BBCode {
 
     // Returns true if the given string is a valid e-mail address.  This allows
     // everything that RFC821 allows, including e-mail addresses that make no sense.
-    function IsValidEmail($string) {
+    public function isValidEmail($string) {
         $result = filter_var($string, FILTER_VALIDATE_EMAIL);
         return $result !== false;
     }
@@ -743,7 +743,7 @@ class BBCode {
     //
     // Note that htmlspecialchars() is still used directly for doing things like
     // cleaning up URLs in tags; this function is applied to *plain* *text* *only*.
-    function HTMLEncode($string) {
+    public function htmlEncode($string) {
         if (!$this->allow_ampersand)
             return htmlspecialchars($string);
         else
@@ -756,7 +756,7 @@ class BBCode {
     // Replace < and > and & and " with HTML-safe equivalents, and replace
     // smileys like :-) with <img /> tags, and replace any embedded URLs
     // with <a href=...>...</a> links.
-    function FixupOutput($string) {
+    public function fixupOutput($string) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('FixupOutput');
 
@@ -765,7 +765,7 @@ class BBCode {
         if (!$this->detect_urls) {
             // Easy case:  No URL-decoding, so don't take the time to do it.
             $BBCode_Profiler->End('FixupOutput');
-            $output = $this->Internal_ProcessSmileys($string);
+            $output = $this->processSmileys($string);
             $BBCode_Profiler->Begin('FixupOutput');
         } else {
             // Extract out any embedded URLs, and then process smileys and such on
@@ -777,14 +777,14 @@ class BBCode {
             // will likely capture those before the smiley decoder ever has a chance
             // at them.  But then you didn't want a smiley named "foo.com" anyway,
             // did you?)
-            $chunks = $this->Internal_AutoDetectURLs($string);
+            $chunks = $this->autoDetectURLs($string);
             $output = [];
             if (count($chunks)) {
                 $is_a_url = false;
                 foreach ($chunks as $index => $chunk) {
                     if (!$is_a_url) {
                         $BBCode_Profiler->End('FixupOutput');
-                        $chunk = $this->Internal_ProcessSmileys($chunk);
+                        $chunk = $this->processSmileys($chunk);
                         $BBCode_Profiler->Begin('FixupOutput');
                     }
                     $output[] = $chunk;
@@ -806,19 +806,19 @@ class BBCode {
     // Go through a string containing plain text and do two things on it:
     // Replace < and > and & and " with HTML-safe equivalents, and replace
     // smileys like :-) with <img /> tags.
-    function Internal_ProcessSmileys($string) {
+    protected function processSmileys($string) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('ProcessSmileys:other');
 
         if (!$this->enable_smileys || $this->plain_mode) {
             // If smileys are turned off, don't convert them.
-            $output = $this->HTMLEncode($string);
+            $output = $this->htmlEncode($string);
         } else {
             // If the smileys need to be computed, process them now.
             if ($this->smiley_regex === false) {
                 $BBCode_Profiler->End('ProcessSmileys:other');
                 $BBCode_Profiler->Begin('ProcessSmileys:rebuild');
-                $this->Internal_RebuildSmileys();
+                $this->rebuildSmileys();
                 $BBCode_Profiler->End('ProcessSmileys:rebuild');
                 $BBCode_Profiler->Begin('ProcessSmileys:other');
             }
@@ -833,7 +833,7 @@ class BBCode {
             if (count($tokens) <= 1) {
                 // Special (common) case:  This skips the smiley constructor if there
                 // were no smileys found, which is most of the time.
-                $output = $this->HTMLEncode($string);
+                $output = $this->htmlEncode($string);
             } else {
                 $output = "";
                 $is_a_smiley = false;
@@ -841,7 +841,7 @@ class BBCode {
                 foreach ($tokens as $token) {
                     if (!$is_a_smiley) {
                         // For non-smiley text, we just pass it through htmlspecialchars.
-                        $output .= $this->HTMLEncode($token);
+                        $output .= $this->htmlEncode($token);
                     } else {
                         $alt = htmlspecialchars($token);
                         if ($smiley_count < $this->max_smileys || $this->max_smileys < 0) {
@@ -864,7 +864,7 @@ class BBCode {
     }
 
 
-    function Internal_RebuildSmileys() {
+    protected function rebuildSmileys() {
         // Construct the $this->smiley_regex that can recognize all
         // of the smileys.  This will save us a lot of computation time
         // in $this->Parse() if multiple BBCode strings are being
@@ -907,7 +907,7 @@ class BBCode {
     //
     // Note that the input string is plain text, not HTML or BBCode.  The return value
     // must be an array of alternating pairs of plain text (even indexes) and HTML (odd indexes).
-    function Internal_AutoDetectURLs($string) {
+    protected function autoDetectURLs($string) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('AutoDetectURLs');
 
@@ -988,7 +988,7 @@ class BBCode {
                     $params['url'] = $url;
                     $params['link'] = $url;
                     $params['text'] = $token;
-                    $output[$index] = $this->FillTemplate($this->url_pattern, $params);
+                    $output[$index] = $this->fillTemplate($this->url_pattern, $params);
                 }
 
                 $is_a_url = !$is_a_url;
@@ -1029,7 +1029,7 @@ class BBCode {
     //
     // Note that only one of the e, h, k, or u "formatting flags" may be specified;
     // these flags are mutually-exclusive.
-    function FillTemplate($template, $insert_array, $default_array = []) {
+    public function fillTemplate($template, $insert_array, $default_array = []) {
         $pieces = preg_split('/(\{\$[a-zA-Z0-9_.:\/-]+\})/', $template, -1, PREG_SPLIT_DELIM_CAPTURE);
 
         // Special (common) high-speed case:  No inserts found in the template.
@@ -1103,9 +1103,9 @@ class BBCode {
                     if (isset($flags['b']))
                         $value = basename($value);
                     if (isset($flags['e']))
-                        $value = $this->HTMLEncode($value);
+                        $value = $this->htmlEncode($value);
                     else if (isset($flags['k']))
-                        $value = $this->Wikify($value);
+                        $value = $this->wikify($value);
                     else if (isset($flags['h']))
                         $value = htmlspecialchars($value);
                     else if (isset($flags['u']))
@@ -1134,7 +1134,7 @@ class BBCode {
     // Collect a series of text strings from a token stack and return them as a
     // single string.  We use output buffering because it seems to produce slightly
     // more efficient string concatenation.
-    function Internal_CollectText($array, $start = 0) {
+    protected function collectText($array, $start = 0) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('CollectText');
 
@@ -1150,7 +1150,7 @@ class BBCode {
     }
 
 
-    function Internal_CollectTextReverse($array, $start = 0, $end = 0) {
+    protected function collectTextReverse($array, $start = 0, $end = 0) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('CollectTextReverse');
 
@@ -1173,14 +1173,14 @@ class BBCode {
     // they're not to be outputted as plain text:  They're fully legit, and
     // need to be processed with the plain text after them as their body.
     // This returns a list of tokens in the REVERSE of output order.
-    function Internal_GenerateOutput($pos) {
+    protected function generateOutput($pos) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('GenerateOutput');
 
         Debugger::debug("<b>Internal_GenerateOutput:</b> from=$pos len=".(count($this->stack) - $pos)
             ."<br>\n"
             ."<b>Internal_GenerateOutput:</b> Stack contents: <tt>"
-            .$this->Internal_DumpStack()."</tt><br>\n");
+            .$this->dumpStack()."</tt><br>\n");
         $output = [];
         while (count($this->stack) > $pos) {
             $token = array_pop($this->stack);
@@ -1234,22 +1234,22 @@ class BBCode {
                         $this->lost_start_tags[$name]++;
                     }
 
-                    $end = $this->Internal_CleanupWSByIteratingPointer(@$rule['before_endtag'], 0, $output);
-                    $this->Internal_CleanupWSByPoppingStack(@$rule['after_tag'], $output);
-                    $tag_body = $this->Internal_CollectTextReverse($output, count($output) - 1, $end);
+                    $end = $this->cleanupWSByIteratingPointer(@$rule['before_endtag'], 0, $output);
+                    $this->cleanupWSByPoppingStack(@$rule['after_tag'], $output);
+                    $tag_body = $this->collectTextReverse($output, count($output) - 1, $end);
 
                     // Note:  We don't process 'after_endtag' because the invisible end tag
                     // always butts up against another tag, so there's *never* any whitespace
                     // after it.  Attempting to process 'after_endtag' would just be a waste
                     // of time because it'd never match.  But 'before_tag' is useful, though.
-                    $this->Internal_CleanupWSByPoppingStack(@$rule['before_tag'], $this->stack);
+                    $this->cleanupWSByPoppingStack(@$rule['before_tag'], $this->stack);
 
                     Debugger::debug("<b>Internal_GenerateOutput:</b> optional-tag's content: <tt>"
                         .htmlspecialchars($tag_body)."</tt><br>\n");
 
-                    @$this->Internal_UpdateParamsForMissingEndTag($token[self::BBCODE_STACK_TAG]);
+                    @$this->updateParamsForMissingEndTag($token[self::BBCODE_STACK_TAG]);
 
-                    $tag_output = $this->DoTag(self::BBCODE_OUTPUT, $name, @$token[self::BBCODE_STACK_TAG]['_default'], @$token[self::BBCODE_STACK_TAG], $tag_body);
+                    $tag_output = $this->doTag(self::BBCODE_OUTPUT, $name, @$token[self::BBCODE_STACK_TAG]['_default'], @$token[self::BBCODE_STACK_TAG], $tag_body);
 
                     if ($this->debug) {
                         Debugger::debug("<b>Internal_GenerateOutput:</b> push optional-tag's output: <tt>"
@@ -1267,12 +1267,12 @@ class BBCode {
         }
         if ($this->debug) {
             Debugger::debug("<b>Internal_GenerateOutput:</b> done; output contains ".count($output)." items: <tt>"
-                .$this->Internal_DumpStack($output)."</tt><br>\n");
-            $noutput = $this->Internal_CollectTextReverse($output, count($output) - 1);
+                .$this->dumpStack($output)."</tt><br>\n");
+            $noutput = $this->collectTextReverse($output, count($output) - 1);
             Debugger::debug("<b>Internal_GenerateOutput:</b> output: <tt>".htmlspecialchars($noutput)."</tt><br>\n");
-            Debugger::debug("<b>Internal_GenerateOutput:</b> Stack contents: <tt>".$this->Internal_DumpStack()."</tt><br>\n");
+            Debugger::debug("<b>Internal_GenerateOutput:</b> Stack contents: <tt>".$this->dumpStack()."</tt><br>\n");
         }
-        $this->Internal_ComputeCurrentClass();
+        $this->computeCurrentClass();
         $BBCode_Profiler->End('GenerateOutput');
         return $output;
     }
@@ -1292,7 +1292,7 @@ class BBCode {
     //
     // This returns true if the stack could be rewound to a safe state, or false
     // if no such "safe state" existed.
-    function Internal_RewindToClass($class_list) {
+    protected function rewindToClass($class_list) {
         if ($this->debug) {
             Debugger::debug("<b>Internal_RewindToClass:</b> stack has ".count($this->stack)
                 ." items; allowed classes are: <tt> ");
@@ -1316,7 +1316,7 @@ class BBCode {
         // Convert any tags on the stack from $pos+1 to the top, inclusive, to
         // plain text tokens, possibly processing any tags where the end tags
         // are optional.
-        $output = $this->Internal_GenerateOutput($pos + 1);
+        $output = $this->generateOutput($pos + 1);
 
         // Push the clean tokens back onto the stack.
         while (count($output)) {
@@ -1337,7 +1337,7 @@ class BBCode {
 
     // We've found an end tag with the given name, so walk backward until we
     // find the start tag, and then output the contents.
-    function Internal_FinishTag($tag_name) {
+    protected function finishTag($tag_name) {
         if ($this->debug) {
             Debugger::debug("<b>Internal_FinishTag:</b> stack has ".count($this->stack)
                 ." items; searching for start tag for <tt>[/"
@@ -1379,9 +1379,9 @@ class BBCode {
         // $pos forward.  (We add one because we've actually rewound the stack
         // to the start tag itself.)
         if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['after_tag'])) {
-            $newpos = $this->Internal_CleanupWSByIteratingPointer(@$this->tag_rules[$tag_name]['after_tag'], $pos + 1, $this->stack);
+            $newpos = $this->cleanupWSByIteratingPointer(@$this->tag_rules[$tag_name]['after_tag'], $pos + 1, $this->stack);
         } else {
-            $newpos = $this->Internal_CleanupWSByIteratingPointer(null, $pos + 1, $this->stack);
+            $newpos = $this->cleanupWSByIteratingPointer(null, $pos + 1, $this->stack);
         }
         $delta = $newpos - ($pos + 1);
 
@@ -1394,15 +1394,15 @@ class BBCode {
         // Output everything on the stack from $pos to the top, inclusive, as
         // plain text, and then return it as a string, leaving the start tag on
         // the top of the stack.
-        $output = $this->Internal_GenerateOutput($newpos);
+        $output = $this->generateOutput($newpos);
 
         // Clean off any whitespace before the end tag that doesn't belong there.
         if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['before_endtag'])) {
-            $newend = $this->Internal_CleanupWSByIteratingPointer($this->tag_rules[$tag_name]['before_endtag'], 0, $output);
+            $newend = $this->cleanupWSByIteratingPointer($this->tag_rules[$tag_name]['before_endtag'], 0, $output);
         } else {
-            $newend = $this->Internal_CleanupWSByIteratingPointer(null, 0, $output);
+            $newend = $this->cleanupWSByIteratingPointer(null, 0, $output);
         }
-        $output = $this->Internal_CollectTextReverse($output, count($output) - 1, $newend);
+        $output = $this->collectTextReverse($output, count($output) - 1, $newend);
 
         if ($this->debug)
             Debugger::debug("<b>Internal_FinishTag:</b> whitespace cleanup: popping $delta items<br>\n");
@@ -1410,7 +1410,7 @@ class BBCode {
         // Clean up any 'after_tag' whitespace we skipped.
         while ($delta-- > 0)
             array_pop($this->stack);
-        $this->Internal_ComputeCurrentClass();
+        $this->computeCurrentClass();
 
         if ($this->debug)
             Debugger::debug("<b>Internal_FinishTag:</b> output: <tt>".htmlspecialchars($output)."</tt><br>\n");
@@ -1420,7 +1420,7 @@ class BBCode {
 
 
     // Recompute the current class, based on the class of the stack's top element.
-    function Internal_ComputeCurrentClass() {
+    protected function computeCurrentClass() {
         if (count($this->stack) > 0)
             $this->current_class = $this->stack[count($this->stack) - 1][self::BBCODE_STACK_CLASS];
         else
@@ -1435,7 +1435,7 @@ class BBCode {
 
     // Given a stack of tokens in $array, write it to a string (possibly with HTML
     // color and style encodings for readability, if $raw is false).
-    function Internal_DumpStack($array = false, $raw = false) {
+    protected function dumpStack($array = false, $raw = false) {
         if (!$raw)
             $string = "<span style='color: #00C;'>";
         else
@@ -1472,7 +1472,7 @@ class BBCode {
     //  Whitespace cleanup routines (internal).
     // Walk down from the top of the stack, and remove whitespace/newline tokens from
     // the top according to the rules in the given pattern.
-    function Internal_CleanupWSByPoppingStack($pattern, &$array) {
+    protected function cleanupWSByPoppingStack($pattern, &$array) {
         if ($this->debug) {
             Debugger::debug("<b>Internal_CleanupWSByPoppingStack:</b> array has ".count($array)
                 ." items; pattern=\"<tt>"
@@ -1502,13 +1502,13 @@ class BBCode {
 
         if ($this->debug) {
             Debugger::debug("<b>Internal_CleanupWSByPoppingStack:</b> array now has ".count($array)." items<br>\n");
-            Debugger::debug("<b>Internal_CleanupWSByPoppingStack:</b> array: <tt>".$this->Internal_DumpStack($array)
+            Debugger::debug("<b>Internal_CleanupWSByPoppingStack:</b> array: <tt>".$this->dumpStack($array)
                 ."</tt><br>\n");
         }
 
         if (count($array) != $oldlen) {
             // We only recompute the class if something actually changed.
-            $this->Internal_ComputeCurrentClass();
+            $this->computeCurrentClass();
         }
     }
 
@@ -1516,7 +1516,7 @@ class BBCode {
 
     // Read tokens from the input, and remove whitespace/newline tokens from the input
     // according to the rules in the given pattern.
-    function Internal_CleanupWSByEatingInput($pattern) {
+    protected function cleanupWSByEatingInput($pattern) {
         global $BBCode_Profiler;
 
         if ($this->debug) {
@@ -1570,7 +1570,7 @@ class BBCode {
 
     // Read tokens from the given position in the stack, going forward as we match
     // the rules in the given pattern.  Returns the first position *after* the pattern.
-    function Internal_CleanupWSByIteratingPointer($pattern, $pos, $array) {
+    protected function cleanupWSByIteratingPointer($pattern, $pos, $array) {
         if ($this->debug) {
             Debugger::debug("<b>Internal_CleanupWSByIteratingPointer:</b> pointer is $pos; pattern=\"<tt>"
                 .htmlspecialchars($pattern)."</tt>\"<br>\n");
@@ -1598,7 +1598,7 @@ class BBCode {
         if ($this->debug) {
             Debugger::debug("<b>Internal_CleanupWSByIteratingPointer:</b> pointer is now $pos<br>\n"
                 ."<b>Internal_CleanupWSByIteratingPointer:</b> array: <tt>"
-                .$this->Internal_DumpStack($array)."</tt><br>\n");
+                .$this->dumpStack($array)."</tt><br>\n");
         }
         return $pos;
     }
@@ -1608,7 +1608,7 @@ class BBCode {
     // We have a string that's too long, so chop it off at a suitable break so that it's
     // no longer than $limit characters, if at all possible (if there's nowhere to break
     // before that, we just chop at $limit).
-    function Internal_LimitText($string, $limit) {
+    protected function limitText($string, $limit) {
         if ($this->debug) {
             Debugger::debug("<b>Internal_LimitText:</b> chopping string of length "
                 .strlen($string)." at $limit.<br>\n");
@@ -1630,8 +1630,8 @@ class BBCode {
 
     // If we've reached the text limit, clean up the stack, push the limit tail,
     // set the we-hit-the-limit flag, and return.
-    function Internal_DoLimit() {
-        $this->Internal_CleanupWSByPoppingStack("a", $this->stack);
+    protected function doLimit() {
+        $this->cleanupWSByPoppingStack("a", $this->stack);
 
         if (strlen($this->limit_tail) > 0) {
             $this->stack[] = Array(
@@ -1670,7 +1670,7 @@ class BBCode {
     // For BBCODE_CHECK, this must return true (if the tag definition is valid) or false
     // (if the tag definition is not valid); for BBCODE_OUTPUT, this function must return
     // HTML output.
-    function DoTag($action, $tag_name, $default_value, $params, $contents) {
+    public function doTag($action, $tag_name, $default_value, $params, $contents) {
         $tag_rule = @$this->tag_rules[$tag_name];
 
         switch ($action) {
@@ -1791,7 +1791,7 @@ class BBCode {
                         $link = $possible_content = "";
                         foreach ($tag_rule['plain_link'] as $possible_content) {
                             if ($possible_content == '_content' && strlen($contents) > 0) {
-                                $link = $this->UnHTMLEncode(strip_tags($contents));
+                                $link = $this->unHTMLEncode(strip_tags($contents));
                                 break;
                             }
                             if (isset($params[$possible_content]) && strlen($params[$possible_content]) > 0) {
@@ -1804,8 +1804,8 @@ class BBCode {
                             $params = [];
                         $params['link'] = $link;
                         $params['url'] = $link;
-                        $start = $this->FillTemplate($start, $params);
-                        $end = $this->FillTemplate($end, $params);
+                        $start = $this->fillTemplate($start, $params);
+                        $end = $this->fillTemplate($end, $params);
                     }
 
                     // Construct the plain output using the available content.
@@ -1820,7 +1820,7 @@ class BBCode {
                         break;
 
                     case self::BBCODE_MODE_ENHANCED:
-                        $result = $this->Internal_DoEnhancedTag($tag_rule, $params, $contents);
+                        $result = $this->doEnhancedTag($tag_rule, $params, $contents);
                         break;
 
                     case self::BBCODE_MODE_INTERNAL:
@@ -1860,7 +1860,7 @@ class BBCode {
     // default value, '_name' for its name, and '_content' for its contents (body).
     // Note that in enhanced mode, the tag parameters' keys must match [a-zA-Z0-9_:-]+,
     // that is, alphanumeric, with underscore, colon, or hyphen.
-    function Internal_DoEnhancedTag($tag_rule, $params, $contents) {
+    protected function doEnhancedTag($tag_rule, $params, $contents) {
 
         // Set up the special "_content" and "_defaultcontent" parameters.
         $params['_content'] = $contents;
@@ -1869,15 +1869,15 @@ class BBCode {
         // Now use common template-formatting logic.
         if (isset($tag_rule['template'])) {
             if (isset($tag_rule['default'])) {
-                return $this->FillTemplate($tag_rule['template'], $params, $tag_rule['default']);
+                return $this->fillTemplate($tag_rule['template'], $params, $tag_rule['default']);
             } else {
-                return $this->FillTemplate($tag_rule['template'], $params, null);
+                return $this->fillTemplate($tag_rule['template'], $params, null);
             }
         } else {
             if (isset($tag_rule['default'])) {
-                return $this->FillTemplate(null, $params, $tag_rule['default']);
+                return $this->fillTemplate(null, $params, $tag_rule['default']);
             } else {
-                return $this->FillTemplate(null, $params, null);
+                return $this->fillTemplate(null, $params, null);
             }
         }
     }
@@ -1889,7 +1889,7 @@ class BBCode {
     // If an end-tag is required/optional but missing, we simulate it here so that the
     // rule handlers still see a valid '_endtag' parameter.  This way, all rules always
     // see valid '_endtag' parameters except for rules for isolated tags.
-    function Internal_UpdateParamsForMissingEndTag(&$params) {
+    protected function updateParamsForMissingEndTag(&$params) {
         switch ($this->tag_marker) {
             case '[':
                 $tail_marker = ']';
@@ -1912,7 +1912,7 @@ class BBCode {
 
 
     // Process an isolated tag, a tag that is not allowed to have an end tag.
-    function Internal_ProcessIsolatedTag($tag_name, $tag_params, $tag_rule) {
+    protected function processIsolatedTag($tag_name, $tag_params, $tag_rule) {
         if ($this->debug) {
             Debugger::debug("<b>ProcessIsolatedTag:</b> tag <tt>[".htmlspecialchars($tag_name)
                 ."]</tt> is isolated: no end tag allowed, so processing immediately.<br>\n");
@@ -1920,23 +1920,23 @@ class BBCode {
 
         // Ask this tag if its attributes are valid; this gives the tag
         // the option to say, no, I'm broken, don't try to process me.
-        if (!$this->DoTag(self::BBCODE_CHECK, $tag_name, @$tag_params['_default'], $tag_params, "")) {
+        if (!$this->doTag(self::BBCODE_CHECK, $tag_name, @$tag_params['_default'], $tag_params, "")) {
             if ($this->debug) {
                 Debugger::debug("<b>ProcessIsolatedTag:</b> isolated tag <tt>[".htmlspecialchars($tag_name)
                     ."]</tt> rejected its parameters; outputting as text after fixup.<br>\n");
             }
             $this->stack[] = Array(
                 self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+                self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
                 self::BBCODE_STACK_TAG => false,
                 self::BBCODE_STACK_CLASS => $this->current_class,
             );
             return;
         }
 
-        $this->Internal_CleanupWSByPoppingStack(@$tag_rule['before_tag'], $this->stack);
-        $output = $this->DoTag(self::BBCODE_OUTPUT, $tag_name, @$tag_params['_default'], $tag_params, "");
-        $this->Internal_CleanupWSByEatingInput(@$tag_rule['after_tag']);
+        $this->cleanupWSByPoppingStack(@$tag_rule['before_tag'], $this->stack);
+        $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, @$tag_params['_default'], $tag_params, "");
+        $this->cleanupWSByEatingInput(@$tag_rule['after_tag']);
 
         if ($this->debug) {
             Debugger::debug("<b>ProcessIsolatedTag:</b> isolated tag <tt>[".htmlspecialchars($tag_name)
@@ -1953,7 +1953,7 @@ class BBCode {
 
 
     // Process a verbatim tag, a tag whose contents (body) must not be processed at all.
-    function Internal_ProcessVerbatimTag($tag_name, $tag_params, $tag_rule) {
+    protected function processVerbatimTag($tag_name, $tag_params, $tag_rule) {
 
         // This tag is a special type that disallows all other formatting
         // tags within it and wants its contents reproduced verbatim until
@@ -1986,17 +1986,17 @@ class BBCode {
             // If this token pushes us past the output limit, split it up on a whitespace
             // boundary, add as much as we can, and then abort.
             if ($this->output_limit > 0 && $this->text_length + strlen($this->lexer->text) >= $this->output_limit) {
-                $text = $this->Internal_LimitText($this->lexer->text, $this->output_limit - $this->text_length);
+                $text = $this->limitText($this->lexer->text, $this->output_limit - $this->text_length);
                 if (strlen($text) > 0) {
                     $this->text_length += strlen($text);
                     $this->stack[] = Array(
                         self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                        self::BBCODE_STACK_TEXT => $this->FixupOutput($text),
+                        self::BBCODE_STACK_TEXT => $this->fixupOutput($text),
                         self::BBCODE_STACK_TAG => false,
                         self::BBCODE_STACK_CLASS => $this->current_class,
                     );
                 }
-                $this->Internal_DoLimit();
+                $this->doLimit();
                 break;
             }
             $this->text_length += strlen($this->lexer->text);
@@ -2027,7 +2027,7 @@ class BBCode {
 
             $this->stack[] = Array(
                 self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+                self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
                 self::BBCODE_STACK_TAG => false,
                 self::BBCODE_STACK_CLASS => $this->current_class,
             );
@@ -2039,37 +2039,37 @@ class BBCode {
 
         // Clean up whitespace everywhere except before the start tag.
         if (isset($tag_rule['after_tag'])) {
-            $newstart = $this->Internal_CleanupWSByIteratingPointer($tag_rule['after_tag'], $start, $this->stack);
+            $newstart = $this->cleanupWSByIteratingPointer($tag_rule['after_tag'], $start, $this->stack);
         } else {
-            $newstart = $this->Internal_CleanupWSByIteratingPointer(null, $start, $this->stack);
+            $newstart = $this->cleanupWSByIteratingPointer(null, $start, $this->stack);
         }
         if (isset($tag_rule['before_endtag'])) {
-            $this->Internal_CleanupWSByPoppingStack($tag_rule['before_endtag'], $this->stack);
+            $this->cleanupWSByPoppingStack($tag_rule['before_endtag'], $this->stack);
         } else {
-            $this->Internal_CleanupWSByPoppingStack(null, $this->stack);
+            $this->cleanupWSByPoppingStack(null, $this->stack);
         }
         if (isset($tag_rule['after_endtag'])) {
-            $this->Internal_CleanupWSByEatingInput($tag_rule['after_endtag']);
+            $this->cleanupWSByEatingInput($tag_rule['after_endtag']);
         } else {
-            $this->Internal_CleanupWSByEatingInput(null);
+            $this->cleanupWSByEatingInput(null);
         }
 
         // Collect the output from $newstart to the top of the stack, and then
         // quickly pop off all of those tokens.
-        $content = $this->Internal_CollectText($this->stack, $newstart);
+        $content = $this->collectText($this->stack, $newstart);
         if ($this->debug) {
             Debugger::debug("<b>Internal_ProcessVerbatimTag:</b> removing stack elements starting at $start (stack has "
                 .count($this->stack)." elements).<br>\n");
         }
         array_splice($this->stack, $start);
-        $this->Internal_ComputeCurrentClass();
+        $this->computeCurrentClass();
 
         // Clean up whitespace before the start tag (the tag was never pushed
         // onto the stack itself, so we don't need to remove it).
         if (isset($tag_rule['before_tag'])) {
-            $this->Internal_CleanupWSByPoppingStack($tag_rule['before_tag'], $this->stack);
+            $this->cleanupWSByPoppingStack($tag_rule['before_tag'], $this->stack);
         } else {
-            $this->Internal_CleanupWSByPoppingStack(null, $this->stack);
+            $this->cleanupWSByPoppingStack(null, $this->stack);
         }
 
         // Found the end tag, so process this tag immediately with
@@ -2079,7 +2079,7 @@ class BBCode {
         // verbatim contents, so they're going to get it.
         $tag_params['_endtag'] = $end_tag_params;
         $tag_params['_hasend'] = true;
-        $output = $this->DoTag(self::BBCODE_OUTPUT, $tag_name, @$tag_params['_default'], $tag_params, $content);
+        $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, @$tag_params['_default'], $tag_params, $content);
 
         if ($this->debug) {
             Debugger::debug("<b>Internal_ProcessVerbatimTag:</b> end of verbatim <tt>[".htmlspecialchars($tag_name)
@@ -2097,7 +2097,7 @@ class BBCode {
 
 
     // Called when the parser has read a self::BBCODE_TAG token.
-    function Internal_ParseStartTagToken() {
+    protected function parseStartTagToken() {
 
         // Tags are somewhat complicated, because they have to do several things
         // all at once.  First, let's look up what we know about the tag we've
@@ -2119,7 +2119,7 @@ class BBCode {
             // though it was plain text.
             $this->stack[] = Array(
                 self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+                self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
                 self::BBCODE_STACK_TAG => false,
                 self::BBCODE_STACK_CLASS => $this->current_class,
             );
@@ -2134,7 +2134,7 @@ class BBCode {
                     // though it was plain text.
                     $this->stack[] = Array(
                         self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                        self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+                        self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
                         self::BBCODE_STACK_TAG => false,
                         self::BBCODE_STACK_CLASS => $this->current_class,
                     );
@@ -2156,14 +2156,14 @@ class BBCode {
                     ."]</tt> is disallowed inside class <tt>".htmlspecialchars($this->current_class)
                     ."</tt>; rewinding stack to a safe class.<br>\n");
             }
-            if (!$this->Internal_RewindToClass($allow_in)) {
+            if (!$this->rewindToClass($allow_in)) {
                 if ($this->debug) {
                     Debugger::debug("<b>Internal_ParseStartTagToken:</b> no safe class exists; rejecting"
                         ." this tag as text after fixup.<br>\n");
                 }
                 $this->stack[] = Array(
                     self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                    self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+                    self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
                     self::BBCODE_STACK_TAG => false,
                     self::BBCODE_STACK_CLASS => $this->current_class,
                 );
@@ -2180,7 +2180,7 @@ class BBCode {
 
         if ($end_tag == self::BBCODE_PROHIBIT) {
             // No end tag, so process this tag RIGHT NOW.
-            $this->Internal_ProcessIsolatedTag($tag_name, $tag_params, $tag_rule);
+            $this->processIsolatedTag($tag_name, $tag_params, $tag_rule);
             return;
         }
 
@@ -2194,14 +2194,14 @@ class BBCode {
 
         // Ask this tag if its attributes are valid; this gives the tag the option
         // to say, no, I'm broken, don't try to process me.
-        if (!$this->DoTag(self::BBCODE_CHECK, $tag_name, @$tag_params['_default'], $tag_params, "")) {
+        if (!$this->doTag(self::BBCODE_CHECK, $tag_name, @$tag_params['_default'], $tag_params, "")) {
             if ($this->debug) {
                 Debugger::debug("<b>Internal_ParseStartTagToken:</b> tag <tt>[".htmlspecialchars($tag_name)
                     ."]</tt> rejected its parameters; outputting as text after fixup.<br>\n");
             }
             $this->stack[] = Array(
                 self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+                self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
                 self::BBCODE_STACK_TAG => false,
                 self::BBCODE_STACK_CLASS => $this->current_class,
             );
@@ -2211,7 +2211,7 @@ class BBCode {
         if (isset($tag_rule['content']) && $tag_rule['content'] == self::BBCODE_VERBATIM) {
             // Verbatim tags have to be handled specially, since they consume successive
             // input immediately.
-            $this->Internal_ProcessVerbatimTag($tag_name, $tag_params, $tag_rule);
+            $this->processVerbatimTag($tag_name, $tag_params, $tag_rule);
             return;
         }
 
@@ -2232,7 +2232,7 @@ class BBCode {
 
         $this->stack[] = Array(
             self::BBCODE_STACK_TOKEN => $this->lexer->token,
-            self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+            self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
             self::BBCODE_STACK_TAG => $this->lexer->tag,
             self::BBCODE_STACK_CLASS => ($this->current_class = $newclass),
         );
@@ -2245,7 +2245,7 @@ class BBCode {
 
 
     // Called when the parser has read a self::BBCODE_ENDTAG token.
-    function Internal_ParseEndTagToken() {
+    protected function parseEndTagToken() {
 
         $tag_params = $this->lexer->tag;
         $tag_name = @$tag_params['_name'];
@@ -2258,7 +2258,7 @@ class BBCode {
         // start tag for it anywhere.  If we find one, we pack everything between
         // them as output HTML, and then have the tag format itself with that
         // content.
-        $contents = $this->Internal_FinishTag($tag_name);
+        $contents = $this->finishTag($tag_name);
         if ($contents === false) {
             // There's no start tag for this --- unless there was and it was in a bad
             // place.  If there's a start tag we can't reach, then swallow this end tag;
@@ -2272,7 +2272,7 @@ class BBCode {
             } else {
                 $this->stack[] = Array(
                     self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                    self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+                    self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
                     self::BBCODE_STACK_TAG => false,
                     self::BBCODE_STACK_CLASS => $this->current_class,
                 );
@@ -2287,20 +2287,20 @@ class BBCode {
         // done when the tag was pushed onto the stack.
         $start_tag_node = array_pop($this->stack);
         $start_tag_params = $start_tag_node[self::BBCODE_STACK_TAG];
-        $this->Internal_ComputeCurrentClass();
+        $this->computeCurrentClass();
 
         if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['before_tag'])) {
-            $this->Internal_CleanupWSByPoppingStack($this->tag_rules[$tag_name]['before_tag'], $this->stack);
+            $this->cleanupWSByPoppingStack($this->tag_rules[$tag_name]['before_tag'], $this->stack);
         } else {
-            $this->Internal_CleanupWSByPoppingStack(null, $this->stack);
+            $this->cleanupWSByPoppingStack(null, $this->stack);
         }
         $start_tag_params['_endtag'] = $tag_params['_tag'];
         $start_tag_params['_hasend'] = true;
-        $output = $this->DoTag(self::BBCODE_OUTPUT, $tag_name, @$start_tag_params['_default'], $start_tag_params, $contents);
+        $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, @$start_tag_params['_default'], $start_tag_params, $contents);
         if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['after_endtag'])) {
-            $this->Internal_CleanupWSByEatingInput(@$this->tag_rules[$tag_name]['after_endtag']);
+            $this->cleanupWSByEatingInput(@$this->tag_rules[$tag_name]['after_endtag']);
         } else {
-            $this->Internal_CleanupWSByEatingInput(null);
+            $this->cleanupWSByEatingInput(null);
         }
 
         if ($this->debug) {
@@ -2322,10 +2322,10 @@ class BBCode {
     //-----------------------------------------------------------------------------
     //  Core parser.  This is where all the magic begins and ends.
     // Core parsing routine.  Call with a BBCode string, and it returns an HTML string.
-    function Parse($string) {
+    public function parse($string) {
         global $BBCode_Profiler;
         $BBCode_Profiler = new Profiler;
-        $BBCode_Profiler->Begin('_Parse');
+        $BBCode_Profiler->begin('_Parse');
 
 
         Debugger::debug(
@@ -2334,7 +2334,7 @@ class BBCode {
             "</tt><br>\n"
         );
 
-        $BBCode_Profiler->Begin('Lexer:Split');
+        $BBCode_Profiler->begin('Lexer:Split');
 
         // The lexer is responsible for converting individual characters to tokens,
         // and uses preg_split to do most of its magic.  Because it uses preg_split
@@ -2344,7 +2344,7 @@ class BBCode {
         $this->lexer = new BBCodeLexer($string, $this->tag_marker);
         $this->lexer->debug = $this->debug;
 
-        $BBCode_Profiler->End('Lexer:Split');
+        $BBCode_Profiler->end('Lexer:Split');
 
         // If we're fuzzily limiting the text length, see if we need to actually
         // cut it off, or if it's close enough to not be worth the effort.
@@ -2363,7 +2363,7 @@ class BBCode {
                 // We're using fuzzy precision, so make a guess as to how long the text is,
                 // and then decide whether we can let this string slide through based on the
                 // limit precision.
-                $guess_length = $this->lexer->GuessTextLength();
+                $guess_length = $this->lexer->guessTextLength();
                 if ($this->debug)
                     Debugger::debug("<b>Parse:</b> Maybe not:  Fuzzy limiting enabled, and approximate text length is $guess_length.<br>\n");
                 if ($guess_length < $this->output_limit * ($this->limit_precision + 1.0)) {
@@ -2394,7 +2394,7 @@ class BBCode {
 
         // Remove any initial whitespace in pre-trim mode.
         if (strlen($this->pre_trim) > 0)
-            $this->Internal_CleanupWSByEatingInput($this->pre_trim);
+            $this->cleanupWSByEatingInput($this->pre_trim);
 
         // In plain mode, we generate newlines instead of <br> tags.
         $newline = $this->plain_mode ? "\n" : "<br>\n";
@@ -2404,13 +2404,13 @@ class BBCode {
         // keep the text/whitespace/newline code here for performance reasons.
         while (true) {
 //            $BBCode_Profiler->Begin('Lexer:NextToken');
-            if (($token_type = $this->lexer->NextToken()) == self::BBCODE_EOI) {
+            if (($token_type = $this->lexer->nextToken()) == self::BBCODE_EOI) {
 //                $BBCode_Profiler->End('Lexer:NextToken');
                 break;
             }
 
             if ($this->debug)
-                Debugger::debug("<b>Parse:</b> Stack contents: <tt>".$this->Internal_DumpStack()."</tt><br>\n");
+                Debugger::debug("<b>Parse:</b> Stack contents: <tt>".$this->dumpStack()."</tt><br>\n");
 
             switch ($token_type) {
 
@@ -2425,17 +2425,17 @@ class BBCode {
                     // If this token pushes us past the output limit, split it up on a whitespace
                     // boundary, add as much as we can, and then abort.
                     if ($this->output_limit > 0 && $this->text_length + strlen($this->lexer->text) >= $this->output_limit) {
-                        $text = $this->Internal_LimitText($this->lexer->text, $this->output_limit - $this->text_length);
+                        $text = $this->limitText($this->lexer->text, $this->output_limit - $this->text_length);
                         if (strlen($text) > 0) {
                             $this->text_length += strlen($text);
                             $this->stack[] = Array(
                                 self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                                self::BBCODE_STACK_TEXT => $this->FixupOutput($text),
+                                self::BBCODE_STACK_TEXT => $this->fixupOutput($text),
                                 self::BBCODE_STACK_TAG => false,
                                 self::BBCODE_STACK_CLASS => $this->current_class,
                             );
                         }
-                        $this->Internal_DoLimit();
+                        $this->doLimit();
                         break 2;
                     }
                     $this->text_length += strlen($this->lexer->text);
@@ -2443,7 +2443,7 @@ class BBCode {
                     // Push this text token onto the stack.
                     $this->stack[] = Array(
                         self::BBCODE_STACK_TOKEN => self::BBCODE_TEXT,
-                        self::BBCODE_STACK_TEXT => $this->FixupOutput($this->lexer->text),
+                        self::BBCODE_STACK_TEXT => $this->fixupOutput($this->lexer->text),
                         self::BBCODE_STACK_TAG => false,
                         self::BBCODE_STACK_CLASS => $this->current_class,
                     );
@@ -2457,7 +2457,7 @@ class BBCode {
 
                     // If this token pushes us past the output limit, don't process anything further.
                     if ($this->output_limit > 0 && $this->text_length + strlen($this->lexer->text) >= $this->output_limit) {
-                        $this->Internal_DoLimit();
+                        $this->doLimit();
                         break 2;
                     }
                     $this->text_length += strlen($this->lexer->text);
@@ -2484,7 +2484,7 @@ class BBCode {
 
                         // If this token pushes us past the output limit, don't process anything further.
                         if ($this->output_limit > 0 && $this->text_length + 1 >= $this->output_limit) {
-                            $this->Internal_DoLimit();
+                            $this->doLimit();
                             break 2;
                         }
                         $this->text_length += 1;
@@ -2504,14 +2504,14 @@ class BBCode {
                         // Any whitespace before a newline isn't worth outputting, so if there's
                         // whitespace sitting on top of the stack, remove it so that it doesn't
                         // get outputted.
-                        $this->Internal_CleanupWSByPoppingStack("s", $this->stack);
+                        $this->cleanupWSByPoppingStack("s", $this->stack);
 
                         if ($this->debug)
                             Debugger::debug("<b>Internal_ParseNewlineToken:</b> push newline.<br>\n");
 
                         // If this token pushes us past the output limit, don't process anything further.
                         if ($this->output_limit > 0 && $this->text_length + 1 >= $this->output_limit) {
-                            $this->Internal_DoLimit();
+                            $this->doLimit();
                             break 2;
                         }
                         $this->text_length += 1;
@@ -2526,18 +2526,18 @@ class BBCode {
 
                         // Any whitespace after a newline is meaningless, so if there's whitespace
                         // lingering on the input after this, remove it now.
-                        $this->Internal_CleanupWSByEatingInput("s");
+                        $this->cleanupWSByEatingInput("s");
                     }
                     break;
 
                 case self::BBCODE_TAG:
                     // Use a separate function to handle tags, because they're complicated.
-                    $this->Internal_ParseStartTagToken();
+                    $this->parseStartTagToken();
                     break;
 
                 case self::BBCODE_ENDTAG:
                     // Use a separate function to handle end tags, because they're complicated.
-                    $this->Internal_ParseEndTagToken();
+                    $this->parseEndTagToken();
                     break;
 
                 default:
@@ -2550,12 +2550,12 @@ class BBCode {
 
         // Remove any trailing whitespace in post-trim mode.
         if (strlen($this->post_trim) > 0)
-            $this->Internal_CleanupWSByPoppingStack($this->post_trim, $this->stack);
+            $this->cleanupWSByPoppingStack($this->post_trim, $this->stack);
 
         // Everything left on the stack should be HTML (or broken tags), so pop it
         // all off as plain text, concatenate it, and return it.
-        $result = $this->Internal_GenerateOutput(0);
-        $result = $this->Internal_CollectTextReverse($result, count($result) - 1);
+        $result = $this->generateOutput(0);
+        $result = $this->collectTextReverse($result, count($result) - 1);
 
         // If we changed the limit (in fuzzy-limit mode), set it back.
         $this->output_limit = $old_output_limit;
@@ -2579,7 +2579,7 @@ class BBCode {
             );
         }
 
-        $BBCode_Profiler->End('_Parse');
+        $BBCode_Profiler->end('_Parse');
 
         return $result;
     }

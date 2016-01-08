@@ -424,7 +424,7 @@ class BBCodeLibrary {
      *
      * @return string Full HTML url
      */
-    function DoURL($bbcode, $action, $name, $default, $params, $content) {
+    public function doURL($bbcode, $action, $name, $default, $params, $content) {
         // We can't check this with BBCODE_CHECK because we may have no URL
         // before the content has been processed.
         if ($action == BBCode::BBCODE_CHECK) {
@@ -433,9 +433,9 @@ class BBCodeLibrary {
 
         $url = is_string($default)
             ? $default
-            : $bbcode->UnHTMLEncode(strip_tags($content));
+            : $bbcode->unHTMLEncode(strip_tags($content));
 
-        if ($bbcode->IsValidURL($url)) {
+        if ($bbcode->isValidURL($url)) {
             if ($bbcode->debug) {
                 Debugger::debug('ISVALIDURL');
             }
@@ -466,7 +466,7 @@ class BBCodeLibrary {
      * The e-mail address must be a valid address including at least a '@' and a valid domain
      * name or IPv4 or IPv6 address after the '@'.
      *
-     * @param type $bbcode
+     * @param BBCode $bbcode
      * @param type $action
      * @param type $name
      * @param type $default
@@ -474,7 +474,7 @@ class BBCodeLibrary {
      * @param type $content
      * @return string
      */
-    function DoEmail($bbcode, $action, $name, $default, $params, $content) {
+    public function doEmail($bbcode, $action, $name, $default, $params, $content) {
         // We can't check this with BBCODE_CHECK because we may have no URL
         // before the content has been processed.
         if ($action == BBCode::BBCODE_CHECK) {
@@ -494,7 +494,7 @@ class BBCodeLibrary {
 
 
     // Format a [size] tag by producing a <span> with a style with a different font-size.
-    function DoSize($bbcode, $action, $name, $default, $params, $content) {
+    public function doSize($bbcode, $action, $name, $default, $params, $content) {
         switch ($default) {
             case '0':
                 $size = '.5em';
@@ -537,7 +537,7 @@ class BBCodeLibrary {
     // Format a [font] tag by producing a <span> with a style with a different font-family.
     // This is complicated by the fact that we have to recognize the five special font
     // names and quote all the others.
-    function DoFont($bbcode, $action, $name, $default, $params, $content) {
+    public function doFont($bbcode, $action, $name, $default, $params, $content) {
         $fonts = explode(",", $default);
         $result = "";
         $special_fonts = Array(
@@ -578,7 +578,7 @@ class BBCodeLibrary {
      * @param type $content
      * @return string
      */
-    function DoWiki($bbcode, $action, $name, $default, $params, $content) {
+    public function doWiki($bbcode, $action, $name, $default, $params, $content) {
         $name = $bbcode->Wikify($default);
 
         if ($action == BBCode::BBCODE_CHECK) {
@@ -606,13 +606,13 @@ class BBCodeLibrary {
      * @param type $content
      * @return string
      */
-    function DoImage($bbcode, $action, $name, $default, $params, $content) {
+    public function doImage($bbcode, $action, $name, $default, $params, $content) {
         // We can't validate this until we have its content.
         if ($action == BBCode::BBCODE_CHECK) {
             return true;
         }
 
-        $content = trim($bbcode->UnHTMLEncode(strip_tags($content)));
+        $content = trim($bbcode->unHTMLEncode(strip_tags($content)));
         $urlParts = parse_url($content);
 
 
@@ -626,7 +626,7 @@ class BBCodeLibrary {
                 return "<img src=\""
                 .htmlspecialchars((empty($bbcode->local_img_url) ? '' : $bbcode->local_img_url.'/').ltrim($urlParts['path'], '/')).'" alt="'
                 .htmlspecialchars(basename($content)).'" class="bbcode_img" />';
-            } elseif ($bbcode->IsValidURL($content, false)) {
+            } elseif ($bbcode->isValidURL($content, false)) {
                 // Remote URL, or at least we don't know where it is.
                 return '<img src="'.htmlspecialchars($content).'" alt="'
                 .htmlspecialchars(basename($content)).'" class="bbcode_img" />';
@@ -640,7 +640,7 @@ class BBCodeLibrary {
 
     // Format a [rule] tag.  This substitutes the content provided by the BBCode
     // object, whatever that may be.
-    function DoRule($bbcode, $action, $name, $default, $params, $content) {
+    public function doRule($bbcode, $action, $name, $default, $params, $content) {
         if ($action == BBCode::BBCODE_CHECK)
             return true;
         else
@@ -660,7 +660,7 @@ class BBCodeLibrary {
     //  [quote name="Tom" date="July 4, 1776 3:48 PM" url="http://www.constitution.gov"]...[/quote]
     //
     // The URL only allows http, https, mailto, gopher, ftp, and feed protocols for safety.
-    function DoQuote($bbcode, $action, $name, $default, $params, $content) {
+    public function doQuote($bbcode, $action, $name, $default, $params, $content) {
         if ($action == BBCode::BBCODE_CHECK)
             return true;
 
@@ -698,7 +698,7 @@ class BBCodeLibrary {
     //   [list=i]         Ordered list, lowercase Roman numerals, starting at i
     //   [list=greek]     Ordered list, lowercase Greek letters, starting at alpha
     //   [list=01]        Ordered list, two-digit numeric with 0-padding, starting at 01
-    function DoList($bbcode, $action, $name, $default, $params, $content) {
+    public function doList($bbcode, $action, $name, $default, $params, $content) {
 
         // Allowed list styles, striaght from the CSS 2.1 spec.  The only prohibited
         // list style is that with image-based markers, which often slows down web sites.
