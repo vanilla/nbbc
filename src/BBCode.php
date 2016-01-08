@@ -47,44 +47,39 @@ namespace Nbbc;
 //  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 //  IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-//-----------------------------------------------------------------------------
-//
-//  This file implements the New BBCode parser.  Usage is simple:  Just create
-//  a BBCode object, and then call $bbcode->Parse() with a string containing
-//  BBCode, and it returns HTML.
-//
-//  Internally, this constructs and validates a syntax tree for the BBCode,
-//  so the output HTML is *always* valid HTML --- except that the resulting
-//  output is *not* wrapped in a container <div> or <span> element automatically;
-//  if you need a wrapper, add one yourself.
-//
-//  This also replaces smileys with their respective images.
-//
-//  This class works by building the BBCode on a stack as an implict tree of
-//  operators and operands, somewhat like parsing a math expression, using
-//  the tags' class-containment rules like operator precedences.  The stack
-//  is used to determine what's legal and what's not, and to eventually
-//  "evaluate" the BBCode into HTML output.  This technique (a push-down
-//  automaton) is equivalent to building a real document tree from the input,
-//  but it's much faster and requires much less memory, in exchange for much
-//  more conceptually-convoluted code:  Don't modify Internal_GenerateOutput,
-//  Internal_RewindToClass, Internal_FinishTag, or any function with "Parse"
-//  in its name function unless you know *exactly* what you're doing.  In
-//  fact, the less you change here the better, because this class is very
-//  tightly-knit, and even small changes can have big ramifications.  If you
-//  do make a change, be sure to test it with the included conformance suite.
-//
-//  Note:  For performance reasons, we use $array[]= instead of array_push;
-//  and we use output buffering rather than string concatenation.  These seem
-//  to both yield slightly higher performance than their alternative solutions,
-//  even if they're a little stranger to read.
-//
-//  Apr 02, 2014 Add Maximum number of smilies with SetMaxSmileys()
-//
-//-----------------------------------------------------------------------------
 
 /**
  * A parser that converts BBCode formatted strings into HTML.
+ * 
+ * This file implements the New BBCode parser.  Usage is simple: Just create
+ * a BBCode object, and then call $bbcode->Parse() with a string containing
+ * BBCode, and it returns HTML.
+ *
+ * Internally, this constructs and validates a syntax tree for the BBCode,
+ * so the output HTML is *always* valid HTML --- except that the resulting
+ * output is *not* wrapped in a container <div> or <span> element automatically;
+ * if you need a wrapper, add one yourself.
+ *
+ * This also replaces smileys with their respective images.
+ *
+ * This class works by building the BBCode on a stack as an implicit tree of
+ * operators and operands, somewhat like parsing a math expression, using
+ * the tags' class-containment rules like operator precedences.  The stack
+ * is used to determine what's legal and what's not, and to eventually
+ * "evaluate" the BBCode into HTML output.  This technique (a push-down
+ * automaton) is equivalent to building a real document tree from the input,
+ * but it's much faster and requires much less memory, in exchange for much
+ * more conceptually-convoluted code:  Don't modify Internal_GenerateOutput,
+ * Internal_RewindToClass, Internal_FinishTag, or any function with "Parse"
+ * in its name function unless you know *exactly* what you're doing.  In
+ * fact, the less you change here the better, because this class is very
+ * tightly-knit, and even small changes can have big ramifications.  If you
+ * do make a change, be sure to test it with the included conformance suite.
+ *
+ * Note:  For performance reasons, we use $array[]= instead of array_push;
+ * and we use output buffering rather than string concatenation.  These seem
+ * to both yield slightly higher performance than their alternative solutions,
+ * even if they're a little stranger to read.
  */
 class BBCode {
     /**
@@ -223,9 +218,9 @@ class BBCode {
     public $debug;   // Enable debugging mode
     protected $max_smileys; // Maximum numbe of smileys that can be used in parse
 
-    //-----------------------------------------------------------------------------
-    // Constructor.
-
+    /**
+     * Initialize a new instance of the {@link BBCode} class.
+     */
     public function __construct() {
         $this->defaults = new BBCodeLibrary();
         $this->tag_rules = $this->defaults->default_tag_rules;
@@ -706,18 +701,22 @@ class BBCode {
 				)
 				(?::[0-9]{1,5})?
 				(?:[\\/\\?\\#][^\\n\\r]*)?
-				$/Dx", $string))
+				$/Dx", $string)) {
             return true;
+        }
 
         // Check for anything that does *not* have a colon in it before the first
         // slash or question mark or #; that indicates a local file relative to us.
-        if (preg_match("/^[^:]+([\\/\\\\?#][^\\r\\n]*)?$/D", $string))
+        if (preg_match("/^[^:]+([\\/\\\\?#][^\\r\\n]*)?$/D", $string)) {
             return true;
+        }
 
         // Match mail addresses.
-        if ($email_too)
-            if (substr($string, 0, 7) == "mailto:")
+        if ($email_too) {
+            if (substr($string, 0, 7) == "mailto:") {
                 return $this->isValidEmail(substr($string, 7));
+            }
+        }
 
         // Reject all other protocols.
         return false;
@@ -725,8 +724,13 @@ class BBCode {
 
 
 
-    // Returns true if the given string is a valid e-mail address.  This allows
-    // everything that RFC821 allows, including e-mail addresses that make no sense.
+    /**
+     * Returns true if the given string is a valid e-mail address.
+     *
+     * This allows everything that RFC821 allows, including e-mail addresses that make no sense.
+     * @param string $string The email address to validate.
+     * @return bool Returns **true** if {@link $string} is an email address or **false** otherwise.
+     */
     public function isValidEmail($string) {
         $result = filter_var($string, FILTER_VALIDATE_EMAIL);
         return $result !== false;
@@ -734,28 +738,43 @@ class BBCode {
 
 
 
-    // This function is used to wrap around calls to htmlspecialchars() for
-    // plain text so that you can add your own text-evaluation code if you want.
-    // For example, you might want to make *foo* turn into <b>foo</b>, or
-    // something like that.  The default behavior is just to call htmlspecialchars()
-    // and be done with it, but if you inherit and override this function, you
-    // can do pretty much anything you want.
-    //
-    // Note that htmlspecialchars() is still used directly for doing things like
-    // cleaning up URLs in tags; this function is applied to *plain* *text* *only*.
+    /**
+     * Escape HTML characters.
+     *
+     * This function is used to wrap around calls to htmlspecialchars() for
+     * plain text so that you can add your own text-evaluation code if you want.
+     * For example, you might want to make *foo* turn into <b>foo</b>, or
+     * something like that.  The default behavior is just to call htmlspecialchars()
+     * and be done with it, but if you inherit and override this function, you
+     * can do pretty much anything you want.
+     *
+     * Note that htmlspecialchars() is still used directly for doing things like
+     * cleaning up URLs in tags; this function is applied to *plain* *text* *only*.
+     *
+     * @param string $string The string to replace.
+     * @return string Returns an encoded version of {@link $string}.
+     */
     public function htmlEncode($string) {
-        if (!$this->allow_ampersand)
+        if (!$this->allow_ampersand) {
             return htmlspecialchars($string);
-        else
+        } else {
             return str_replace(Array('<', '>', '"'), Array('&lt;', '&gt;', '&quot;'), $string);
+        }
     }
 
 
 
-    // Go through a string containing plain text and do three things on it:
-    // Replace < and > and & and " with HTML-safe equivalents, and replace
-    // smileys like :-) with <img /> tags, and replace any embedded URLs
-    // with <a href=...>...</a> links.
+    /**
+     * Properly encode tag content.
+     *
+     * Go through a string containing plain text and do three things on it:
+     * Replace < and > and & and " with HTML-safe equivalents, and replace
+     * smileys like :-) with <img /> tags, and replace any embedded URLs
+     * with <a href=...>...</a> links.
+     *
+     * @param string $string The string to process.
+     * @return string Returns the processed version of {@link $string}.
+     */
     public function fixupOutput($string) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('FixupOutput');
@@ -801,11 +820,16 @@ class BBCode {
         return $output;
     }
 
-
-
-    // Go through a string containing plain text and do two things on it:
-    // Replace < and > and & and " with HTML-safe equivalents, and replace
-    // smileys like :-) with <img /> tags.
+    /**
+     * Replace the smiley codes in a string with image tags.
+     *
+     * Go through a string containing plain text and do two things on it:
+     * Replace < and > and & and " with HTML-safe equivalents, and replace
+     * smileys like :-) with <img /> tags.
+     *
+     * @param string $string The string to process.
+     * @return string Returns the processed version of {@link $string}.
+     */
     protected function processSmileys($string) {
         global $BBCode_Profiler;
         $BBCode_Profiler->Begin('ProcessSmileys:other');
@@ -863,13 +887,12 @@ class BBCode {
         return $output;
     }
 
-
     protected function rebuildSmileys() {
         // Construct the $this->smiley_regex that can recognize all
         // of the smileys.  This will save us a lot of computation time
         // in $this->Parse() if multiple BBCode strings are being
         // processed by the same script.
-        $regex = Array("/(?<![\\w])(");
+        $regex = ["/(?<![\\w])("];
         $first = true;
         foreach ($this->smileys as $code => $filename) {
             if (!$first)
@@ -1910,8 +1933,13 @@ class BBCode {
         $params['_endtag'] = $this->tag_marker.'/'.$params['_name'].$tail_marker;
     }
 
-
-    // Process an isolated tag, a tag that is not allowed to have an end tag.
+    /**
+     * Process an isolated tag, a tag that is not allowed to have an end tag.
+     *
+     * @param string $tag_name The name of the tag.
+     * @param array $tag_params All of the parameters passed to the tag.
+     * @param array $tag_rule The rule governing the tag.
+     */
     protected function processIsolatedTag($tag_name, $tag_params, $tag_rule) {
         if ($this->debug) {
             Debugger::debug("<b>ProcessIsolatedTag:</b> tag <tt>[".htmlspecialchars($tag_name)
@@ -1951,10 +1979,14 @@ class BBCode {
         );
     }
 
-
-    // Process a verbatim tag, a tag whose contents (body) must not be processed at all.
+    /**
+     * Process a verbatim tag, a tag whose contents (body) must not be processed at all.
+     *
+     * @param string $tag_name The name of the tag.
+     * @param array $tag_params All of the parameters passed to the tag.
+     * @param array $tag_rule The rule governing the tag.
+     */
     protected function processVerbatimTag($tag_name, $tag_params, $tag_rule) {
-
         // This tag is a special type that disallows all other formatting
         // tags within it and wants its contents reproduced verbatim until
         // its matching end tag.  We save the state of the lexer in case
@@ -2095,8 +2127,9 @@ class BBCode {
         );
     }
 
-
-    // Called when the parser has read a self::BBCODE_TAG token.
+    /**
+     * Called when the parser has read a self::BBCODE_TAG token.
+     */
     protected function parseStartTagToken() {
 
         // Tags are somewhat complicated, because they have to do several things
@@ -2243,8 +2276,9 @@ class BBCode {
             $this->start_tags[$tag_name][] = count($this->stack) - 1;
     }
 
-
-    // Called when the parser has read a self::BBCODE_ENDTAG token.
+    /**
+     * Called when the parser has read a self::BBCODE_ENDTAG token.
+     */
     protected function parseEndTagToken() {
 
         $tag_params = $this->lexer->tag;
@@ -2317,11 +2351,15 @@ class BBCode {
         );
     }
 
-
-
-    //-----------------------------------------------------------------------------
-    //  Core parser.  This is where all the magic begins and ends.
-    // Core parsing routine.  Call with a BBCode string, and it returns an HTML string.
+    /**
+     * Parse a BBCode string and convert it into HTML.
+     *
+     * Core parser.  This is where all the magic begins and ends.
+     * Core parsing routine.  Call with a BBCode string, and it returns an HTML string.
+     *
+     * @param string $string The BBCode string to parse.
+     * @return string Returns the HTML version of {@link $string}.
+     */
     public function parse($string) {
         global $BBCode_Profiler;
         $BBCode_Profiler = new Profiler;
