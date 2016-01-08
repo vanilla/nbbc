@@ -807,16 +807,17 @@ class BBCode {
      * @return string Returns the processed version of {@link $string}.
      */
     public function fixupOutput($string) {
+        /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
-        $BBCode_Profiler->Begin('FixupOutput');
+        $BBCode_Profiler->begin('FixupOutput');
 
         Debugger::debug("<b>FixupOutput:</b> input: <tt>".htmlspecialchars($string)."</tt><br>\n");
 
         if (!$this->detect_urls) {
             // Easy case:  No URL-decoding, so don't take the time to do it.
-            $BBCode_Profiler->End('FixupOutput');
+            $BBCode_Profiler->end('FixupOutput');
             $output = $this->processSmileys($string);
-            $BBCode_Profiler->Begin('FixupOutput');
+            $BBCode_Profiler->begin('FixupOutput');
         } else {
             // Extract out any embedded URLs, and then process smileys and such on
             // any text in between them.  This necessarily means that URLs get
@@ -833,9 +834,9 @@ class BBCode {
                 $is_a_url = false;
                 foreach ($chunks as $index => $chunk) {
                     if (!$is_a_url) {
-                        $BBCode_Profiler->End('FixupOutput');
+                        $BBCode_Profiler->end('FixupOutput');
                         $chunk = $this->processSmileys($chunk);
-                        $BBCode_Profiler->Begin('FixupOutput');
+                        $BBCode_Profiler->begin('FixupOutput');
                     }
                     $output[] = $chunk;
                     $is_a_url = !$is_a_url;
@@ -846,7 +847,7 @@ class BBCode {
 
         Debugger::debug("<b>FixupOutput:</b> output: <tt>".htmlspecialchars($output)."</tt><br>\n");
 
-        $BBCode_Profiler->End('FixupOutput');
+        $BBCode_Profiler->end('FixupOutput');
 
         return $output;
     }
@@ -862,8 +863,9 @@ class BBCode {
      * @return string Returns the processed version of {@link $string}.
      */
     protected function processSmileys($string) {
+        /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
-        $BBCode_Profiler->Begin('ProcessSmileys:other');
+        $BBCode_Profiler->begin('ProcessSmileys:other');
 
         if (!$this->enable_smileys || $this->plain_mode) {
             // If smileys are turned off, don't convert them.
@@ -871,19 +873,19 @@ class BBCode {
         } else {
             // If the smileys need to be computed, process them now.
             if ($this->smiley_regex === false) {
-                $BBCode_Profiler->End('ProcessSmileys:other');
-                $BBCode_Profiler->Begin('ProcessSmileys:rebuild');
+                $BBCode_Profiler->end('ProcessSmileys:other');
+                $BBCode_Profiler->begin('ProcessSmileys:rebuild');
                 $this->rebuildSmileys();
-                $BBCode_Profiler->End('ProcessSmileys:rebuild');
-                $BBCode_Profiler->Begin('ProcessSmileys:other');
+                $BBCode_Profiler->end('ProcessSmileys:rebuild');
+                $BBCode_Profiler->begin('ProcessSmileys:other');
             }
 
             // Split the string so that it consists of alternating pairs of smileys and non-smileys.
-            $BBCode_Profiler->End('ProcessSmileys:other');
-            $BBCode_Profiler->Begin('ProcessSmileys:split');
+            $BBCode_Profiler->end('ProcessSmileys:other');
+            $BBCode_Profiler->begin('ProcessSmileys:split');
             $tokens = preg_split($this->smiley_regex, $string, -1, PREG_SPLIT_DELIM_CAPTURE);
-            $BBCode_Profiler->End('ProcessSmileys:split');
-            $BBCode_Profiler->Begin('ProcessSmileys:other');
+            $BBCode_Profiler->end('ProcessSmileys:split');
+            $BBCode_Profiler->begin('ProcessSmileys:other');
 
             if (count($tokens) <= 1) {
                 // Special (common) case:  This skips the smiley constructor if there
@@ -913,7 +915,7 @@ class BBCode {
             }
         }
 
-        $BBCode_Profiler->End('ProcessSmileys:other');
+        $BBCode_Profiler->end('ProcessSmileys:other');
 
         return $output;
     }
@@ -960,8 +962,9 @@ class BBCode {
     // Note that the input string is plain text, not HTML or BBCode.  The return value
     // must be an array of alternating pairs of plain text (even indexes) and HTML (odd indexes).
     protected function autoDetectURLs($string) {
+        /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
-        $BBCode_Profiler->Begin('AutoDetectURLs');
+        $BBCode_Profiler->begin('AutoDetectURLs');
 
         $output = preg_split("/( (?:
 					(?:https?|ftp) : \\/*
@@ -1047,7 +1050,7 @@ class BBCode {
             }
         }
 
-        $BBCode_Profiler->End('AutoDetectURLs');
+        $BBCode_Profiler->end('AutoDetectURLs');
 
         return $output;
     }
@@ -1183,8 +1186,9 @@ class BBCode {
     // single string.  We use output buffering because it seems to produce slightly
     // more efficient string concatenation.
     protected function collectText($array, $start = 0) {
+        /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
-        $BBCode_Profiler->Begin('CollectText');
+        $BBCode_Profiler->begin('CollectText');
 
         ob_start();
         for ($start = intval($start), $end = count($array); $start < $end; $start++)
@@ -1192,14 +1196,15 @@ class BBCode {
         $output = ob_get_contents();
         ob_end_clean();
 
-        $BBCode_Profiler->End('CollectText');
+        $BBCode_Profiler->end('CollectText');
 
         return $output;
     }
 
     protected function collectTextReverse($array, $start = 0, $end = 0) {
+        /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
-        $BBCode_Profiler->Begin('CollectTextReverse');
+        $BBCode_Profiler->begin('CollectTextReverse');
 
         ob_start();
         for ($start = intval($start); $start >= $end; $start--)
@@ -1207,7 +1212,7 @@ class BBCode {
         $output = ob_get_contents();
         ob_end_clean();
 
-        $BBCode_Profiler->End('CollectTextReverse');
+        $BBCode_Profiler->end('CollectTextReverse');
 
         return $output;
     }
@@ -1219,8 +1224,9 @@ class BBCode {
     // need to be processed with the plain text after them as their body.
     // This returns a list of tokens in the REVERSE of output order.
     protected function generateOutput($pos) {
+        /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
-        $BBCode_Profiler->Begin('GenerateOutput');
+        $BBCode_Profiler->begin('GenerateOutput');
 
         Debugger::debug("<b>Internal_GenerateOutput:</b> from=$pos len=".(count($this->stack) - $pos)
             ."<br>\n"
@@ -1318,7 +1324,7 @@ class BBCode {
             Debugger::debug("<b>Internal_GenerateOutput:</b> Stack contents: <tt>".$this->dumpStack()."</tt><br>\n");
         }
         $this->computeCurrentClass();
-        $BBCode_Profiler->End('GenerateOutput');
+        $BBCode_Profiler->end('GenerateOutput');
         return $output;
     }
 
@@ -1551,6 +1557,7 @@ class BBCode {
     // Read tokens from the input, and remove whitespace/newline tokens from the input
     // according to the rules in the given pattern.
     protected function cleanupWSByEatingInput($pattern) {
+        /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
 
         if ($this->debug) {
@@ -1565,31 +1572,31 @@ class BBCode {
         foreach (str_split($pattern) as $char) {
             switch ($char) {
                 case 's':
-//                    $BBCode_Profiler->Begin('Lexer:NextToken');
+//                    $BBCode_Profiler->begin('Lexer:NextToken');
                     $token_type = $this->lexer->NextToken();
-//                    $BBCode_Profiler->End('Lexer:NextToken');
+//                    $BBCode_Profiler->end('Lexer:NextToken');
                     while ($token_type == self::BBCODE_WS) {
-//                        $BBCode_Profiler->Begin('Lexer:NextToken');
+//                        $BBCode_Profiler->begin('Lexer:NextToken');
                         $token_type = $this->lexer->NextToken();
-//                        $BBCode_Profiler->End('Lexer:NextToken');
+//                        $BBCode_Profiler->end('Lexer:NextToken');
                     }
                     $this->lexer->UngetToken();
                     break;
                 case 'n':
-//                    $BBCode_Profiler->Begin('Lexer:NextToken');
+//                    $BBCode_Profiler->begin('Lexer:NextToken');
                     $token_type = $this->lexer->NextToken();
-//                    $BBCode_Profiler->End('Lexer:NextToken');
+//                    $BBCode_Profiler->end('Lexer:NextToken');
                     if ($token_type != self::BBCODE_NL)
                         $this->lexer->UngetToken();
                     break;
                 case 'a':
-//                    $BBCode_Profiler->Begin('Lexer:NextToken');
+//                    $BBCode_Profiler->begin('Lexer:NextToken');
                     $token_type = $this->lexer->NextToken();
-//                    $BBCode_Profiler->End('Lexer:NextToken');
+//                    $BBCode_Profiler->end('Lexer:NextToken');
                     while ($token_type == self::BBCODE_WS || $token_type == self::BBCODE_NL) {
-//                        $BBCode_Profiler->Begin('Lexer:NextToken');
+//                        $BBCode_Profiler->begin('Lexer:NextToken');
                         $token_type = $this->lexer->NextToken();
-//                        $BBCode_Profiler->End('Lexer:NextToken');
+//                        $BBCode_Profiler->end('Lexer:NextToken');
                     }
                     $this->lexer->UngetToken();
                     break;
@@ -2362,6 +2369,7 @@ class BBCode {
      * @return string Returns the HTML version of {@link $string}.
      */
     public function parse($string) {
+        /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
         $BBCode_Profiler = new Profiler;
         $BBCode_Profiler->begin('_Parse');
@@ -2442,9 +2450,9 @@ class BBCode {
         // clarity's sake, we break the tag-processing code into separate functions, but we
         // keep the text/whitespace/newline code here for performance reasons.
         while (true) {
-//            $BBCode_Profiler->Begin('Lexer:NextToken');
+//            $BBCode_Profiler->begin('Lexer:NextToken');
             if (($token_type = $this->lexer->nextToken()) == self::BBCODE_EOI) {
-//                $BBCode_Profiler->End('Lexer:NextToken');
+//                $BBCode_Profiler->end('Lexer:NextToken');
                 break;
             }
 
