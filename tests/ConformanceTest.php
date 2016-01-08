@@ -13,6 +13,11 @@ use Nbbc\BBCode;
  * Contains all the tests that were part of the default NBBC test page (test_nbbc.php).
  */
 class ConformanceTest extends \PHPUnit_Framework_TestCase {
+    /**
+     * Provide input validation test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideInputValidationTests() {
         $result = [
             [[
@@ -105,6 +110,11 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide special character test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideSpecialCharacterTests() {
         $result = [
             [[
@@ -115,7 +125,10 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
             [[
                 'descr' => ":-) produces a smiley <img> element.",
                 'bbcode' => "This is a test of the emergency broadcasting system :-)",
-                'regex' => "/This is a test of the emergency broadcasting system <img src=\\\"smileys\\/smile.gif\\\" alt=\\\":-\\)\\\" title=\\\":-\\)\\\" class=\\\"bbcode_smiley\\\" \\/>/",
+                'regex' => <<<'REGEX'
+`This is a test of the emergency broadcasting system <img src="smileys/smile.gif" alt=":-\)" title=":-\)" class="bbcode_smiley" />`
+REGEX
+,
             ]],
             [[
                 'descr' => "--- does *not* produce a [rule] tag.",
@@ -230,6 +243,11 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide white space test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideWhitespaceTests() {
         $result = [
             [[
@@ -265,7 +283,18 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
             ]],
             [[
                 'descr' => "Whitespace is properly collapsed near block tags like [center].",
-                'bbcode' => "Not centered.    \n    \n    [center]    \n    \n    A bold stone gathers no italics.    \n    \n    [/center]    \n    \n    Not centered.",
+                'bbcode' => <<<BBCODE
+Not centered.
+
+[center]
+
+    A bold stone gathers no italics.
+
+[/center]
+
+Not centered.
+BBCODE
+,
                 'html' => "Not centered.<br>\n"
                     . "\n<div class=\"bbcode_center\" style=\"text-align:center\">\n"
                     . "<br>\n"
@@ -295,6 +324,11 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide inline tag conversion test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideInlineConversionTests() {
         $result = [
             [[
@@ -406,6 +440,11 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide **[url]** tag test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideUrlTests() {
         $result = [
             [[
@@ -526,6 +565,11 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide auto-embedded URL test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideEmbeddedUrlTests() {
         $result = [
             [[
@@ -599,6 +643,13 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide test data for URL-like tags.
+     *
+     * These tags include **[email]** and **[[wiki]]** links.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideUrlLikeTagTests() {
         $result = [
             [[
@@ -682,6 +733,11 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide **[img]** tag test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideImageTests() {
         $result = [
             [[
@@ -729,6 +785,11 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide block tag conversion test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideBlockTagConversionTests() {
         $result = [
             [[
@@ -978,6 +1039,11 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
         return $result;
     }
 
+    /**
+     * Provide list and list-item test data.
+     *
+     * @return array Returns the test function arguments.
+     */
     public function provideListAndListItemTests() {
         $result = [
             [[
@@ -1054,7 +1120,7 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
      *
      * @param array $test The test to run.
      */
-    protected function runTestArray($test) {
+    protected function performTest($test) {
         $testDefaults = [
             'newline_ignore' => false,
             'detect_urls' => false,
@@ -1108,82 +1174,102 @@ class ConformanceTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @param array $test
+     * Test input validation.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideInputValidationTests
      */
     public function testInputValidation(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test special characters.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideSpecialCharacterTests
      */
     public function testSpecialCharacters(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test whitespace edge cases.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideWhitespaceTests
      */
     public function testWhitespace(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test inline tag conversions.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideInlineConversionTests
      */
     public function testInlineConversions(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test **[url]** tags.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideUrlTests
      */
     public function testUrls(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test auto-generated URLs.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideEmbeddedUrlTests
      */
     public function testEmbeddedUrls(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test tags that generate links.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideUrlLikeTagTests
      */
     public function testUrlLikeTags(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test **[img]** tags.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideImageTests
      */
     public function testImages(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test block tag conversions.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideBlockTagConversionTests
      */
     public function testBlockTagConversions(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 
     /**
-     * @param array $test
+     * Test lists and list items.
+     *
+     * @param array $test The test to perform.
      * @dataProvider provideListAndListItemTests
      */
     public function testListAndListItems(array $test) {
-        $this->runTestArray($test);
+        $this->performTest($test);
     }
 }

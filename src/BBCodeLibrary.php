@@ -494,9 +494,9 @@ class BBCodeLibrary {
 
         $email = is_string($default)
             ? $default
-            : $bbcode->UnHTMLEncode(strip_tags($content));
+            : $bbcode->unHTMLEncode(strip_tags($content));
 
-        if ($bbcode->IsValidEmail($email)) {
+        if ($bbcode->isValidEmail($email)) {
             return '<a href="mailto:'.htmlspecialchars($email).'" class="bbcode_email">'.$content.'</a>';
         } else {
             return htmlspecialchars($params['_tag']).$content.htmlspecialchars($params['_endtag']);
@@ -611,7 +611,7 @@ class BBCodeLibrary {
      * @return string Returns a link to the wiki.
      */
     public function doWiki(BBCode $bbcode, $action, $name, $default, $params, $content) {
-        $name = $bbcode->Wikify($default);
+        $name = $bbcode->wikify($default);
 
         if ($action == BBCode::BBCODE_CHECK) {
             return strlen($name) > 0;
@@ -733,7 +733,7 @@ class BBCodeLibrary {
             $title .= ":";
             if (isset($params['url'])) {
                 $url = trim($params['url']);
-                if ($bbcode->IsValidURL($url)) {
+                if ($bbcode->isValidURL($url)) {
                     $title = "<a href=\"".htmlspecialchars($params['url'])."\">".$title."</a>";
                 }
             }
