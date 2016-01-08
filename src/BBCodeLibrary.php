@@ -655,8 +655,10 @@ class BBCodeLibrary {
                 in_array(pathinfo($urlParts['path'], PATHINFO_EXTENSION), $this->imageExtensions)
             ) {
 
+                $localImgURL = $bbcode->getLocalImgURL();
+
                 return "<img src=\""
-                .htmlspecialchars((empty($bbcode->getLocalImgURL()) ? '' : $bbcode->getLocalImgURL().'/').ltrim($urlParts['path'], '/')).'" alt="'
+                .htmlspecialchars((empty($localImgURL) ? '' : $localImgURL.'/').ltrim($urlParts['path'], '/')).'" alt="'
                 .htmlspecialchars(basename($content)).'" class="bbcode_img" />';
             } elseif ($bbcode->isValidURL($content, false)) {
                 // Remote URL, or at least we don't know where it is.
