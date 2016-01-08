@@ -1023,7 +1023,7 @@ class BBCode {
 					)?
 				) | (?:
 					(?:
-						(?: (?: [a-zA-Z0-9-]{2,} \\. )+
+						(?: (?: [a-zA-Z0-9-]{1,} \\. )+
 							(?: arpa | com | org | net | edu | gov | mil | int | [a-z]{2}
 								| aero | biz | coop | info | museum | name | pro
 								| example | invalid | localhost | test | local | onion | swift ) )
@@ -1040,7 +1040,7 @@ class BBCode {
 						[^\\(\\)\\[\\]\\{\\}<>\\'\\\"\\x00-\\x20\\x7F-\\xFF]+
 					)?
 				) | (?:
-					[a-zA-Z0-9._-]{2,} @
+					[a-zA-Z0-9._-]{1,} @
 					(?:
 						(?: (?: [a-zA-Z0-9-]{2,} \\. )+
 							(?: arpa | com | org | net | edu | gov | mil | int | [a-z]{2}
@@ -1062,12 +1062,12 @@ class BBCode {
                     } else if (preg_match("/^(https?:|ftp:)\\/*([^\\/&?#]+)\\/*(.*)\$/", $token, $matches)) {
                         // Protocol has been provided, so just use it as-is (but fix
                         // up any forgotten slashes).
-                        $url = $matches[1].'/'.'/'.$matches[2]."/".$matches[3];
+                        $url = $matches[1].'/'.'/'.$matches[2].($matches[3] ? "/" : '').$matches[3];
                     } else {
                         // Raw domain name, like "www.google.com", so convert it for
                         // use as an HTTP web address.
                         preg_match("/^([^\\/&?#]+)\\/*(.*)\$/", $token, $matches);
-                        $url = "http:/"."/".$matches[1]."/".$matches[2];
+                        $url = "http:/"."/".$matches[1].($matches[2] ? "/" : '').$matches[2];
                     }
 
                     // We have a full, complete, and properly-formatted URL, with protocol.
