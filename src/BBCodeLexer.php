@@ -527,7 +527,7 @@ class BBCodeLexer {
 
         // The first piece should be the tag name, whatever it is.  If it starts with a /
         // we remove the / and mark it as an end tag.
-        if (!empty($pieces[$ptr]) && substr($pieces[$ptr], 0, 1) == '/') {
+        if (!empty($pieces[$ptr]) && substr($pieces[$ptr], 0, 1) === '/') {
             $result['_name'] = strtolower(substr($pieces[$ptr++], 1));
             $result['_end'] = true;
         } else {
@@ -623,23 +623,23 @@ class BBCodeLexer {
         while (($type = $this->classifyPiece($ptr, $pieces)) != -1) {
 
             // Skip whitespace before the next key name.
-            while ($type == ' ') {
+            while ($type === ' ') {
                 $ptr++;
                 $type = $this->classifyPiece($ptr, $pieces);
             }
 
             // Decode the key name.
-            if ($type == 'A' || $type == '"') {
+            if ($type === 'A' || $type === '"') {
                 if (isset($pieces[$ptr])) {
                     $key = strtolower($this->stripQuotes($pieces[$ptr]));
                 } else {
                     $key = '';
                 }
                 $ptr++;
-            } elseif ($type == '=') {
+            } elseif ($type === '=') {
                 $ptr++;
                 continue;
-            } elseif ($type == -1) {
+            } elseif ($type === -1) {
                 break;
             }
 
@@ -650,7 +650,7 @@ class BBCodeLexer {
 
             // If an equal-sign follows, we need to collect a value.  Otherwise, we
             // take the key itself as the value.
-            if ($type != '=') {
+            if ($type !== '=') {
                 $value = $this->stripQuotes($key);
             } else {
                 $ptr++;
@@ -677,7 +677,7 @@ class BBCodeLexer {
 
             // Record this in the associative array if it's a legal public identifier name.
             // Legal *public* identifier names must *not* begin with an underscore.
-            if (substr($key, 0, 1) != '_') {
+            if (substr($key, 0, 1) !== '_') {
                 $result[$key] = $value;
             }
 
