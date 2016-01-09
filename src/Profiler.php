@@ -7,17 +7,20 @@
 namespace Nbbc;
 
 /**
- *  This profiler class helps us to easily detect performance bottlenecks.
- *  We leave it out of the high-speed compressed version of NBBC for
- *  performance reasons; this is really a debugging aid more than anything.
+ * This profiler class helps us to easily detect performance bottlenecks.
+ *
+ * We leave it out of the high-speed compressed version of NBBC for performance reasons; this is really a debugging aid
+ * more than anything.
+ *
+ * @deprecated
  */
 class Profiler {
 
     var $start_time, $total_times;
 
     public function __construct() {
-        $start_time = Array();
-        $total_times = Array();
+        $this->start_time = [];
+        $this->total_times = [];
     }
 
     public function now() {
@@ -30,10 +33,11 @@ class Profiler {
 
     public function end($group) {
         $time = $this->now() - $this->start_time[$group];
-        if (!isset($this->total_times[$group]))
+        if (!isset($this->total_times[$group])) {
             $this->total_times[$group] = $time;
-        else
+        } else {
             $this->total_times[$group] += $time;
+        }
     }
 
     public function reset($group) {
