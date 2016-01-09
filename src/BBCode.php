@@ -594,7 +594,9 @@ class BBCode {
 
 
     public function setDefaultSmiley($code) {
-        $this->smileys[$code] = @$this->defaults->default_smileys[$code];
+        if (isset($this->defaults->default_smileys[$code])) {
+            $this->smileys[$code] = $this->defaults->default_smileys[$code];
+        }
         $this->smiley_regex = false;
         return $this;
     }
@@ -1190,21 +1192,22 @@ REGEX;
             } else {
                 // We have a valid variable name, possibly with an index and some flags.
                 // Locate the requested variable in the input parameters.
-                if (isset($insert_array[$matches[1]]))
-                    $value = @$insert_array[$matches[1]];
-                else
-                    $value = @$default_array[$matches[1]];
+                if (isset($insert_array[$matches[1]])) {
+                    $value = $insert_array[$matches[1]];
+                } else {
+                    $value = isset($default_array[$matches[1]]) ? $default_array[$matches[1]] : null;
+                }
 
-                if (strlen(@$matches[2])) {
+                if (!empty($matches[2])) {
                     // We have one or more indexes, so break them apart and look up the requested data.
-                    foreach (split(".", substr($matches[2], 1)) as $index) {
-                        if (is_array($value))
-                            $value = @$value[$index];
-                        else if (is_object($value)) {
-                            $value = (array)$value;
-                            $value = @$value[$index];
-                        } else
-                            $value = "";
+                    foreach (explode(".", substr($matches[2], 1)) as $index) {
+                        if (is_array($value)) {
+                            $value = isset($value[$index]) ? $value[$index] : null;
+                        } elseif (is_object($value)) {
+                            $value = isset($value->$index) ? $value->$index : null;
+                        } else {
+                            $value = '';
+                        }
                     }
                 }
 
@@ -1227,29 +1230,35 @@ REGEX;
                 }
 
                 // See if there are any flags.
-                if (strlen(@$matches[3]))
+                if (!empty($matches[3])) {
                     $flags = array_flip(str_split($matches[3]));
-                else
+                } else {
                     $flags = [];
+                }
 
                 // If there are flags, process the value according to them.
                 if (!isset($flags['v'])) {
-                    if (isset($flags['w']))
+                    if (isset($flags['w'])) {
                         $value = preg_replace("/[\\x00-\\x09\\x0B-\x0C\x0E-\\x20]+/", " ", $value);
-                    if (isset($flags['t']))
+                    }
+                    if (isset($flags['t'])) {
                         $value = trim($value);
-                    if (isset($flags['b']))
+                    }
+                    if (isset($flags['b'])) {
                         $value = basename($value);
-                    if (isset($flags['e']))
+                    }
+                    if (isset($flags['e'])) {
                         $value = $this->htmlEncode($value);
-                    else if (isset($flags['k']))
+                    } elseif (isset($flags['k'])) {
                         $value = $this->wikify($value);
-                    else if (isset($flags['h']))
+                    } elseif (isset($flags['h'])) {
                         $value = htmlspecialchars($value);
-                    else if (isset($flags['u']))
+                    } elseif (isset($flags['u'])) {
                         $value = urlencode($value);
-                    if (isset($flags['n']))
+                    }
+                    if (isset($flags['n'])) {
                         $value = $this->nl2br($value);
+                    }
                 }
 
                 Debugger::debug("<b>FormatInserts:</b> add insert: <tt>".htmlspecialchars($piece)
@@ -1262,22 +1271,30 @@ REGEX;
             $is_an_insert = !$is_an_insert;
         }
 
-        return implode("", $result);
+        return implode('', $result);
     }
 
-    //-----------------------------------------------------------------------------
-    //  Stack and output-management (internal).
-    // Collect a series of text strings from a token stack and return them as a
-    // single string.  We use output buffering because it seems to produce slightly
-    // more efficient string concatenation.
+    ///  Stack and output-management (internal). ///
+
+
+    /**
+     * Collect a series of text strings from a token stack and return them as a single string.
+     *
+     * We use output buffering because it seems to produce slightly more efficient string concatenation.
+     *
+     * @param array $array The token stack.
+     * @param int $start The starting index in {@link $array} to process.
+     * @return string Returns the stack text from all the elements in the stack.
+     */
     protected function collectText($array, $start = 0) {
         /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
         $BBCode_Profiler->begin('CollectText');
 
         ob_start();
-        for ($start = intval($start), $end = count($array); $start < $end; $start++)
+        for ($start = intval($start), $end = count($array); $start < $end; $start++) {
             print $array[$start][self::BBCODE_STACK_TEXT];
+        }
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -1292,8 +1309,9 @@ REGEX;
         $BBCode_Profiler->begin('CollectTextReverse');
 
         ob_start();
-        for ($start = intval($start); $start >= $end; $start--)
+        for ($start = intval($start); $start >= $end; $start--) {
             print $array[$start][self::BBCODE_STACK_TEXT];
+        }
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -1302,12 +1320,17 @@ REGEX;
         return $output;
     }
 
-    // Output everything on the stack from $pos to the top, inclusive, as
-    // plain text, and return it.  This is a little more complicated than
-    // necessary, because if we encounter end-tag-optional tags in here,
-    // they're not to be outputted as plain text:  They're fully legit, and
-    // need to be processed with the plain text after them as their body.
-    // This returns a list of tokens in the REVERSE of output order.
+
+    /**
+     * Output everything on the stack from $pos to the top, inclusive, as plain text, and return it.
+     *
+     * This is a little more complicated than necessary, because if we encounter end-tag-optional tags in here, they're
+     * not to be outputted as plain text:  They're fully legit, and need to be processed with the plain text after them
+     * as their body. This returns a list of tokens in the REVERSE of output order.
+     *
+     * @param int $pos The position to start on the stack.
+     * @return array Returns an array of output tokens.
+     */
     protected function generateOutput($pos) {
         /* @var Profiler $BBCode_Profiler */
         global $BBCode_Profiler;
@@ -1336,13 +1359,15 @@ REGEX;
                 // classes and the other to convert the output:  So we choose speed over
                 // precision here, but it's a decision that only affects broken tags anyway.
 
-                $name = @$token[self::BBCODE_STACK_TAG]['_name'];
-                $rule = @$this->tag_rules[$name];
-                $end_tag = @$rule['end_tag'];
-                if (!isset($rule['end_tag']))
-                    $end_tag = self::BBCODE_REQUIRED;
-                else
-                    $end_tag = $rule['end_tag'];
+                $name = isset($token[self::BBCODE_STACK_TAG]['_name']) ? $token[self::BBCODE_STACK_TAG]['_name'] : null;
+                $rule = isset($this->tag_rules[$name]) ? $this->tag_rules[$name] : null;
+                // Add default to the rule.
+                $rule += [
+                    'end_tag' => self::BBCODE_REQUIRED, 'before_endtag' => null, 'after_tag' => null, 'before_tag' => null
+                ];
+
+                $end_tag = $rule['end_tag'];
+
                 array_pop($this->start_tags[$name]); // Remove the locator for this tag.
                 if ($end_tag == self::BBCODE_PROHIBIT) {
                     // Broken tag, so just push it to the output as HTML.
@@ -1370,22 +1395,39 @@ REGEX;
                         $this->lost_start_tags[$name]++;
                     }
 
-                    $end = $this->cleanupWSByIteratingPointer(@$rule['before_endtag'], 0, $output);
-                    $this->cleanupWSByPoppingStack(@$rule['after_tag'], $output);
+                    $end = $this->cleanupWSByIteratingPointer($rule['before_endtag'], 0, $output);
+                    $this->cleanupWSByPoppingStack($rule['after_tag'], $output);
                     $tag_body = $this->collectTextReverse($output, count($output) - 1, $end);
 
                     // Note:  We don't process 'after_endtag' because the invisible end tag
                     // always butts up against another tag, so there's *never* any whitespace
                     // after it.  Attempting to process 'after_endtag' would just be a waste
                     // of time because it'd never match.  But 'before_tag' is useful, though.
-                    $this->cleanupWSByPoppingStack(@$rule['before_tag'], $this->stack);
+                    $this->cleanupWSByPoppingStack($rule['before_tag'], $this->stack);
 
                     Debugger::debug("<b>Internal_GenerateOutput:</b> optional-tag's content: <tt>"
                         .htmlspecialchars($tag_body)."</tt><br>\n");
 
-                    @$this->updateParamsForMissingEndTag($token[self::BBCODE_STACK_TAG]);
 
-                    $tag_output = $this->doTag(self::BBCODE_OUTPUT, $name, @$token[self::BBCODE_STACK_TAG]['_default'], @$token[self::BBCODE_STACK_TAG], $tag_body);
+                    if (isset($token[self::BBCODE_STACK_TAG])) {
+                        $this->updateParamsForMissingEndTag($token[self::BBCODE_STACK_TAG]);
+
+                        $tag_output = $this->doTag(
+                            self::BBCODE_OUTPUT,
+                            $name,
+                            isset($token[self::BBCODE_STACK_TAG]['_default']) ? $token[self::BBCODE_STACK_TAG]['_default'] : null,
+                            $token[self::BBCODE_STACK_TAG],
+                            $tag_body
+                        );
+                    } else {
+                        $tag_output = $this->doTag(
+                            self::BBCODE_OUTPUT,
+                            $name,
+                            null,
+                            null,
+                            $tag_body
+                        );
+                    }
 
                     if ($this->debug) {
                         Debugger::debug("<b>Internal_GenerateOutput:</b> push optional-tag's output: <tt>"
@@ -1511,7 +1553,11 @@ REGEX;
         // $pos forward.  (We add one because we've actually rewound the stack
         // to the start tag itself.)
         if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['after_tag'])) {
-            $newpos = $this->cleanupWSByIteratingPointer(@$this->tag_rules[$tag_name]['after_tag'], $pos + 1, $this->stack);
+            $newpos = $this->cleanupWSByIteratingPointer(
+                isset($this->tag_rules[$tag_name]['after_tag']) ? $this->tag_rules[$tag_name]['after_tag'] : null,
+                $pos + 1,
+                $this->stack
+            );
         } else {
             $newpos = $this->cleanupWSByIteratingPointer(null, $pos + 1, $this->stack);
         }
@@ -1572,9 +1618,11 @@ REGEX;
         if ($array === false)
             $array = $this->stack;
         foreach ($array as $item) {
-            switch (@$item[self::BBCODE_STACK_TOKEN]) {
+            $item += [self::BBCODE_STACK_TOKEN => null, self::BBCODE_STACK_TEXT => null, self::BBCODE_STACK_TAG => ['_name' => '']];
+
+            switch ($item[self::BBCODE_STACK_TOKEN]) {
                 case self::BBCODE_TEXT:
-                    $string .= "\"".htmlspecialchars(@$item[self::BBCODE_STACK_TEXT])."\" ";
+                    $string .= "\"".htmlspecialchars($item[self::BBCODE_STACK_TEXT])."\" ";
                     break;
                 case self::BBCODE_WS:
                     $string .= "WS ";
@@ -1583,7 +1631,7 @@ REGEX;
                     $string .= "NL ";
                     break;
                 case self::BBCODE_TAG:
-                    $string .= "[".htmlspecialchars(@$item[self::BBCODE_STACK_TAG]['_name'])."] ";
+                    $string .= "[".htmlspecialchars($item[self::BBCODE_STACK_TAG]['_name'])."] ";
                     break;
                 default:
                     $string .= "unknown ";
@@ -1791,7 +1839,7 @@ REGEX;
     // (if the tag definition is not valid); for BBCODE_OUTPUT, this function must return
     // HTML output.
     public function doTag($action, $tag_name, $default_value, $params, $contents) {
-        $tag_rule = @$this->tag_rules[$tag_name];
+        $tag_rule = isset($this->tag_rules[$tag_name]) ? $this->tag_rules[$tag_name] : null;
 
         switch ($action) {
 
@@ -1802,18 +1850,20 @@ REGEX;
                 if (isset($tag_rule['allow'])) {
                     // An 'allow' array, if given, overrides the other check techniques.
                     foreach ($tag_rule['allow'] as $param => $pattern) {
-                        if ($param == '_content')
+                        if ($param == '_content') {
                             $value = $contents;
-                        else if ($param == '_defaultcontent') {
-                            if (strlen($default_value))
+                        } elseif ($param == '_defaultcontent') {
+                            if (strlen($default_value)) {
                                 $value = $default_value;
-                            else
+                            } else {
                                 $value = $contents;
+                            }
                         } else {
-                            if (isset($params[$param]))
+                            if (isset($params[$param])) {
                                 $value = $params[$param];
-                            else
-                                $value = @$tag_rule['default'][$param];
+                            } else {
+                                $value = isset($tag_rule['default'][$param]) ? $tag_rule['default'][$param] : null;
+                            }
                         }
                         if ($this->debug) {
                             Debugger::debug("<b>DoTag:</b> check parameter <tt>\"".htmlspecialchars($param)
@@ -1833,7 +1883,9 @@ REGEX;
 
                 $result = true;
                 if (isset($tag_rule['mode'])) {
-                    switch (@$tag_rule['mode']) {
+                    $tag_rule += ['method' => ''];
+
+                    switch ($tag_rule['mode']) {
 
                         default:
                         case self::BBCODE_MODE_SIMPLE:
@@ -1845,15 +1897,21 @@ REGEX;
                             break;
 
                         case self::BBCODE_MODE_INTERNAL:
-                            $result = @call_user_func(Array($this, @$tag_rule['method']), self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents);
+                            if (method_exists($this, $tag_rule['method'])) {
+                                $result = @call_user_func([$this, $tag_rule['method']], self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents);
+                            }
                             break;
 
                         case self::BBCODE_MODE_LIBRARY:
-                            $result = @call_user_func(Array($this->defaults, @$tag_rule['method']), $this, self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents);
+                            if (method_exists($this->defaults, $tag_rule['method'])) {
+                                $result = @call_user_func([$this->defaults, $tag_rule['method']], $this, self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents);
+                            }
                             break;
 
                         case self::BBCODE_MODE_CALLBACK:
-                            $result = @call_user_func(@$tag_rule['method'], $this, self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents);
+                            if (is_callable($tag_rule['method'])) {
+                                $result = @call_user_func($tag_rule['method'], $this, self::BBCODE_CHECK, $tag_name, $default_value, $params, $contents);
+                            }
                             break;
                     }
                 }
@@ -1919,9 +1977,10 @@ REGEX;
                                 break;
                             }
                         }
-                        $params = @parse_url($link);
-                        if (!is_array($params))
+                        $params = parse_url($link);
+                        if (!is_array($params)) {
                             $params = [];
+                        }
                         $params['link'] = $link;
                         $params['url'] = $link;
                         $start = $this->fillTemplate($start, $params);
@@ -1979,10 +2038,9 @@ REGEX;
     // Note that in enhanced mode, the tag parameters' keys must match [a-zA-Z0-9_:-]+,
     // that is, alphanumeric, with underscore, colon, or hyphen.
     protected function doEnhancedTag($tag_rule, $params, $contents) {
-
         // Set up the special "_content" and "_defaultcontent" parameters.
         $params['_content'] = $contents;
-        $params['_defaultcontent'] = strlen(@$params['_default']) ? $params['_default'] : $contents;
+        $params['_defaultcontent'] = !empty($params['_default']) ? $params['_default'] : $contents;
 
         // Now use common template-formatting logic.
         if (isset($tag_rule['template'])) {
@@ -2038,10 +2096,11 @@ REGEX;
             Debugger::debug("<b>ProcessIsolatedTag:</b> tag <tt>[".htmlspecialchars($tag_name)
                 ."]</tt> is isolated: no end tag allowed, so processing immediately.<br>\n");
         }
+        $tag_rule += ['_default' => null, 'before_tag' => null, 'after_tag' => null];
 
         // Ask this tag if its attributes are valid; this gives the tag
         // the option to say, no, I'm broken, don't try to process me.
-        if (!$this->doTag(self::BBCODE_CHECK, $tag_name, @$tag_params['_default'], $tag_params, "")) {
+        if (!$this->doTag(self::BBCODE_CHECK, $tag_name, $tag_params['_default'], $tag_params, "")) {
             if ($this->debug) {
                 Debugger::debug("<b>ProcessIsolatedTag:</b> isolated tag <tt>[".htmlspecialchars($tag_name)
                     ."]</tt> rejected its parameters; outputting as text after fixup.<br>\n");
@@ -2055,9 +2114,9 @@ REGEX;
             return;
         }
 
-        $this->cleanupWSByPoppingStack(@$tag_rule['before_tag'], $this->stack);
-        $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, @$tag_params['_default'], $tag_params, "");
-        $this->cleanupWSByEatingInput(@$tag_rule['after_tag']);
+        $this->cleanupWSByPoppingStack($tag_rule['before_tag'], $this->stack);
+        $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, $tag_params['_default'], $tag_params, "");
+        $this->cleanupWSByEatingInput($tag_rule['after_tag']);
 
         if ($this->debug) {
             Debugger::debug("<b>ProcessIsolatedTag:</b> isolated tag <tt>[".htmlspecialchars($tag_name)
@@ -2204,7 +2263,10 @@ REGEX;
         // verbatim contents, so they're going to get it.
         $tag_params['_endtag'] = $end_tag_params;
         $tag_params['_hasend'] = true;
-        $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, @$tag_params['_default'], $tag_params, $content);
+        if (!isset($tag_params['_default'])) {
+            $tag_params['_default'] = null;
+        }
+        $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, $tag_params['_default'], $tag_params, $content);
 
         if ($this->debug) {
             Debugger::debug("<b>Internal_ProcessVerbatimTag:</b> end of verbatim <tt>[".htmlspecialchars($tag_name)
@@ -2229,7 +2291,7 @@ REGEX;
         // all at once.  First, let's look up what we know about the tag we've
         // encountered.
         $tag_params = $this->lexer->tag;
-        $tag_name = @$tag_params['_name'];
+        $tag_name = isset($tag_params['_name']) ? $tag_params['_name'] : null;
         if ($this->debug) {
             Debugger::debug("<hr />\n<b>Internal_ParseStartTagToken:</b> got tag <tt>["
                 .htmlspecialchars($tag_name)."]</tt>.<br>\n");
@@ -2320,7 +2382,7 @@ REGEX;
 
         // Ask this tag if its attributes are valid; this gives the tag the option
         // to say, no, I'm broken, don't try to process me.
-        if (!$this->doTag(self::BBCODE_CHECK, $tag_name, @$tag_params['_default'], $tag_params, "")) {
+        if (!$this->doTag(self::BBCODE_CHECK, $tag_name, isset($tag_params['_default']) ? $tag_params['_default'] : null, $tag_params, "")) {
             if ($this->debug) {
                 Debugger::debug("<b>Internal_ParseStartTagToken:</b> tag <tt>[".htmlspecialchars($tag_name)
                     ."]</tt> rejected its parameters; outputting as text after fixup.<br>\n");
@@ -2375,7 +2437,7 @@ REGEX;
     protected function parseEndTagToken() {
 
         $tag_params = $this->lexer->tag;
-        $tag_name = @$tag_params['_name'];
+        $tag_name = isset($tag_params['_name']) ? $tag_params['_name'] : null;
         if ($this->debug) {
             Debugger::debug("<hr />\n<b>Internal_ParseEndTagToken:</b> got end tag <tt>[/"
                 .htmlspecialchars($tag_name)."]</tt>.<br>\n");
@@ -2423,9 +2485,16 @@ REGEX;
         }
         $start_tag_params['_endtag'] = $tag_params['_tag'];
         $start_tag_params['_hasend'] = true;
-        $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, @$start_tag_params['_default'], $start_tag_params, $contents);
-        if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['after_endtag'])) {
-            $this->cleanupWSByEatingInput(@$this->tag_rules[$tag_name]['after_endtag']);
+        $output = $this->doTag(
+            self::BBCODE_OUTPUT,
+            $tag_name,
+            isset($start_tag_params['_default']) ? $start_tag_params['_default'] : null,
+            $start_tag_params,
+            $contents
+        );
+
+        if (isset($this->tag_rules[$tag_name]['after_endtag'])) {
+            $this->cleanupWSByEatingInput($this->tag_rules[$tag_name]['after_endtag']);
         } else {
             $this->cleanupWSByEatingInput(null);
         }
