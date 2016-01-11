@@ -793,12 +793,11 @@ BBCODE
                 'bbcode' => "This is a smiley: [img]../smile.gif[/img].",
                 'html' => "This is a smiley: <img src=\"../smile.gif\" alt=\"smile.gif\" class=\"bbcode_img\" />.",
             ]],
-//            [[
-//                'descr' => "[img] will skip nonexistent local images.",
-//                'bbcode' => "This is a smiley: [img]flarb.gif[/img].",
-//                'html' => "This is a smiley: [img]flarb.gif[/img].",
-//                'skip' => true
-//            ]],
+            [[
+                'descr' => "[img=src] should produce an image.",
+                'bbcode' => 'This is a smiley: [img=smile.gif?f=1&b=2][/img] okay?',
+                'html' => 'This is a smiley: <img src="smileys/smile.gif" alt="smile.gif?f=1&amp;b=2" class="bbcode_img" /> okay?',
+            ]]
         ];
         return $result;
     }

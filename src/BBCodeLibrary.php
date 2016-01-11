@@ -256,7 +256,7 @@ class BBCodeLibrary {
             'class' => 'image',
             'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'end_tag' => BBCode::BBCODE_REQUIRED,
-            'content' => BBCode::BBCODE_REQUIRED,
+            'content' => BBCode::BBCODE_OPTIONAL,
             'plain_start' => "[image]",
             'plain_content' => [],
         ],
@@ -644,6 +644,10 @@ class BBCodeLibrary {
         }
 
         $content = trim($bbcode->unHTMLEncode(strip_tags($content)));
+        if (empty($content) && $default) {
+            $content = $default;
+        }
+
         $urlParts = parse_url($content);
 
 
