@@ -1,14 +1,13 @@
 <?php
 /**
- * @copyright 2008-2010 Phantom Inker
+ * @copyright Copyright (C) 2008-10, Sean Werkema. All rights reserved.
  * @copyright 2016 Vanilla Forums Inc. (changes only)
- * @license MIT
+ * @license BSDv2
  */
+
 namespace Nbbc;
 
 //-----------------------------------------------------------------------------
-//
-//  nbbc_lib.php
 //
 //  This file is part of NBBC, the New BBCode Parser.
 //

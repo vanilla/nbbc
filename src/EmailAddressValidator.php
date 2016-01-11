@@ -4,6 +4,7 @@
  * @copyright 2016 Vanilla Forums Inc. (changes only)
  * @license BSDv2
  */
+
 namespace Nbbc;
 
 /**
@@ -25,7 +26,7 @@ namespace Nbbc;
  */
 class EmailAddressValidator {
 
-    // Check email address validity
+    // Check email address validity.
     // @param   strEmailAddress     Email address to be checked
     // @return  True if email is valid, false if not
     function check_email_address($strEmailAddress) {
