@@ -172,7 +172,7 @@ class BBCodeLibrary {
         'font' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'allow' => ['_default' => '/^[a-zA-Z0-9._ -]+$/'],
-            'method' => 'DoFont',
+            'method' => 'doFont',
             'class' => 'inline',
             'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
         ],
@@ -186,7 +186,7 @@ class BBCodeLibrary {
         'size' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
             'allow' => ['_default' => '/^[0-9.]+$/D'],
-            'method' => 'DoSize',
+            'method' => 'doSize',
             'class' => 'inline',
             'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
         ],
@@ -218,7 +218,7 @@ class BBCodeLibrary {
         ],
         'url' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'method' => 'DoURL',
+            'method' => 'doURL',
             'class' => 'link',
             'allow_in' => ['listitem', 'block', 'columns', 'inline'],
             'content' => BBCode::BBCODE_REQUIRED,
@@ -229,7 +229,7 @@ class BBCodeLibrary {
         ],
         'email' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'method' => 'DoEmail',
+            'method' => 'doEmail',
             'class' => 'link',
             'allow_in' => ['listitem', 'block', 'columns', 'inline'],
             'content' => BBCode::BBCODE_REQUIRED,
@@ -240,7 +240,7 @@ class BBCodeLibrary {
         ],
         'wiki' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'method' => "DoWiki",
+            'method' => "doWiki",
             'class' => 'link',
             'allow_in' => ['listitem', 'block', 'columns', 'inline'],
             'end_tag' => BBCode::BBCODE_PROHIBIT,
@@ -252,7 +252,7 @@ class BBCodeLibrary {
         ],
         'img' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'method' => "DoImage",
+            'method' => "doImage",
             'class' => 'image',
             'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
             'end_tag' => BBCode::BBCODE_REQUIRED,
@@ -262,7 +262,7 @@ class BBCodeLibrary {
         ],
         'rule' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'method' => "DoRule",
+            'method' => "doRule",
             'class' => 'block',
             'allow_in' => ['listitem', 'block', 'columns'],
             'end_tag' => BBCode::BBCODE_PROHIBIT,
@@ -379,7 +379,7 @@ class BBCodeLibrary {
         ],
         'quote' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'method' => "DoQuote",
+            'method' => "doQuote",
             'allow_in' => ['listitem', 'block', 'columns'],
             'before_tag' => "sns",
             'after_tag' => "sns",
@@ -390,7 +390,7 @@ class BBCodeLibrary {
         ],
         'list' => [
             'mode' => BBCode::BBCODE_MODE_LIBRARY,
-            'method' => 'DoList',
+            'method' => 'doList',
             'class' => 'list',
             'allow_in' => ['listitem', 'block', 'columns'],
             'before_tag' => "sns",
