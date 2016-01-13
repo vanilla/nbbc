@@ -1,7 +1,7 @@
 {
 	"name": "vanilla/nbbc",
 	"description": "A composer-compatible fork of the NBBC BBCode parsing library.",
-	"license": "MIT",
+	"license": "BSDv2",
 	"authors": [
 		{
 			"name": "Todd Burry",
