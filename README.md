@@ -1,5 +1,8 @@
 # The New BBCode Parser (NBBC)
 
+[![Build Status](https://img.shields.io/travis/vanilla/nbbc.svg?style=flat-square)](https://travis-ci.org/vanilla/nbbc)
+[![Packagist Version](https://img.shields.io/packagist/v/vanilla/nbbc.svg?style=flat-square)](https://packagist.org/packages/vanilla/nbbc)
+
 NBBC is a high-speed, extensible, easy-to-use validating BBCode parser. It was originally developed by Sean Werkema and
 most of the core code is still his. The core NBBC was last [updated officially](http://nbbc.sourceforge.net/) in 2010.
 This is forked from the best third-party fork we could find.
