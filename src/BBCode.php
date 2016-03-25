@@ -440,10 +440,22 @@ class BBCode {
         return $this->url_target;
     }
 
+    /**
+     * Set the value for escape_content.
+     *
+     * @param bool $escape_content
+     * @return $this
+     */
     public function setEscapeContent($escape_content) {
         $this->escape_content = $escape_content;
+        return $this;
     }
 
+    /**
+     * Get the current value of escape_content.
+     *
+     * @return bool
+     */
     public function getEscapeContent() {
         return $this->escape_content;
     }
@@ -836,7 +848,7 @@ class BBCode {
             if (!$this->allow_ampersand) {
                 return htmlspecialchars($string);
             } else {
-                return str_replace(Array('<', '>', '"'), Array('&lt;', '&gt;', '&quot;'), $string);
+                return str_replace(['<', '>', '"'], ['&lt;', '&gt;', '&quot;'], $string);
             }
         } else {
             return $string;
