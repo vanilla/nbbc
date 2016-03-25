@@ -215,7 +215,8 @@ class BBCode {
     protected $pre_trim;  // How to trim the whitespace at the start of the input.
     protected $post_trim;  // How to trim the whitespace at the end of the input.
     public $debug;   // Enable debugging mode
-    protected $max_smileys; // Maximum numbe of smileys that can be used in parse
+    protected $max_smileys; // Maximum number of smileys that can be used in parse
+    protected $escape_content; // Encode HTML. POTENTIALLY DANGEROUS IF DISABLED. ONLY DISABLE IF YOU KNOW WHAT YOURE DOING.
 
     /**
      * Initialize a new instance of the {@link BBCode} class.
@@ -252,6 +253,7 @@ class BBCode {
         $this->url_targetable = false;
         $this->url_target = false;
         $this->max_smileys = -1;
+        $this->escape_content = true;
     }
 
     //-----------------------------------------------------------------------------
@@ -438,7 +440,25 @@ class BBCode {
         return $this->url_target;
     }
 
+    /**
+     * Set the value for escape_content.
+     *
+     * @param bool $escape_content
+     * @return $this
+     */
+    public function setEscapeContent($escape_content) {
+        $this->escape_content = $escape_content;
+        return $this;
+    }
 
+    /**
+     * Get the current value of escape_content.
+     *
+     * @return bool
+     */
+    public function getEscapeContent() {
+        return $this->escape_content;
+    }
 
     //-----------------------------------------------------------------------------
     // Rule-management:  You can add your own custom tag rules, or use the defaults.
@@ -824,10 +844,14 @@ class BBCode {
      * @return string Returns an encoded version of {@link $string}.
      */
     public function htmlEncode($string) {
-        if (!$this->allow_ampersand) {
-            return htmlspecialchars($string);
+        if ($this->escape_content) {
+            if (!$this->allow_ampersand) {
+                return htmlspecialchars($string);
+            } else {
+                return str_replace(['<', '>', '"'], ['&lt;', '&gt;', '&quot;'], $string);
+            }
         } else {
-            return str_replace(Array('<', '>', '"'), Array('&lt;', '&gt;', '&quot;'), $string);
+            return $string;
         }
     }
 
