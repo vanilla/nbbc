@@ -189,7 +189,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => ":-) produces a smiley <img> element.",
 			'bbcode' => "This is a test of the emergency broadcasting system :-)",
-			'regex' => "/This is a test of the emergency broadcasting system <img src=\\\"smileys\\/smile.gif\\\" width=\\\"[0-9]*\\\" height=\\\"[0-9]*\\\" alt=\\\":-\\)\\\" title=\\\":-\\)\\\" class=\\\"bbcode_smiley\\\" \\/>/",
+			'html' => "This is a test of the emergency broadcasting system <img src=\"smileys/smile.gif\" alt=\":-)\" title=\":-)\" class=\"bbcode_smiley\" />",
 		),
 		Array(
 			'descr' => "--- does *not* produce a [rule] tag.",
@@ -234,7 +234,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "[--] comments may *not* contain newlines.",
 			'bbcode' => "This is a test of the [-- emergency\n\rbroadcasting] system.",
-			'html' => "This is a test of the [-- emergency<br />\nbroadcasting] system.",
+			'html' => "This is a test of the [-- emergency<br>\nbroadcasting] system.",
 		),
 		Array(
 			'descr' => "['] produces a comment.",
@@ -249,7 +249,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "['] comments may *not* contain newlines.",
 			'bbcode' => "This is a test of the [' emergency\n\rbroadcasting] system.",
-			'html' => "This is a test of the [' emergency<br />\nbroadcasting] system.",
+			'html' => "This is a test of the [' emergency<br>\nbroadcasting] system.",
 		),
 		Array(
 			'descr' => "[!-- --] produces a comment.",
@@ -305,12 +305,12 @@ h1 { text-align: center; }
 
 		"Whitespace Tests",
 		Array(
-			'descr' => "Newlines get replaced with <br /> tags.",
+			'descr' => "Newlines get replaced with <br> tags.",
 			'bbcode' => "This\nis\r\na\n\rtest.",
-			'html' => "This<br />\nis<br />\na<br />\ntest.",
+			'html' => "This<br>\nis<br>\na<br>\ntest.",
 		),
 		Array(
-			'descr' => "Newlines *don't* get replaced with <br /> tags in ignore-newline mode.",
+			'descr' => "Newlines *don't* get replaced with <br> tags in ignore-newline mode.",
 			'bbcode' => "This\nis\r\na\n\rtest.",
 			'html' => "This\nis\na\ntest.",
 			'newline_ignore' => true,
@@ -318,7 +318,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "Space before and after newlines gets removed.",
 			'bbcode' => "This \n \t is \na\n \x08test.",
-			'html' => "This<br />\nis<br />\na<br />\ntest.",
+			'html' => "This<br>\nis<br>\na<br>\ntest.",
 		),
 		Array(
 			'descr' => "Whitespace doesn't matter inside tags after the tag name.",
@@ -338,12 +338,12 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "Whitespace is properly collapsed near block tags like [center].",
 			'bbcode' => "Not centered.    \n    \n    [center]    \n    \n    A bold stone gathers no italics.    \n    \n    [/center]    \n    \n    Not centered.",
-			'html' => "Not centered.<br />\n"
+			'html' => "Not centered.<br>\n"
 				. "\n<div class=\"bbcode_center\" style=\"text-align:center\">\n"
-				. "<br />\n"
-				. "A bold stone gathers no italics.<br />\n"
+				. "<br>\n"
+				. "A bold stone gathers no italics.<br>\n"
 				. "\n</div>\n"
-				. "<br />\n"
+				. "<br>\n"
 				. "Not centered.",
 		),
 		Array(
@@ -351,17 +351,17 @@ h1 { text-align: center; }
 			'bbcode' => "Not\ncode.\n"
 				. "[code]    \n\n    This is a test.    \n\n    [/code]\n"
 				. "Also not code.\n",
-			'html' => "Not<br />\ncode.\n"
+			'html' => "Not<br>\ncode.\n"
 				. "<div class=\"bbcode_code\">\n"
 				. "<div class=\"bbcode_code_head\">Code:</div>\n"
 				. "<div class=\"bbcode_code_body\" style=\"white-space:pre\">\n    This is a test.    \n</div>\n"
 				. "</div>\n"
-				. "Also not code.<br />\n",
+				. "Also not code.<br>\n",
 		),
 		Array(
 			'descr' => "[list] and [*] must consume correct quantities of whitespace.",
 			'bbcode' => "[list]\n\n\t[*] One Box\n\n\t[*] Two Boxes\n\t[*] \n Three Boxes\n\n[/list]\n",
-			'html' => "\n<ul class=\"bbcode_list\">\n<br />\n<li>One Box<br />\n</li>\n<li>Two Boxes</li>\n<li><br />\nThree Boxes<br />\n</li>\n</ul>\n",
+			'html' => "\n<ul class=\"bbcode_list\">\n<br>\n<li>One Box<br>\n</li>\n<li>Two Boxes</li>\n<li><br>\nThree Boxes<br>\n</li>\n</ul>\n",
 		),
 
 		//-----------------------------------------------------------------------------------------
@@ -597,19 +597,19 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "Embedded URLs get detected and converted.",
 			'bbcode' => "Go to http://www.google.com for your search needs!",
-			'html' => "Go to <a href=\"http://www.google.com/\">http://www.google.com</a> for your search needs!",
+			'html' => "Go to <a href=\"http://www.google.com\">http://www.google.com</a> for your search needs!",
 			'detect_urls' => true,
 		),
 		Array(
 			'descr' => "Embedded HTTPS URLs get detected and converted.",
 			'bbcode' => "Go to https://www.google.com for your search needs!",
-			'html' => "Go to <a href=\"https://www.google.com/\">https://www.google.com</a> for your search needs!",
+			'html' => "Go to <a href=\"https://www.google.com\">https://www.google.com</a> for your search needs!",
 			'detect_urls' => true,
 		),
 		Array(
 			'descr' => "Embedded FTP URLs get detected and converted.",
 			'bbcode' => "Go to ftp://www.google.com for your search needs!",
-			'html' => "Go to <a href=\"ftp://www.google.com/\">ftp://www.google.com</a> for your search needs!",
+			'html' => "Go to <a href=\"ftp://www.google.com\">ftp://www.google.com</a> for your search needs!",
 			'detect_urls' => true,
 		),
 		Array(
@@ -621,7 +621,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "Embedded domain names get detected and converted.",
 			'bbcode' => "Go to www.google.com for your search needs!",
-			'html' => "Go to <a href=\"http://www.google.com/\">www.google.com</a> for your search needs!",
+			'html' => "Go to <a href=\"http://www.google.com\">www.google.com</a> for your search needs!",
 			'detect_urls' => true,
 		),
 		Array(
@@ -633,7 +633,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "Embedded addresses are smart about being inside parentheses.",
 			'bbcode' => "I love Google! (google.com)",
-			'html' => "I love Google! (<a href=\"http://google.com/\">google.com</a>)",
+			'html' => "I love Google! (<a href=\"http://google.com\">google.com</a>)",
 			'detect_urls' => true,
 		),
 		Array(
@@ -718,7 +718,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "The [[wiki]] special tag cannot contain newlines.",
 			'bbcode' => "This is a test of the [[northwestern\nsalmon]].",
-			'html' => "This is a test of the [[northwestern<br />\nsalmon]].",
+			'html' => "This is a test of the [[northwestern<br>\nsalmon]].",
 		),
 		Array(
 			'descr' => "The [[wiki]] special tag can contain a title after a | character.",
@@ -851,7 +851,7 @@ h1 { text-align: center; }
 				. "<div class=\"bbcode_code_body\" style=\"white-space:pre\">\$foo['bar'] = 42;\n"
 					. "if (\$foo[&quot;bar&quot;] &lt; 42) \$foo[] = 0;</div>\n"
 				. "</div>\n"
-				. "Also not code.<br />\n",
+				. "Also not code.<br>\n",
 		),
 		Array(
 			'descr' => "<code>...</code> should not misbehave in '<' tag marker mode.",
@@ -1008,7 +1008,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "[nextcol] doesn't do anything outside a [columns] block.",
 			'bbcode' => "Here's some text.[nextcol]\nHere's some more.\n",
-			'html' => "Here's some text.[nextcol]<br />\nHere's some more.<br />\n",
+			'html' => "Here's some text.[nextcol]<br>\nHere's some more.<br>\n",
 		),
 		Array(
 			'descr' => "Bad column misuse doesn't break layouts.",
