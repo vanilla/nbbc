@@ -211,6 +211,7 @@ class BBCode {
     protected $local_img_url; // The URL path to local images (possibly a relative path).
     protected $url_targetable; // If true, [url] tags can accept a target="..." parameter.
     protected $url_target; // If non-false, [url] tags will use this target and no other.
+    protected $url_template; // The default template used with the default [url] tag.
     protected $rule_html;  // The default HTML to output for a [rule] tag.
     protected $pre_trim;  // How to trim the whitespace at the start of the input.
     protected $post_trim;  // How to trim the whitespace at the end of the input.
@@ -252,6 +253,7 @@ class BBCode {
         $this->url_pattern = '<a href="{$url/h}">{$text/h}</a>';
         $this->url_targetable = false;
         $this->url_target = false;
+        $this->url_template = '<a href="{$url/h}" class="bbcode_url"{$target/v}>{$content/v}</a>';
         $this->max_smileys = -1;
         $this->escape_content = true;
     }
@@ -438,6 +440,17 @@ class BBCode {
 
     public function getURLTarget() {
         return $this->url_target;
+    }
+
+
+    public function setURLTemplate($template) {
+        $this->url_template = $template;
+        return $this;
+    }
+
+
+    public function getURLTemplate() {
+        return $this->url_template;
     }
 
     /**

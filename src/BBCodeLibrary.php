@@ -463,7 +463,7 @@ class BBCodeLibrary {
             // enclosed in an <a href> tag. Remove that if that is the case.
             $content = preg_replace('/^\\<a [^\\>]*\\>(.*?)<\\/a>$/', "\\1", $content);
 
-            return '<a href="'.htmlspecialchars($url).'" class="bbcode_url"'.$target.'>'.$content.'</a>';
+            return $bbcode->fillTemplate($bbcode->getURLTemplate(), array("url" => $url, "target" => $target, "content" => $content));
         } else {
             return htmlspecialchars($params['_tag']).$content.htmlspecialchars($params['_endtag']);
         }
