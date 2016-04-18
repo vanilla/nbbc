@@ -613,12 +613,6 @@ h1 { text-align: center; }
 			'detect_urls' => true,
 		),
 		Array(
-			'descr' => "Embedded Javascript URLs are properly ignored.",
-			'bbcode' => "Go to javascript:foo.com;alert(); for your search needs!",
-			'html' => "Go to javascript:<a href=\"http://foo.com/\">foo.com</a>;alert(); for your search needs!",
-			'detect_urls' => true,
-		),
-		Array(
 			'descr' => "Embedded domain names get detected and converted.",
 			'bbcode' => "Go to www.google.com for your search needs!",
 			'html' => "Go to <a href=\"http://www.google.com\">www.google.com</a> for your search needs!",
