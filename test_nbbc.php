@@ -82,7 +82,9 @@ h1 { text-align: center; }
 
 <?php
 
-	require_once("src/nbbc_main.php");		// Expanded version.
+	require_once(__DIR__ . "/vendor/autoload.php");
+	use Nbbc\BBCode;
+	//require_once("src/nbbc_main.php");	// Expanded version.
 	//require_once("nbbc.php");				// Condensed version.
 
 	$BBCodeTestSuite = Array(
@@ -1105,7 +1107,7 @@ h1 { text-align: center; }
 	$bbcode = new BBCode;
 
 	$bbcode->AddRule('wstest', Array(
-		'mode' => BBCODE_MODE_ENHANCED,
+		'mode' => BBCode::BBCODE_MODE_ENHANCED,
 		'allow' => Array('_default' => '/^[a-zA-Z0-9._ -]+$/'),
 		'template' => '<span style="wstest:{$_default}">{$_content}</span>',
 		'class' => 'inline',
