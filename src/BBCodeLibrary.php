@@ -746,9 +746,7 @@ class BBCodeLibrary {
             $title = htmlspecialchars(trim($default))." wrote:";
         }
 
-        return "\n<div class=\"bbcode_quote\">\n<div class=\"bbcode_quote_head\">"
-            .$title."</div>\n<div class=\"bbcode_quote_body\">"
-            .$content."</div>\n</div>\n";
+        return $bbcode->fillTemplate($bbcode->getQuoteTemplate(), array("title" => $title, "content" => $content));
     }
 
     /**
