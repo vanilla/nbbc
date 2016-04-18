@@ -762,7 +762,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "[img] can produce a local image.",
 			'bbcode' => "This is a smiley: [img]smile.gif[/img].",
-			'html' => "This is a smiley: <img src=\"smileys/smile.gif\" alt=\"smile.gif\" width=\"16\" height=\"16\" class=\"bbcode_img\" />.",
+			'html' => "This is a smiley: <img src=\"smileys/smile.gif\" alt=\"smile.gif\" class=\"bbcode_img\" />.",
 		),
 		Array(
 			'descr' => "[img] can produce a local rooted URL.",
@@ -775,11 +775,6 @@ h1 { text-align: center; }
 			'html' => "This is a smiley: <img src=\"../smile.gif\" alt=\"smile.gif\" class=\"bbcode_img\" />.",
 		),
 		Array(
-			'descr' => "[img] will skip nonexistent local images.",
-			'bbcode' => "This is a smiley: [img]flarb.gif[/img].",
-			'html' => "This is a smiley: [img]flarb.gif[/img].",
-		),
-		Array(
 			'descr' => "[rule] produces a horizontal rule.",
 			'bbcode' => "This is a test of the [rule] emergency broadcasting system.",
 			'html' => "This is a test of the\n<hr class=\"bbcode_rule\" />\nemergency broadcasting system.",
@@ -787,7 +782,7 @@ h1 { text-align: center; }
 		Array(
 			'descr' => "[br] is equivalent to a newline.",
 			'bbcode' => "This is a newline.    [br]    And here we are!    \n  And more!",
-			'html' => "This is a newline.<br />\nAnd here we are!<br />\nAnd more!",
+			'html' => "This is a newline.<br>\nAnd here we are!<br>\nAnd more!",
 		),
 
 		//-----------------------------------------------------------------------------------------
@@ -880,7 +875,7 @@ h1 { text-align: center; }
 			'html' => "Outside the quote."
 				. "\n<div class=\"bbcode_quote\">\n"
 				. "<div class=\"bbcode_quote_head\">Quote:</div>\n"
-				. "<div class=\"bbcode_quote_body\">A <b>and</b> &amp; &lt;woo&gt;!<br />\n"
+				. "<div class=\"bbcode_quote_body\">A <b>and</b> &amp; &lt;woo&gt;!<br>\n"
 					. "And a [hey] and a [/nonny] and a ho ho ho!</div>\n"
 				. "</div>\n"
 				. "Also outside the quote.",
@@ -930,7 +925,7 @@ h1 { text-align: center; }
 				. "text3"
 				. "</div>\n"
 				. "</div>\n"
-				. "text4 <img src=\"smileys/smile.gif\" width=\"16\" height=\"16\" alt=\":)\" title=\":)\" class=\"bbcode_smiley\" /> text5 :o text6 :o",
+				. "text4 <img src=\"smileys/smile.gif\" alt=\":)\" title=\":)\" class=\"bbcode_smiley\" /> text5 :o text6 :o",
 		),
 		Array(
 			'descr' => "[quote=John]...[/quote] should produce a quote from John.",
@@ -940,7 +935,7 @@ h1 { text-align: center; }
 			'html' => "Outside the quote."
 				. "\n<div class=\"bbcode_quote\">\n"
 				. "<div class=\"bbcode_quote_head\">John wrote:</div>\n"
-				. "<div class=\"bbcode_quote_body\">A <b>and</b> &amp; &lt;woo&gt;!<br />\n"
+				. "<div class=\"bbcode_quote_body\">A <b>and</b> &amp; &lt;woo&gt;!<br>\n"
 					. "And a [hey] and a [/nonny] and a ho ho ho!</div>\n"
 				. "</div>\n"
 				. "Also outside the quote.",
@@ -953,7 +948,7 @@ h1 { text-align: center; }
 			'html' => "Outside the quote."
 				. "\n<div class=\"bbcode_quote\">\n"
 				. "<div class=\"bbcode_quote_head\">John Smith wrote:</div>\n"
-				. "<div class=\"bbcode_quote_body\">A <b>and</b> &amp; &lt;woo&gt;!<br />\n"
+				. "<div class=\"bbcode_quote_body\">A <b>and</b> &amp; &lt;woo&gt;!<br>\n"
 					. "And a [hey] and a [/nonny] and a ho ho ho!</div>\n"
 				. "</div>\n"
 				. "Also outside the quote.",
@@ -990,7 +985,7 @@ h1 { text-align: center; }
 			'html' => "Outside the quote."
 				. "\n<div class=\"bbcode_quote\">\n"
 				. "<div class=\"bbcode_quote_head\">&lt;script&gt;javascript:alert()&lt;/script&gt; wrote:</div>\n"
-				. "<div class=\"bbcode_quote_body\">A <b>and</b> &amp; &lt;woo&gt;!<br />\n"
+				. "<div class=\"bbcode_quote_body\">A <b>and</b> &amp; &lt;woo&gt;!<br>\n"
 					. "And a [hey] and a [/nonny] and a ho ho ho!</div>\n"
 				. "</div>\n"
 				. "Also outside the quote.",
