@@ -622,7 +622,7 @@ class BBCodeLibrary {
         }
 
         $wikiURL = $bbcode->getWikiURL();
-        return "<a href=\"{$wikiURL}$name\" class=\"bbcode_wiki\">".htmlspecialchars($title)."</a>";
+        return $bbcode->fillTemplate($bbcode->getWikiURLTemplate(), array("wikiURL" => $wikiURL, "name" => $name, "title" => $title));
     }
 
 

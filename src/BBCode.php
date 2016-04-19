@@ -213,6 +213,7 @@ class BBCode {
     protected $url_target; // If non-false, [url] tags will use this target and no other.
     protected $url_template; // The default template used with the default [url] tag.
     protected $quote_template; // The default template used with the default [quote] tag.
+    protected $wiki_url_template; // The default template to use when rendering wiki links.
     protected $rule_html;  // The default HTML to output for a [rule] tag.
     protected $pre_trim;  // How to trim the whitespace at the start of the input.
     protected $post_trim;  // How to trim the whitespace at the end of the input.
@@ -257,6 +258,7 @@ class BBCode {
         $this->url_template = '<a href="{$url/h}" class="bbcode_url"{$target/v}>{$content/v}</a>';
         $this->quote_template = "\n" . '<div class="bbcode_quote">' . "\n" . '<div class="bbcode_quote_head">{$title/v}</div>' . "\n";
         $this->quote_template .= '<div class="bbcode_quote_body">{$content/v}</div>' . "\n</div>\n";
+        $this->wiki_url_template = '<a href="{$wikiURL/v}{$name/v}" class="bbcode_wiki">{$title/h}</a>';
         $this->max_smileys = -1;
         $this->escape_content = true;
     }
@@ -463,8 +465,19 @@ class BBCode {
     }
 
 
-    public function getQuoteTemplate($template) {
+    public function getQuoteTemplate() {
         return $this->quote_template;
+    }
+
+
+    public function setWikiURLTemplate($template) {
+        $this->wiki_url_template = $template;
+        return $this;
+    }
+
+
+    public function getWikiURLTemplate() {
+        return $this->wiki_url_template;
     }
 
     /**
