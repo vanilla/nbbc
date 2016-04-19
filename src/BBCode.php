@@ -213,7 +213,8 @@ class BBCode {
     protected $url_target; // If non-false, [url] tags will use this target and no other.
     protected $url_template; // The default template used with the default [url] tag.
     protected $quote_template; // The default template used with the default [quote] tag.
-    protected $wiki_url_template; // The default template to use when rendering wiki links.
+    protected $wiki_url_template; // The default template used when rendering wiki links.
+    protected $email_template; // The default template used with the default [email] tag.
     protected $rule_html;  // The default HTML to output for a [rule] tag.
     protected $pre_trim;  // How to trim the whitespace at the start of the input.
     protected $post_trim;  // How to trim the whitespace at the end of the input.
@@ -259,6 +260,7 @@ class BBCode {
         $this->quote_template = "\n" . '<div class="bbcode_quote">' . "\n" . '<div class="bbcode_quote_head">{$title/v}</div>' . "\n";
         $this->quote_template .= '<div class="bbcode_quote_body">{$content/v}</div>' . "\n</div>\n";
         $this->wiki_url_template = '<a href="{$wikiURL/v}{$name/v}" class="bbcode_wiki">{$title/h}</a>';
+        $this->email_template = '<a href="mailto:{$email/h}" class="bbcode_email">{$content/v}</a>';
         $this->max_smileys = -1;
         $this->escape_content = true;
     }
@@ -478,6 +480,17 @@ class BBCode {
 
     public function getWikiURLTemplate() {
         return $this->wiki_url_template;
+    }
+
+
+    public function setEmailTemplate($template) {
+        $this->email_template = $template;
+        return $this;
+    }
+
+
+    public function getEmailTemplate() {
+        return $this->email_template;
     }
 
     /**

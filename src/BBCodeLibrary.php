@@ -496,7 +496,7 @@ class BBCodeLibrary {
             : $bbcode->unHTMLEncode(strip_tags($content));
 
         if ($bbcode->isValidEmail($email)) {
-            return '<a href="mailto:'.htmlspecialchars($email).'" class="bbcode_email">'.$content.'</a>';
+            return $bbcode->fillTemplate($bbcode->getEmailTemplate(), array("email" => $email, "content" => $content));
         } else {
             return htmlspecialchars($params['_tag']).$content.htmlspecialchars($params['_endtag']);
         }
