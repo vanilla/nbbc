@@ -40,7 +40,7 @@ function MyBorderFunction($bbcode, $action, $name,
 
 <div class='code_header'>A callback rule to a method of an object:</div>
 <xmp class='code'>class MyObject {
-    function BlargFunction($bbcode, $action, $name,
+    public function BlargFunction($bbcode, $action, $name,
         $default, $params, $content) {
         ....
     }

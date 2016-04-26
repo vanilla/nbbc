@@ -259,7 +259,7 @@ class BBCode {
     //-----------------------------------------------------------------------------
     // State control.
 
-    function setPreTrim($trim = "a") {
+    public function setPreTrim($trim = "a") {
         $this->pre_trim = $trim;
         return $this;
     }
