@@ -616,8 +616,9 @@ class BBCodeLibrary {
             return strlen($name) > 0;
         }
 
-        $title = trim(@$params['title']);
-        if (strlen($title) <= 0) {
+        if (isset($params['title']) && strlen(trim($params['title']))) {
+            $title = trim($params['title']);
+        } else {
             $title = trim($default);
         }
 
