@@ -72,7 +72,7 @@ class Debugger {
                 $string .= "\n";
             }
 
-            $date = new DateTime();
+            $date = new \DateTime();
             $string = '['.$date->format('Y-m-d H:i:s.u').'] '.$string;
 
             if (static::$log_file) {
