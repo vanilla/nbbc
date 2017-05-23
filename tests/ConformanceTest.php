@@ -8,11 +8,12 @@
 namespace Nbbc\Tests;
 
 use Nbbc\BBCode;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Contains all the tests that were part of the default NBBC test page (test_nbbc.php).
  */
-class ConformanceTest extends \PHPUnit_Framework_TestCase {
+class ConformanceTest extends TestCase {
     /**
      * Provide input validation test data.
      *

@@ -8,11 +8,12 @@
 namespace Nbbc\Tests;
 
 use Nbbc\BBCode;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Backwards compatibility testing for when new functionality is introduced.
  */
-class CompatibilityTest extends \PHPUnit_Framework_TestCase {
+class CompatibilityTest extends TestCase {
     /**
      * Test that new templates work like old templates.
      *
