@@ -815,6 +815,8 @@ class BBCode {
         if ($email_too && substr($string, 0, 7) == "mailto:") {
             return $this->isValidEmail(substr($string, 7));
         }
+
+        return false;
     }
 
     /**
