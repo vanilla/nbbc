@@ -31,10 +31,10 @@
 	// intended for use as part of the editing of "readme.html" as the list
 	// of smileys change.
 
-	require_once("../nbbc.php");
+	require_once(__DIR__ . "/../vendor/autoload.php");
 
 	function collect_smileys($file) {
-		$lib = new BBCodeLibrary;
+		$lib = new \Nbbc\BBCodeLibrary;
 		$output = "";
 		foreach ($lib->default_smileys as $smiley => $filename) {
 			if ($filename == $file) {
@@ -67,7 +67,7 @@
 	table.smiley_table td { font: 10pt Courier,monospace,mono; white-space: pre; }
 	table.smiley_table tbody th { text-align: center; }	
 --></style>
-<base href="<?php print "http://" . $_SERVER['SERVER_NAME'] . dirname(dirname($_SERVER['REQUEST_URI'])); ?>" />
+	<base href="<?php print "http://" . $_SERVER['SERVER_NAME'] . dirname(dirname($_SERVER['REQUEST_URI'])); ?>" />
 </head>
 
 <body>
