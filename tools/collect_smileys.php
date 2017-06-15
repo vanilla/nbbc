@@ -67,6 +67,7 @@
 	table.smiley_table td { font: 10pt Courier,monospace,mono; white-space: pre; }
 	table.smiley_table tbody th { text-align: center; }	
 --></style>
+	<base href="<?php print "http://" . $_SERVER['SERVER_NAME'] . dirname(dirname($_SERVER['REQUEST_URI'])); ?>" />
 </head>
 
 <body>
