@@ -2019,7 +2019,8 @@ REGEX;
                     return $start.$result.$end;
                 }
 
-                switch (@$tag_rule['mode']) {
+                $tag_rule += ['mode' => self::BBCODE_MODE_SIMPLE];
+                switch ($tag_rule['mode']) {
 
                     default:
                     case self::BBCODE_MODE_SIMPLE:
