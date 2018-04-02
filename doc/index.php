@@ -10,7 +10,7 @@
 <frameset cols="210,1*">
 	<frame name="toc" src="toc.html" />
 	<frame name="content" src="<?php
-	if (isset($_REQUEST['page']) && preg_match('/[a-zA-Z0-9_]+/', $_REQUEST['page']))
+	if (isset($_REQUEST['page']) && preg_match('/^[a-zA-Z0-9_]+$/', $_REQUEST['page']))
 		print $_REQUEST['page'] . ".html";
 	else print "intro_over.html";
 ?>" />
