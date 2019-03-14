@@ -325,7 +325,7 @@ class BBCodeLexer {
                             if (strlen($this->text) > 0) {
                                 return $this->token = BBCode::BBCODE_TEXT;
                             }
-                            continue;
+                            break;
                         }
                         break;
                     default:
