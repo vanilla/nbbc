@@ -344,12 +344,12 @@ class BBCodeLexer {
                         if (preg_match($this->pat_comment, $this->text)) {
                             // This is a comment, not a tag, so treat it like it doesn't exist.
                             $this->state = self::BBCODE_LEXSTATE_TEXT;
-                            continue;
+                            break;
                         }
                         if (preg_match($this->pat_comment2, $this->text)) {
                             // This is a comment, not a tag, so treat it like it doesn't exist.
                             $this->state = self::BBCODE_LEXSTATE_TEXT;
-                            continue;
+                            break;
                         }
 
                         // See if this is a [[wiki link]]; if so, convert it into a [wiki="" title=""] tag.
