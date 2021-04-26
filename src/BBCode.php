@@ -49,7 +49,7 @@ namespace Nbbc;
 
 /**
  * A parser that converts BBCode formatted strings into HTML.
- * 
+ *
  * This file implements the New BBCode parser.  Usage is simple: Just create
  * a BBCode object, and then call $bbcode->Parse() with a string containing
  * BBCode, and it returns HTML.
@@ -1652,6 +1652,9 @@ REGEX;
     // Given a stack of tokens in $array, write it to a string (possibly with HTML
     // color and style encodings for readability, if $raw is false).
     protected function dumpStack($array = false, $raw = false) {
+        if (!$this->debug) {
+            return '';
+        }
         if (!$raw)
             $string = "<span style='color: #00C;'>";
         else
