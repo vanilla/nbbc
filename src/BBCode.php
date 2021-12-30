@@ -1595,12 +1595,12 @@ REGEX;
         // to the start tag itself.)
         if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['after_tag'])) {
             $newpos = $this->cleanupWSByIteratingPointer(
-                isset($this->tag_rules[$tag_name]['after_tag']) ? $this->tag_rules[$tag_name]['after_tag'] : null,
+                $this->tag_rules[$tag_name]['after_tag'],
                 $pos + 1,
                 $this->stack
             );
         } else {
-            $newpos = $this->cleanupWSByIteratingPointer(null, $pos + 1, $this->stack);
+            $newpos = $pos + 1;
         }
         $delta = $newpos - ($pos + 1);
 
@@ -1619,7 +1619,7 @@ REGEX;
         if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['before_endtag'])) {
             $newend = $this->cleanupWSByIteratingPointer($this->tag_rules[$tag_name]['before_endtag'], 0, $output);
         } else {
-            $newend = $this->cleanupWSByIteratingPointer(null, 0, $output);
+            $newend = 0;
         }
         $output = $this->collectTextReverse($output, count($output) - 1, $newend);
 
@@ -2146,9 +2146,13 @@ REGEX;
             return;
         }
 
-        $this->cleanupWSByPoppingStack($tag_rule['before_tag'], $this->stack);
+        if (isset($tag_rule['before_tag'])) {
+            $this->cleanupWSByPoppingStack($tag_rule['before_tag'], $this->stack);
+        }
         $output = $this->doTag(self::BBCODE_OUTPUT, $tag_name, $tag_params['_default'], $tag_params, "");
-        $this->cleanupWSByEatingInput($tag_rule['after_tag']);
+        if (isset($tag_rule['after_tag'])) {
+            $this->cleanupWSByEatingInput($tag_rule['after_tag']);
+        }
 
         if ($this->debug) {
             Debugger::debug("<b>ProcessIsolatedTag:</b> isolated tag <tt>[".htmlspecialchars($tag_name)
@@ -2257,17 +2261,13 @@ REGEX;
         if (isset($tag_rule['after_tag'])) {
             $newstart = $this->cleanupWSByIteratingPointer($tag_rule['after_tag'], $start, $this->stack);
         } else {
-            $newstart = $this->cleanupWSByIteratingPointer(null, $start, $this->stack);
+            $newstart = $start;
         }
         if (isset($tag_rule['before_endtag'])) {
             $this->cleanupWSByPoppingStack($tag_rule['before_endtag'], $this->stack);
-        } else {
-            $this->cleanupWSByPoppingStack(null, $this->stack);
         }
         if (isset($tag_rule['after_endtag'])) {
             $this->cleanupWSByEatingInput($tag_rule['after_endtag']);
-        } else {
-            $this->cleanupWSByEatingInput(null);
         }
 
         // Collect the output from $newstart to the top of the stack, and then
@@ -2284,8 +2284,6 @@ REGEX;
         // onto the stack itself, so we don't need to remove it).
         if (isset($tag_rule['before_tag'])) {
             $this->cleanupWSByPoppingStack($tag_rule['before_tag'], $this->stack);
-        } else {
-            $this->cleanupWSByPoppingStack(null, $this->stack);
         }
 
         // Found the end tag, so process this tag immediately with
@@ -2512,8 +2510,6 @@ REGEX;
 
         if (isset($this->tag_rules[$tag_name]) && isset($this->tag_rules[$tag_name]['before_tag'])) {
             $this->cleanupWSByPoppingStack($this->tag_rules[$tag_name]['before_tag'], $this->stack);
-        } else {
-            $this->cleanupWSByPoppingStack(null, $this->stack);
         }
         $start_tag_params['_endtag'] = $tag_params['_tag'];
         $start_tag_params['_hasend'] = true;
@@ -2527,8 +2523,6 @@ REGEX;
 
         if (isset($this->tag_rules[$tag_name]['after_endtag'])) {
             $this->cleanupWSByEatingInput($this->tag_rules[$tag_name]['after_endtag']);
-        } else {
-            $this->cleanupWSByEatingInput(null);
         }
 
         if ($this->debug) {
