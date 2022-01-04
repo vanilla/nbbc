@@ -14,7 +14,7 @@ aliases:
 jobs:
   php_setup:
     docker:
-      - image: 'circleci/php:7.1.33-cli'
+      - image: 'circleci/php:7.2.34-cli'
     steps:
       - core/checkout
       # We explcitly don't cache dependencies.
