@@ -38,7 +38,7 @@ jobs:
           name: PHPUnit Tests
           command: |
             cd ~/workspace/repo
-            ./vendor/bin/phpunit -c phpunit.xml.dist
+            ./vendor/bin/phpunit -c ./tests/phpunit.xml.dist
   php_73_tests:
     docker:
       - image: 'circleci/php:7.3.33-cli'
