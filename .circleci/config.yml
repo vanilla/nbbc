@@ -24,9 +24,9 @@ jobs:
           root: ~/workspace
           paths:
             - repo
-  php_71_tests:
+  php_72_tests:
     docker:
-      - image: 'circleci/php:7.1.31-cli'
+      - image: 'circleci/php:7.2.34-cli'
     steps: &php_unit_test_steps
       - *attach_workspace
       - run:
@@ -35,19 +35,10 @@ jobs:
             php --version
             composer --version
       - run:
-          name: Static Analysis
-          command: |
-            cd ~/workspace/repo
-            ./vendor/bin/psalm
-      - run:
           name: PHPUnit Tests
           command: |
             cd ~/workspace/repo
             ./vendor/bin/phpunit -c phpunit.xml.dist
-  php_72_tests:
-    docker:
-      - image: 'circleci/php:7.2.34-cli'
-    steps: *php_unit_test_steps
   php_73_tests:
     docker:
       - image: 'circleci/php:7.3.33-cli'
@@ -65,9 +56,6 @@ workflows:
   commit:
     jobs:
       - php_setup
-      - php_71_tests:
-          requires:
-            - php_setup
       - php_72_tests:
           requires:
             - php_setup
@@ -77,6 +65,6 @@ workflows:
       - php_74_tests:
           requires:
             - php_setup
-      - php_80_tests:
-          requires:
-            - php_setup
+#      - php_80_tests:
+#          requires:
+#            - php_setup
