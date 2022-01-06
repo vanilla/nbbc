@@ -65,6 +65,6 @@ workflows:
       - php_74_tests:
           requires:
             - php_setup
-#      - php_80_tests:
-#          requires:
-#            - php_setup
+      - php_80_tests:
+          requires:
+            - php_setup

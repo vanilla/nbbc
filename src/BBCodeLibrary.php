@@ -808,7 +808,7 @@ class BBCodeLibrary {
         $default = trim($default);
 
         if ($action == BBCode::BBCODE_CHECK) {
-            if (!is_string($default) || strlen($default) == "") {
+            if (!is_string($default) || strlen($default) == 0) {
                 return true;
             } elseif (isset($listStyles[$default])) {
                 return true;
@@ -820,7 +820,7 @@ class BBCodeLibrary {
         }
 
         // Choose a list element (<ul> or <ol>) and a style.
-        if (!is_string($default) || strlen($default) == "") {
+        if (!is_string($default) || strlen($default) == 0) {
             $elem = 'ul';
             $type = '';
         } elseif ($default == '1') {
