@@ -14,7 +14,7 @@ aliases:
 jobs:
   php_setup:
     docker:
-      - image: 'circleci/php:7.2.34-cli'
+      - image: 'cimg/php:7.2'
     steps:
       - core/checkout
       # We explcitly don't cache dependencies.
@@ -26,7 +26,7 @@ jobs:
             - repo
   php_72_tests:
     docker:
-      - image: 'circleci/php:7.2.34-cli'
+      - image: 'cimg/php:7.2'
     steps: &php_unit_test_steps
       - *attach_workspace
       - run:
@@ -41,15 +41,15 @@ jobs:
             ./vendor/bin/phpunit -c ./tests/phpunit.xml.dist
   php_73_tests:
     docker:
-      - image: 'circleci/php:7.3.33-cli'
+      - image: 'cimg/php:7.3'
     steps: *php_unit_test_steps
   php_74_tests:
     docker:
-      - image: 'circleci/php:7.4.27-cli'
+      - image: 'cimg/php:7.4'
     steps: *php_unit_test_steps
   php_80_tests:
     docker:
-      - image: 'circleci/php:8.0.12-cli'
+      - image: 'cimg/php:8.0'
     steps: *php_unit_test_steps
 workflows:
   version: 2
