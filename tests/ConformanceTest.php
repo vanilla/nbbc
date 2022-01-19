@@ -130,6 +130,16 @@ class ConformanceTest extends TestCase {
                 'escape_content' => false,
             ]],
             [[
+                'descr' => "Single quotes in tags are NOT considered special characters.",
+                'bbcode' => "[wiki='foo' title='bar']",
+                'html' => "<a href=\"/?page=foo\" class=\"bbcode_wiki\">bar</a>",
+            ]],
+            [[
+                'descr' => "Double quotes in tags are NOT considered special characters.",
+                'bbcode' => "[wiki=\"foo\" title=\"bar\"]",
+                'html' => "<a href=\"/?page=foo\" class=\"bbcode_wiki\">bar</a>",
+            ]],
+            [[
                 'descr' => ":-) produces a smiley <img> element.",
                 'bbcode' => "This is a test of the emergency broadcasting system :-)",
                 'regex' => <<<'REGEX'
@@ -384,8 +394,13 @@ BBCODE
                 'html' => "This is a test of the <span style=\"font-family:'Times New Roman'\">emergency broadcasting system</span>.",
             ]],
             [[
-                'descr' => "[font=\"Courier New\"] gets correctly converted (quoted default value).",
+                'descr' => "[font=\"Courier New\"] gets correctly converted (double quoted default value).",
                 'bbcode' => "This is a test of the [font=\"Courier New\"]emergency broadcasting system[/font].",
+                'html' => "This is a test of the <span style=\"font-family:'Courier New'\">emergency broadcasting system</span>.",
+            ]],
+            [[
+                'descr' => "[font='Courier New'] gets correctly converted (single quoted default value).",
+                'bbcode' => "This is a test of the [font='Courier New']emergency broadcasting system[/font].",
                 'html' => "This is a test of the <span style=\"font-family:'Courier New'\">emergency broadcasting system</span>.",
             ]],
             [[
