@@ -762,7 +762,7 @@ class BBCode {
     // and performs exactly the same function.  Unlike html_entity_decode, it
     // works on older versions of PHP (prior to 4.3.0).
     public function unHTMLEncode($string) {
-        return html_entity_decode($string);
+        return html_entity_decode($string, ENT_QUOTES);
     }
 
 
@@ -903,7 +903,7 @@ class BBCode {
     public function htmlEncode($string) {
         if ($this->escape_content) {
             if (!$this->allow_ampersand) {
-                return htmlspecialchars($string);
+                return htmlspecialchars($string, ENT_QUOTES);
             } else {
                 return str_replace(['<', '>', '"'], ['&lt;', '&gt;', '&quot;'], $string);
             }
@@ -995,9 +995,9 @@ class BBCode {
                         // For non-smiley text, we just pass it through htmlspecialchars.
                         $output .= $this->htmlEncode($token);
                     } else {
-                        $alt = htmlspecialchars($token);
+                        $alt = htmlspecialchars($token, ENT_QUOTES);
                         if ($smiley_count < $this->max_smileys || $this->max_smileys < 0) {
-                            $output .= "<img src=\"".htmlspecialchars($this->smiley_url.'/'.$this->smileys[$token]).'"'
+                            $output .= "<img src=\"".htmlspecialchars($this->smiley_url.'/'.$this->smileys[$token], ENT_QUOTES).'"'
 //								. "\" width=\"{$info[ 0 ]}\" height=\"{$info[ 1 ]}\""
                                 ." alt=\"$alt\" title=\"$alt\" class=\"bbcode_smiley\" />";
                         } else {
@@ -1310,7 +1310,7 @@ REGEX;
                     } elseif (isset($flags['k'])) {
                         $value = $this->wikify($value);
                     } elseif (isset($flags['h'])) {
-                        $value = htmlspecialchars($value);
+                        $value = htmlspecialchars($value, ENT_QUOTES);
                     } elseif (isset($flags['u'])) {
                         $value = urlencode($value);
                     }
@@ -1658,7 +1658,7 @@ REGEX;
 
             switch ($item[self::BBCODE_STACK_TOKEN]) {
                 case self::BBCODE_TEXT:
-                    $string .= "\"".htmlspecialchars($item[self::BBCODE_STACK_TEXT])."\" ";
+                    $string .= "\"".htmlspecialchars($item[self::BBCODE_STACK_TEXT], ENT_QUOTES)."\" ";
                     break;
                 case self::BBCODE_WS:
                     $string .= "WS ";
@@ -1667,7 +1667,7 @@ REGEX;
                     $string .= "NL ";
                     break;
                 case self::BBCODE_TAG:
-                    $string .= "[".htmlspecialchars($item[self::BBCODE_STACK_TAG]['_name'])."] ";
+                    $string .= "[".htmlspecialchars($item[self::BBCODE_STACK_TAG]['_name'], ENT_QUOTES)."] ";
                     break;
                 default:
                     $string .= "unknown ";
@@ -1853,7 +1853,7 @@ REGEX;
     //
     //   $params is an array of key => value parameters associated with the tag; for example,
     //        in [smiley src=smile alt=:-)], it's Array('src' => "smile", 'alt' => ":-)").
-    //        These keys and values have NOT beel passed through htmlspecialchars().
+    //        These keys and values have NOT been passed through htmlspecialchars().
     //
     //   $contents is the body of the tag during BBCODE_OUTPUT.  For example, in
     //        [b]Hello[/b], it's "Hello".  THIS VALUE IS ALWAYS HTML, not BBCode.
@@ -1970,7 +1970,7 @@ REGEX;
                             break;
                         }
                         if (isset($params[$possible_content]) && strlen($params[$possible_content]) > 0) {
-                            $result = htmlspecialchars($params[$possible_content]);
+                            $result = htmlspecialchars($params[$possible_content], ENT_QUOTES);
                             break;
                         }
                     }
@@ -2211,7 +2211,7 @@ REGEX;
 
             $this->stack[] = Array(
                 self::BBCODE_STACK_TOKEN => $token_type,
-                self::BBCODE_STACK_TEXT => htmlspecialchars($this->lexer->text),
+                self::BBCODE_STACK_TEXT => htmlspecialchars($this->lexer->text, ENT_QUOTES),
                 self::BBCODE_STACK_TAG => $this->lexer->tag,
                 self::BBCODE_STACK_CLASS => $this->current_class,
             );

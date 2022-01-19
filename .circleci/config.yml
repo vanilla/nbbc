@@ -51,6 +51,10 @@ jobs:
     docker:
       - image: 'cimg/php:8.0'
     steps: *php_unit_test_steps
+  php_81_tests:
+    docker:
+      - image: 'cimg/php:8.1'
+    steps: *php_unit_test_steps
 workflows:
   version: 2
   commit:
@@ -66,5 +70,8 @@ workflows:
           requires:
             - php_setup
       - php_80_tests:
+          requires:
+            - php_setup
+      - php_81_tests:
           requires:
             - php_setup

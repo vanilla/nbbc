@@ -52,14 +52,14 @@ class ConformanceTest extends TestCase {
                 'html' => "This is [/ a tag.",
             ]],
             [[
-                'descr' => "Broken [ tags before [b]real tags[/b] don't break the real tags.",
-                'bbcode' => "Broken [ tags before [b]real tags[/b] don't break the real tags.",
-                'html' => "Broken [ tags before <b>real tags</b> don't break the real tags.",
+                'descr' => "Broken [ tags before [b]real tags[/b] do not break the real tags.",
+                'bbcode' => "Broken [ tags before [b]real tags[/b] do not break the real tags.",
+                'html' => "Broken [ tags before <b>real tags</b> do not break the real tags.",
             ]],
             [[
-                'descr' => "Broken [tags before [b]real tags[/b] don't break the real tags.",
-                'bbcode' => "Broken [tags before [b]real tags[/b] don't break the real tags.",
-                'html' => "Broken [tags before <b>real tags</b> don't break the real tags.",
+                'descr' => "Broken [tags before [b]real tags[/b] do not break the real tags.",
+                'bbcode' => "Broken [tags before [b]real tags[/b] do not break the real tags.",
+                'html' => "Broken [tags before <b>real tags</b> do not break the real tags.",
             ]],
             [[
                 'descr' => "[i][b]Mis-ordered nesting[/i][/b] gets fixed.",
@@ -119,9 +119,25 @@ class ConformanceTest extends TestCase {
     public function provideSpecialCharacterTests() {
         $result = [
             [[
-                'descr' => "& and < and > and \" get replaced with HTML-safe equivalents.",
+                'descr' => "& and < and > and \" and ' get replaced with HTML-safe equivalents.",
                 'bbcode' => "This <woo!> &\"yeah!\" 'sizzle'",
-                'html' => "This &lt;woo!&gt; &amp;&quot;yeah!&quot; 'sizzle'",
+                'html' => "This &lt;woo!&gt; &amp;&quot;yeah!&quot; &#039;sizzle&#039;",
+            ]],
+            [[
+                'descr' => "& and < and > and \" and ' do NOT get replaced with HTML-safe equivalents if setEscapeContent(false).",
+                'bbcode' => "This <woo!> &\"yeah!\" 'sizzle'",
+                'html' => "This <woo!> &\"yeah!\" 'sizzle'",
+                'escape_content' => false,
+            ]],
+            [[
+                'descr' => "Single quotes in tags are NOT considered special characters.",
+                'bbcode' => "[wiki='foo' title='bar']",
+                'html' => "<a href=\"/?page=foo\" class=\"bbcode_wiki\">bar</a>",
+            ]],
+            [[
+                'descr' => "Double quotes in tags are NOT considered special characters.",
+                'bbcode' => "[wiki=\"foo\" title=\"bar\"]",
+                'html' => "<a href=\"/?page=foo\" class=\"bbcode_wiki\">bar</a>",
             ]],
             [[
                 'descr' => ":-) produces a smiley <img> element.",
@@ -189,7 +205,7 @@ REGEX
             [[
                 'descr' => "['] comments may *not* contain newlines.",
                 'bbcode' => "This is a test of the [' emergency\n\rbroadcasting] system.",
-                'html' => "This is a test of the [' emergency<br>\nbroadcasting] system.",
+                'html' => "This is a test of the [&#039; emergency<br>\nbroadcasting] system.",
             ]],
             [[
                 'descr' => "[!-- --] produces a comment.",
@@ -378,8 +394,13 @@ BBCODE
                 'html' => "This is a test of the <span style=\"font-family:'Times New Roman'\">emergency broadcasting system</span>.",
             ]],
             [[
-                'descr' => "[font=\"Courier New\"] gets correctly converted (quoted default value).",
+                'descr' => "[font=\"Courier New\"] gets correctly converted (double quoted default value).",
                 'bbcode' => "This is a test of the [font=\"Courier New\"]emergency broadcasting system[/font].",
+                'html' => "This is a test of the <span style=\"font-family:'Courier New'\">emergency broadcasting system</span>.",
+            ]],
+            [[
+                'descr' => "[font='Courier New'] gets correctly converted (single quoted default value).",
+                'bbcode' => "This is a test of the [font='Courier New']emergency broadcasting system[/font].",
                 'html' => "This is a test of the <span style=\"font-family:'Courier New'\">emergency broadcasting system</span>.",
             ]],
             [[
@@ -425,7 +446,7 @@ BBCODE
             [[
                 'descr' => "[spoiler] gets converted.",
                 'bbcode' => "Ssh, don't tell, but [spoiler]Darth is Luke's father[/spoiler]!",
-                'html' => "Ssh, don't tell, but <span class=\"bbcode_spoiler\">Darth is Luke's father</span>!",
+                'html' => "Ssh, don&#039;t tell, but <span class=\"bbcode_spoiler\">Darth is Luke&#039;s father</span>!",
             ]],
             [[
                 'descr' => "[acronym] gets converted.",
@@ -721,7 +742,7 @@ BBCODE
             [[
                 'descr' => "The [[wiki]] special tag does not convert [a-zA-Z0-9'\".:_-].",
                 'bbcode' => "This is a test of the [[\"Ab1cd'Ef2gh_Ij3kl.,Mn4op:Qr9st-Uv0wx\"]] tag.",
-                'html' => "This is a test of the <a href=\"/?page=%22Ab1cd%27Ef2gh_Ij3kl.%2CMn4op%3AQr9st_Uv0wx%22\" class=\"bbcode_wiki\">&quot;Ab1cd'Ef2gh_Ij3kl.,Mn4op:Qr9st-Uv0wx&quot;</a> tag.",
+                'html' => "This is a test of the <a href=\"/?page=%22Ab1cd%27Ef2gh_Ij3kl.%2CMn4op%3AQr9st_Uv0wx%22\" class=\"bbcode_wiki\">&quot;Ab1cd&#039;Ef2gh_Ij3kl.,Mn4op:Qr9st-Uv0wx&quot;</a> tag.",
             ]],
             [[
                 'descr' => "The [[wiki]] special tag can contain spaces.",
@@ -761,23 +782,23 @@ BBCODE
         $result = [
             [[
                 'descr' => "[img] produces an image.",
-                'bbcode' => "This is Google's logo: [img]http://www.google.com/intl/en_ALL/images/logo.gif[/img].",
-                'html' => "This is Google's logo: <img src=\"http://www.google.com/intl/en_ALL/images/logo.gif\" alt=\"logo.gif\" class=\"bbcode_img\" />.",
+                'bbcode' => "This is the Google logo: [img]http://www.google.com/intl/en_ALL/images/logo.gif[/img].",
+                'html' => "This is the Google logo: <img src=\"http://www.google.com/intl/en_ALL/images/logo.gif\" alt=\"logo.gif\" class=\"bbcode_img\" />.",
             ]],
             [[
                 'descr' => "[img] disallows a javascript: URL.",
-                'bbcode' => "This is Google's logo: [img]javascript:alert()[/img].",
-                'html' => "This is Google's logo: [img]javascript:alert()[/img].",
+                'bbcode' => "This is the Google logo: [img]javascript:alert()[/img].",
+                'html' => "This is the Google logo: [img]javascript:alert()[/img].",
             ]],
             [[
                 'descr' => "[img] disallows a URL with an unknown protocol type.",
-                'bbcode' => "This is Google's logo: [img]foobar:bar.jpg[/img].",
-                'html' => "This is Google's logo: [img]foobar:bar.jpg[/img].",
+                'bbcode' => "This is the Google logo: [img]foobar:bar.jpg[/img].",
+                'html' => "This is the Google logo: [img]foobar:bar.jpg[/img].",
             ]],
             [[
                 'descr' => "[img] disallows HTML content.",
-                'bbcode' => "This is Google's logo: [img]<a href='javascript:alert(\"foo\")'>click me</a>[/img].",
-                'html' => "This is Google's logo: [img]&lt;a href='javascript:alert(&quot;foo&quot;)'&gt;click me&lt;/a&gt;[/img].",
+                'bbcode' => "This is the Google logo: [img]<a href='javascript:alert(\"foo\")'>click me</a>[/img].",
+                'html' => "This is the Google logo: [img]&lt;a href=&#039;javascript:alert(&quot;foo&quot;)&#039;&gt;click me&lt;/a&gt;[/img].",
             ]],
             [[
                 'descr' => "[img] can produce a local image.",
@@ -865,7 +886,7 @@ BBCODE
                     . "\n<div class=\"bbcode_code\">\n"
                     . "<div class=\"bbcode_code_head\">Code:</div>\n"
                     . "<div class=\"bbcode_code_body\" style=\"white-space:pre\">A [b]and[/b] &amp; &lt;woo&gt;!\n"
-                    . "\tAnd a ['hey'] and a [/nonny] and a ho ho ho!</div>\n"
+                    . "\tAnd a [&#039;hey&#039;] and a [/nonny] and a ho ho ho!</div>\n"
                     . "</div>\n"
                     . "Also not code.",
             ]],
@@ -880,7 +901,7 @@ BBCODE
                 'html' => "Not code."
                     . "\n<div class=\"bbcode_code\">\n"
                     . "<div class=\"bbcode_code_head\">Code:</div>\n"
-                    . "<div class=\"bbcode_code_body\" style=\"white-space:pre\">\$foo['bar'] = 42;\n"
+                    . "<div class=\"bbcode_code_body\" style=\"white-space:pre\">\$foo[&#039;bar&#039;] = 42;\n"
                     . "if (\$foo[&quot;bar&quot;] &lt; 42) \$foo[] = 0;</div>\n"
                     . "</div>\n"
                     . "Also not code.<br>\n",
@@ -1039,8 +1060,8 @@ BBCODE
             ]],
             [[
                 'descr' => "[nextcol] doesn't do anything outside a [columns] block.",
-                'bbcode' => "Here's some text.[nextcol]\nHere's some more.\n",
-                'html' => "Here's some text.[nextcol]<br>\nHere's some more.<br>\n",
+                'bbcode' => "Here is some text.[nextcol]\nHere is some more.\n",
+                'html' => "Here is some text.[nextcol]<br>\nHere is some more.<br>\n",
             ]],
             [[
                 'descr' => "Bad column misuse doesn't break layouts.",
@@ -1175,6 +1196,7 @@ BBCODE
         $bbcode->setURLTargetable($test['urltarget'] == true);
         $bbcode->setURLTarget($test['urlforcetarget']);
         $bbcode->setPlainMode($test['plainmode']);
+        $bbcode->setEscapeContent($test['escape_content'] ?? true);
 
         if ($test['tag_marker'] === '<') {
             $bbcode->setTagMarker('<');
