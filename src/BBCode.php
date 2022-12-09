@@ -221,6 +221,8 @@ class BBCode {
     public $debug;   // Enable debugging mode
     protected $max_smileys; // Maximum number of smileys that can be used in parse
     protected $escape_content; // Encode HTML. POTENTIALLY DANGEROUS IF DISABLED. ONLY DISABLE IF YOU KNOW WHAT YOURE DOING.
+    protected $lexer; // BBCodeLexer created when calling parse
+    protected $stack; // The token stack is used to perform a document-tree walk
 
     /**
      * Initialize a new instance of the {@link BBCode} class.
