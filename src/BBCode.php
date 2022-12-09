@@ -245,7 +245,7 @@ class BBCode {
         $this->lost_start_tags = [];
         $this->start_tags = [];
         $this->tag_marker = '[';
-        $this->allow_ampsersand = false;
+        $this->allow_ampersand = false;
         $this->current_class = $this->root_class;
         $this->debug = false;
         $this->ignore_newlines = false;
