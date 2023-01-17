@@ -27,5 +27,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+      - name: Composer Install
+        run: composer install -o
       - name: PHPUnit
         run: ./vendor/bin/phpunit -c ./tests/phpunit.xml.dist
