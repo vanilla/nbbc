@@ -221,6 +221,8 @@ class BBCode {
     public $debug;   // Enable debugging mode
     protected $max_smileys; // Maximum number of smileys that can be used in parse
     protected $escape_content; // Encode HTML. POTENTIALLY DANGEROUS IF DISABLED. ONLY DISABLE IF YOU KNOW WHAT YOURE DOING.
+    protected $lexer; // BBCodeLexer created when calling parse
+    protected $stack; // The token stack is used to perform a document-tree walk
 
     /**
      * Initialize a new instance of the {@link BBCode} class.
@@ -245,7 +247,7 @@ class BBCode {
         $this->lost_start_tags = [];
         $this->start_tags = [];
         $this->tag_marker = '[';
-        $this->allow_ampsersand = false;
+        $this->allow_ampersand = false;
         $this->current_class = $this->root_class;
         $this->debug = false;
         $this->ignore_newlines = false;
