@@ -1980,7 +1980,7 @@ REGEX;
                     if ($this->debug) {
                         $content_list = "";
                         foreach ($plain_content as $possible_content)
-                            $content_list .= htmlspecialchars($possible_content).",";
+                            $content_list .= htmlspecialchars($possible_content, ENT_QUOTES).",";
                         Debugger::debug("<b>DoTag:</b> plain-mode tag; possible contents were ($content_list); using \""
                             .htmlspecialchars($possible_content)."\"<br>\n");
                     }
