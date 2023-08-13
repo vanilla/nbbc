@@ -926,7 +926,8 @@ class BBCode {
      * @return string Returns the processed version of {@link $string}.
      */
     public function fixupOutput($string) {
-        Debugger::debug("<b>FixupOutput:</b> input: <tt>".htmlspecialchars($string)."</tt><br>\n");
+        if ($this->debug)
+            Debugger::debug("<b>FixupOutput:</b> input: <tt>".htmlspecialchars($string)."</tt><br>\n");
 
         if (!$this->detect_urls) {
             // Easy case:  No URL-decoding, so don't take the time to do it.
@@ -956,7 +957,8 @@ class BBCode {
             $output = implode("", $output);
         }
 
-        Debugger::debug("<b>FixupOutput:</b> output: <tt>".htmlspecialchars($output)."</tt><br>\n");
+        if ($this->debug)
+            Debugger::debug("<b>FixupOutput:</b> output: <tt>".htmlspecialchars($output)."</tt><br>\n");
 
         return $output;
     }
@@ -1031,7 +1033,8 @@ class BBCode {
         $regex[] = ")(?![\\w])/";
         $this->smiley_regex = implode("", $regex);
 
-        Debugger::debug("<b>Internal_RebuildSmileys:</b> regex: <tt>".htmlspecialchars($this->smiley_regex)."</tt><br>\n");
+        if ($this->debug)
+            Debugger::debug("<b>Internal_RebuildSmileys:</b> regex: <tt>".htmlspecialchars($this->smiley_regex)."</tt><br>\n");
     }
 
     /*
@@ -1242,12 +1245,16 @@ REGEX;
         foreach ($pieces as $piece) {
 
             if (!$is_an_insert) {
-                Debugger::debug("<b>FormatInserts:</b> add text: <tt>"
-                    .htmlspecialchars($piece)."</tt><br>\n");
+                if ($this->debug) {
+                    Debugger::debug("<b>FormatInserts:</b> add text: <tt>"
+                        .htmlspecialchars($piece)."</tt><br>\n");
+                }
                 $result[] = $piece;
             } else if (!preg_match('/\{\$([a-zA-Z0-9_:-]+)((?:\\.[a-zA-Z0-9_:-]+)*)(?:\/([a-zA-Z0-9_:-]+))?\}/', $piece, $matches)) {
-                Debugger::debug("<b>FormatInserts:</b> not an insert: add as text: <tt>"
-                    .htmlspecialchars($piece)."</tt><br>\n");
+                if ($this->debug) {
+                    Debugger::debug("<b>FormatInserts:</b> not an insert: add as text: <tt>"
+                        .htmlspecialchars($piece)."</tt><br>\n");
+                }
                 $result[] = $piece;
             } else {
                 // We have a valid variable name, possibly with an index and some flags.
@@ -1321,8 +1328,9 @@ REGEX;
                     }
                 }
 
-                Debugger::debug("<b>FormatInserts:</b> add insert: <tt>".htmlspecialchars($piece)
-                    ."</tt> --&gt; <tt>".htmlspecialchars($value)."</tt><br>\n");
+                if ($this->debug)
+                    Debugger::debug("<b>FormatInserts:</b> add insert: <tt>".htmlspecialchars($piece)
+                        ."</tt> --&gt; <tt>".htmlspecialchars($value)."</tt><br>\n");
 
                 // Append the value to the output.
                 $result[] = $value;
@@ -1380,18 +1388,22 @@ REGEX;
      * @return array Returns an array of output tokens.
      */
     protected function generateOutput($pos) {
-        Debugger::debug("<b>Internal_GenerateOutput:</b> from=$pos len=".(count($this->stack) - $pos)
-            ."<br>\n"
-            ."<b>Internal_GenerateOutput:</b> Stack contents: <tt>"
-            .$this->dumpStack()."</tt><br>\n");
+        if ($this->debug) {
+            Debugger::debug("<b>Internal_GenerateOutput:</b> from=$pos len=".(count($this->stack) - $pos)
+                ."<br>\n"
+                ."<b>Internal_GenerateOutput:</b> Stack contents: <tt>"
+                .$this->dumpStack()."</tt><br>\n");
+        }
         $output = [];
         while (count($this->stack) > $pos) {
             $token = array_pop($this->stack);
             if ($token[self::BBCODE_STACK_TOKEN] != self::BBCODE_TAG) {
                 // Not a tag, so just push it to the output.
                 $output[] = $token;
-                Debugger::debug("<b>Internal_GenerateOutput:</b> push text: <tt>"
-                    .htmlspecialchars($token[self::BBCODE_STACK_TEXT])."</tt><br>\n");
+                if ($this->debug) {
+                    Debugger::debug("<b>Internal_GenerateOutput:</b> push text: <tt>"
+                        .htmlspecialchars($token[self::BBCODE_STACK_TEXT])."</tt><br>\n");
+                }
             } else {
                 // This is a start tag that is either ending-optional or ending-forgotten.
                 // But because of class dependencies, we can't simply reject it; deeper
@@ -1421,14 +1433,16 @@ REGEX;
                         self::BBCODE_STACK_TEXT => $token[self::BBCODE_STACK_TEXT],
                         self::BBCODE_STACK_CLASS => $this->current_class,
                     );
-                    Debugger::debug("<b>Internal_GenerateOutput:</b> push broken tag: <tt>"
-                        .htmlspecialchars($token['text'])."</tt><br>\n");
+                    if ($this->debug)
+                        Debugger::debug("<b>Internal_GenerateOutput:</b> push broken tag: <tt>"
+                            .htmlspecialchars($token['text'])."</tt><br>\n");
                 } else {
                     // Found a start tag where the end tag is optional, or a start
                     // tag where the end tag was forgotten, so that tag should be
                     // processed with the current output as its content.
-                    Debugger::debug("<b>Internal_GenerateOutput:</b> found start tag with optional end tag: <tt>"
-                        .htmlspecialchars($token[self::BBCODE_STACK_TEXT])."</tt><br>\n");
+                    if ($this->debug)
+                        Debugger::debug("<b>Internal_GenerateOutput:</b> found start tag with optional end tag: <tt>"
+                            .htmlspecialchars($token[self::BBCODE_STACK_TEXT])."</tt><br>\n");
 
                     // If this was supposed to have an end tag, and we find a floating one
                     // later on, then we should consume it.
@@ -1449,8 +1463,9 @@ REGEX;
                     // of time because it'd never match.  But 'before_tag' is useful, though.
                     $this->cleanupWSByPoppingStack($rule['before_tag'] ?? '', $this->stack);
 
-                    Debugger::debug("<b>Internal_GenerateOutput:</b> optional-tag's content: <tt>"
-                        .htmlspecialchars($tag_body)."</tt><br>\n");
+                    if ($this->debug)
+                        Debugger::debug("<b>Internal_GenerateOutput:</b> optional-tag's content: <tt>"
+                            .htmlspecialchars($tag_body)."</tt><br>\n");
 
 
                     if (isset($token[self::BBCODE_STACK_TAG])) {
@@ -2525,11 +2540,13 @@ REGEX;
      * @return string Returns the HTML version of {@link $string}.
      */
     public function parse($string) {
-        Debugger::debug(
-            "<b>Parse Begin:</b> input string is ".strlen($string)." characters long:<br>\n".
-            "<b>Parse:</b> input: <tt>".htmlspecialchars(addcslashes($string, "\x00..\x1F\\\"'")).
-            "</tt><br>\n"
-        );
+        if ($this->debug) {
+            Debugger::debug(
+                "<b>Parse Begin:</b> input string is ".strlen($string)." characters long:<br>\n".
+                "<b>Parse:</b> input: <tt>".htmlspecialchars(addcslashes($string, "\x00..\x1F\\\"'")).
+                "</tt><br>\n"
+            );
+        }
 
         // The lexer is responsible for converting individual characters to tokens,
         // and uses preg_split to do most of its magic.  Because it uses preg_split
@@ -2542,7 +2559,8 @@ REGEX;
         // If we're fuzzily limiting the text length, see if we need to actually
         // cut it off, or if it's close enough to not be worth the effort.
         $old_output_limit = $this->output_limit;
-        Debugger::debug("weee");
+        if ($this->debug)
+            Debugger::debug("weee");
         if ($this->output_limit > 0) {
             if ($this->debug)
                 Debugger::debug("<b>Parse:</b> Limiting text length to {$this->output_limit}.<br>\n");
@@ -2590,7 +2608,8 @@ REGEX;
 
         // In plain mode, we generate newlines instead of <br> tags.
         $newline = $this->plain_mode ? "\n" : "<br>\n";
-        Debugger::debug("hi");
+        if ($this->debug)
+            Debugger::debug("hi");
         // This is a fairly straightforward push-down automaton operating in LL(1) mode.  For
         // clarity's sake, we break the tag-processing code into separate functions, but we
         // keep the text/whitespace/newline code here for performance reasons.
