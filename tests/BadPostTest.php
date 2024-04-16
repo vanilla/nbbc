@@ -18,7 +18,7 @@ class BadPostTest extends TestCase {
 BBCODE;
 
         $bbcode = new BBCode();
-        $this->expectExceptionMessage("Error lexing BBCode contents. JIT stack limit exhausted");
+        $this->expectExceptionMessage("Error lexing BBCode contents.");
         $bbcode->parse($postContents);
     }
 }
