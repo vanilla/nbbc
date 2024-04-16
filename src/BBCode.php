@@ -84,11 +84,11 @@ class BBCode {
     /**
      * Current version number
      */
-    const BBCODE_VERSION = '2.0.0-alpha1';
+    const BBCODE_VERSION = '2.4.0';
     /**
      * Current release date
      */
-    const BBCODE_RELEASE = '2016-01-07';
+    const BBCODE_RELEASE = '2023-01-17';
 
     /**
      * Content type:  Content may not be provided by user.
