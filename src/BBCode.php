@@ -229,7 +229,7 @@ class BBCode {
      *
      * @param BBCodeLibrary|null $library
      */
-    public function __construct(BBCodeLibrary $library = null) {
+    public function __construct(?BBCodeLibrary $library = null) {
         $this->defaults = isset($library) ? $library : new BBCodeLibrary();
         $this->tag_rules = $this->defaults->default_tag_rules;
         $this->smileys = $this->defaults->default_smileys;
