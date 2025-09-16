@@ -5,7 +5,7 @@
 Copyright &copy; 2008-10, the Phantom Inker.  All rights reserved.</p>
 
 <p>The New BBCode Parser (NBBC) is a fully-validating, high-speed, extensible parser
-for the BBCode document language, written in PHP, compatible with PHP 4.0.5+ and PHP 5.
+for the BBCode document language, written in PHP, compatible with PHP 7.1+.
 It converts BBCode input into HTML output, and can guarantee that the output will be
 fully conformant to the XHTML 1.0 Strict standard no matter how badly-mangled the BBCode
 input is.</p>

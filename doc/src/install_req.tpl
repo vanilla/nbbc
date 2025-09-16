@@ -2,7 +2,7 @@
 <p>To use NBBC in your programs, you will need to have the following:</p>
 
 <ul>
-<li>A web server running PHP 4.0.5 or higher, or PHP 5.0 or higher.</li>
+<li>A web server running PHP 7.1 or higher.</li>
 <li>Some PHP programming skills (say, skill level 2, where 1 is "newbie" and 5 is "guru").</li>
 </ul>
 
