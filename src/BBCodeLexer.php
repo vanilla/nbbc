@@ -132,7 +132,7 @@ class BBCodeLexer {
             // Tags may not contain newlines.
             ."{$b}"
             ."(?! -- | ' | !-- | {$b}{$b} )"
-            ."(?: [^\\n\\r{$b}{$e}] | \\\" [^\\\"\\n\\r]* \\\" | \\' [^\\'\\n\\r]* \\' )*"
+            ."(?: [^\\n\\r{$b}{$e}] | \\\" [^\\\"\\n\\r]* \\\" | \\' [^\\'\\n\\r]* \\' )*+"
             ."{$e}"
 
             // Match wiki-links, which are of the form [[...]] or [[...|...]].  Unlike
